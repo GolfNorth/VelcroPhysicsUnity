@@ -20,8 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -201,13 +200,13 @@ namespace VelcroPhysics.Dynamics.Joints
             _rA = MathUtils.Mul(qA, LocalAnchorA - _localCenterA);
 
             // K    = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
-            //      = [1/m1+1/m2     0    ] + invI1 * [r1.Y*r1.Y -r1.X*r1.Y] + invI2 * [r1.Y*r1.Y -r1.X*r1.Y]
-            //        [    0     1/m1+1/m2]           [-r1.X*r1.Y r1.X*r1.X]           [-r1.X*r1.Y r1.X*r1.X]
+            //      = [1/m1+1/m2     0    ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]
+            //        [    0     1/m1+1/m2]           [-r1.x*r1.y r1.x*r1.x]           [-r1.x*r1.y r1.x*r1.x]
             Mat22 K = new Mat22();
-            K.ex.X = _invMassA + _invIA * _rA.Y * _rA.Y + _gamma;
-            K.ex.Y = -_invIA * _rA.X * _rA.Y;
-            K.ey.X = K.ex.Y;
-            K.ey.Y = _invMassA + _invIA * _rA.X * _rA.X + _gamma;
+            K.ex.x = _invMassA + _invIA * _rA.y * _rA.y + _gamma;
+            K.ex.y = -_invIA * _rA.x * _rA.y;
+            K.ey.x = K.ex.y;
+            K.ey.y = _invMassA + _invIA * _rA.x* _rA.x + _gamma;
 
             _mass = K.Inverse;
 
@@ -225,7 +224,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
             else
             {
-                _impulse = Vector2.Zero;
+                _impulse = Vector2.zero;
             }
 
             data.Velocities[_indexA].V = vA;
@@ -244,9 +243,9 @@ namespace VelcroPhysics.Dynamics.Joints
             Vector2 oldImpulse = _impulse;
             _impulse += impulse;
             float maxImpulse = data.Step.dt * MaxForce;
-            if (_impulse.LengthSquared() > maxImpulse * maxImpulse)
+            if (_impulse.sqrMagnitude > maxImpulse * maxImpulse)
             {
-                _impulse *= maxImpulse / _impulse.Length();
+                _impulse *= maxImpulse / _impulse.magnitude;
             }
             impulse = _impulse - oldImpulse;
 

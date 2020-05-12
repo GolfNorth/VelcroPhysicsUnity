@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 
 namespace VelcroPhysics.Tools.TextureTools
@@ -58,10 +58,10 @@ namespace VelcroPhysics.Tools.TextureTools
             List<GeomPoly> polyList;
             GeomPoly gp;
 
-            int xn = (int)(domain.Extents.X * 2 / cellWidth);
-            bool xp = xn == (domain.Extents.X * 2 / cellWidth);
-            int yn = (int)(domain.Extents.Y * 2 / cellHeight);
-            bool yp = yn == (domain.Extents.Y * 2 / cellHeight);
+            int xn = (int)(domain.Extents.x * 2 / cellWidth);
+            bool xp = xn == (domain.Extents.x * 2 / cellWidth);
+            int yn = (int)(domain.Extents.y * 2 / cellHeight);
+            bool yp = yn == (domain.Extents.y * 2 / cellHeight);
             if (!xp)
                 xn++;
             if (!yp)
@@ -75,16 +75,16 @@ namespace VelcroPhysics.Tools.TextureTools
             {
                 int x0;
                 if (x == xn)
-                    x0 = (int)domain.UpperBound.X;
+                    x0 = (int)domain.UpperBound.x;
                 else
-                    x0 = (int)(x * cellWidth + domain.LowerBound.X);
+                    x0 = (int)(x * cellWidth + domain.LowerBound.x);
                 for (int y = 0; y < yn + 1; y++)
                 {
                     int y0;
                     if (y == yn)
-                        y0 = (int)domain.UpperBound.Y;
+                        y0 = (int)domain.UpperBound.y;
                     else
-                        y0 = (int)(y * cellHeight + domain.LowerBound.Y);
+                        y0 = (int)(y * cellHeight + domain.LowerBound.y);
                     fs[x, y] = f[x0, y0];
                 }
             }
@@ -92,19 +92,19 @@ namespace VelcroPhysics.Tools.TextureTools
             //generate sub-polys and combine to scan lines
             for (int y = 0; y < yn; y++)
             {
-                float y0 = y * cellHeight + domain.LowerBound.Y;
+                float y0 = y * cellHeight + domain.LowerBound.y;
                 float y1;
                 if (y == yn - 1)
-                    y1 = domain.UpperBound.Y;
+                    y1 = domain.UpperBound.y;
                 else
                     y1 = y0 + cellHeight;
                 GeomPoly pre = null;
                 for (int x = 0; x < xn; x++)
                 {
-                    float x0 = x * cellWidth + domain.LowerBound.X;
+                    float x0 = x * cellWidth + domain.LowerBound.x;
                     float x1;
                     if (x == xn - 1)
-                        x1 = domain.UpperBound.X;
+                        x1 = domain.UpperBound.x;
                     else
                         x1 = x0 + cellWidth;
 
@@ -176,8 +176,8 @@ namespace VelcroPhysics.Tools.TextureTools
                         continue;
                     }
 
-                    float ax = x * cellWidth + domain.LowerBound.X;
-                    float ay = y * cellHeight + domain.LowerBound.Y;
+                    float ax = x * cellWidth + domain.LowerBound.x;
+                    float ay = y * cellHeight + domain.LowerBound.y;
 
                     CxFastList<Vector2> bp = p.GeomP.Points;
                     CxFastList<Vector2> ap = u.GeomP.Points;
@@ -191,13 +191,13 @@ namespace VelcroPhysics.Tools.TextureTools
 
                     //combine above (but disallow the hole thingies
                     CxFastListNode<Vector2> bi = bp.Begin();
-                    while (Square(bi.Elem().Y - ay) > Settings.Epsilon || bi.Elem().X < ax)
+                    while (Square(bi.Elem().y - ay) > Settings.Epsilon || bi.Elem().x < ax)
                         bi = bi.Next();
 
                     //NOTE: Unused
                     //Vector2 b0 = bi.elem();
                     Vector2 b1 = bi.Next().Elem();
-                    if (Square(b1.Y - ay) > Settings.Epsilon)
+                    if (Square(b1.y - ay) > Settings.Epsilon)
                     {
                         x++;
                         continue;
@@ -261,7 +261,7 @@ namespace VelcroPhysics.Tools.TextureTools
                     ret.Remove(p.GeomP);
                     p.GeomP = u.GeomP;
 
-                    x = (int)((bi.Next().Elem().X - domain.LowerBound.X) / cellWidth) + 1;
+                    x = (int)((bi.Next().Elem().x - domain.LowerBound.x) / cellWidth) + 1;
 
                     //x++; this was already commented out!
                 }
@@ -346,12 +346,12 @@ namespace VelcroPhysics.Tools.TextureTools
         private static float VecDsq(Vector2 a, Vector2 b)
         {
             Vector2 d = a - b;
-            return d.X * d.X + d.Y * d.Y;
+            return d.x * d.x + d.y * d.y;
         }
 
         private static float VecCross(Vector2 a, Vector2 b)
         {
-            return a.X * b.Y - a.Y * b.X;
+            return a.x * b.y - a.y * b.x;
         }
 
         /** Look-up table to relate polygon key with the vertices that should be used for

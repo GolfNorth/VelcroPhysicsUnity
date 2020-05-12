@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Extensions.Controllers.ControllerBase;
 
@@ -38,7 +37,7 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
 
         public override void Update(float dt)
         {
-            Vector2 f = Vector2.Zero;
+            Vector2 f = Vector2.zero;
 
             foreach (Body worldBody in World.BodyList)
             {
@@ -51,7 +50,7 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
                         continue;
 
                     Vector2 d = controllerBody.Position - worldBody.Position;
-                    float r2 = d.LengthSquared();
+                    float r2 = d.sqrMagnitude;
 
                     if (r2 <= Settings.Epsilon || r2 > MaxRadius * MaxRadius || r2 < MinRadius * MinRadius)
                         continue;
@@ -62,7 +61,7 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
                             f = Strength / r2 * worldBody.Mass * controllerBody.Mass * d;
                             break;
                         case GravityType.Linear:
-                            f = Strength / (float)Math.Sqrt(r2) * worldBody.Mass * controllerBody.Mass * d;
+                            f = Strength / (float)Mathf.Sqrt(r2) * worldBody.Mass * controllerBody.Mass * d;
                             break;
                     }
 
@@ -72,7 +71,7 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
                 foreach (Vector2 point in Points)
                 {
                     Vector2 d = point - worldBody.Position;
-                    float r2 = d.LengthSquared();
+                    float r2 = d.sqrMagnitude;
 
                     if (r2 <= Settings.Epsilon || r2 > MaxRadius * MaxRadius || r2 < MinRadius * MinRadius)
                         continue;
@@ -83,7 +82,7 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
                             f = Strength / r2 * worldBody.Mass * d;
                             break;
                         case GravityType.Linear:
-                            f = Strength / (float)Math.Sqrt(r2) * worldBody.Mass * d;
+                            f = Strength / (float)Mathf.Sqrt(r2) * worldBody.Mass * d;
                             break;
                     }
 

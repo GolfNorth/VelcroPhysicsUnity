@@ -20,8 +20,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
 
@@ -106,8 +105,8 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
             float[] yrem = new float[vertices.Count];
             for (int i = 0; i < vertices.Count; ++i)
             {
-                xrem[i] = vertices[i].X;
-                yrem[i] = vertices[i].Y;
+                xrem[i] = vertices[i].x;
+                yrem[i] = vertices[i].y;
             }
 
             int vNum = vertices.Count;
@@ -132,18 +131,18 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                         d3.Normalize();
                         float cross12;
                         MathUtils.Cross(ref d1, ref d2, out cross12);
-                        cross12 = Math.Abs(cross12);
+                        cross12 = Mathf.Abs(cross12);
 
                         float cross23;
                         MathUtils.Cross(ref d2, ref d3, out cross23);
-                        cross23 = Math.Abs(cross23);
+                        cross23 = Mathf.Abs(cross23);
 
                         float cross31;
                         MathUtils.Cross(ref d3, ref d1, out cross31);
-                        cross31 = Math.Abs(cross31);
+                        cross31 = Mathf.Abs(cross31);
 
                         //Find the maximum minimum angle
-                        float minCross = Math.Min(cross12, Math.Min(cross23, cross31));
+                        float minCross = Mathf.Min(cross12, Mathf.Min(cross23, cross31));
                         if (minCross > earMaxMinCross)
                         {
                             earIndex = i;
@@ -236,7 +235,7 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                 {
                     //Don't worry about pinch points where the points
                     //are actually just dupe neighbors
-                    if (Math.Abs(pin[i].X - pin[j].X) < tolerance && Math.Abs(pin[i].Y - pin[j].Y) < tolerance && j != i + 1)
+                    if (Mathf.Abs(pin[i].x - pin[j].x) < tolerance && Mathf.Abs(pin[i].y - pin[j].y) < tolerance && j != i + 1)
                     {
                         pinchIndexA = i;
                         pinchIndexB = j;

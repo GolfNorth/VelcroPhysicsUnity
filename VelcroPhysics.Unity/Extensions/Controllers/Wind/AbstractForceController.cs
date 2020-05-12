@@ -1,7 +1,8 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Extensions.Controllers.ControllerBase;
+using Random = System.Random;
 
 namespace VelcroPhysics.Extensions.Controllers.Wind
 {
@@ -203,7 +204,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
         /// <summary>
         /// Calculate the Decay for a given body. Meant to ease force
         /// development and stick to the DRY principle and provide unified and
-        /// predictable decay math.
+        /// predictable decay Mathf.
         /// </summary>
         /// <param name="body">The body to calculate decay for</param>
         /// <returns>
@@ -213,7 +214,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
         protected float GetDecayMultiplier(Body body)
         {
             //TODO: Consider ForceType in distance calculation!
-            float distance = (body.Position - Position).Length();
+            float distance = (body.Position - Position).magnitude;
             switch (DecayMode)
             {
                 case DecayModes.None:

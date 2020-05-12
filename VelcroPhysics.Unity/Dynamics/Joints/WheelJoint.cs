@@ -20,11 +20,11 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Dynamics.Joints
 {
@@ -560,7 +560,7 @@ namespace VelcroPhysics.Dynamics.Joints
             data.Positions[_indexB].C = cB;
             data.Positions[_indexB].A = aB;
 
-            return Math.Abs(C) <= Settings.LinearSlop;
+            return Mathf.Abs(C) <= Settings.LinearSlop;
         }
     }
 }

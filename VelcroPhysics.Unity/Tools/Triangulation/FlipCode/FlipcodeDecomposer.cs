@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
 
@@ -106,13 +105,13 @@ namespace VelcroPhysics.Tools.Triangulation.FlipCode
         private static bool InsideTriangle(ref Vector2 a, ref Vector2 b, ref Vector2 c, ref Vector2 p)
         {
             //A cross bp
-            float abp = (c.X - b.X) * (p.Y - b.Y) - (c.Y - b.Y) * (p.X - b.X);
+            float abp = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x);
 
             //A cross ap
-            float aap = (b.X - a.X) * (p.Y - a.Y) - (b.Y - a.Y) * (p.X - a.X);
+            float aap = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
 
             //b cross cp
-            float bcp = (a.X - c.X) * (p.Y - c.Y) - (a.Y - c.Y) * (p.X - c.X);
+            float bcp = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x);
 
             return ((abp >= 0.0f) && (bcp >= 0.0f) && (aap >= 0.0f));
         }

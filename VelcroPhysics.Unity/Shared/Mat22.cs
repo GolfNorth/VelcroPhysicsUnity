@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+using UnityEngine;
 
 namespace VelcroPhysics.Shared
 {
@@ -37,7 +37,7 @@ namespace VelcroPhysics.Shared
         {
             get
             {
-                float a = ex.X, b = ey.X, c = ex.Y, d = ey.Y;
+                float a = ex.x, b = ey.x, c = ex.y, d = ey.y;
                 float det = a * d - b * c;
                 if (det != 0.0f)
                 {
@@ -45,11 +45,11 @@ namespace VelcroPhysics.Shared
                 }
 
                 Mat22 result = new Mat22();
-                result.ex.X = det * d;
-                result.ex.Y = -det * c;
+                result.ex.x = det * d;
+                result.ex.y = -det * c;
 
-                result.ey.X = -det * b;
-                result.ey.Y = det * a;
+                result.ey.x = -det * b;
+                result.ey.y = det * a;
 
                 return result;
             }
@@ -71,10 +71,10 @@ namespace VelcroPhysics.Shared
         /// </summary>
         public void SetIdentity()
         {
-            ex.X = 1.0f;
-            ey.X = 0.0f;
-            ex.Y = 0.0f;
-            ey.Y = 1.0f;
+            ex.x = 1.0f;
+            ey.x = 0.0f;
+            ex.y = 0.0f;
+            ey.y = 1.0f;
         }
 
         /// <summary>
@@ -82,10 +82,10 @@ namespace VelcroPhysics.Shared
         /// </summary>
         public void SetZero()
         {
-            ex.X = 0.0f;
-            ey.X = 0.0f;
-            ex.Y = 0.0f;
-            ey.Y = 0.0f;
+            ex.x = 0.0f;
+            ey.x = 0.0f;
+            ex.y = 0.0f;
+            ey.y = 0.0f;
         }
 
         /// <summary>
@@ -96,14 +96,14 @@ namespace VelcroPhysics.Shared
         /// <returns></returns>
         public Vector2 Solve(Vector2 b)
         {
-            float a11 = ex.X, a12 = ey.X, a21 = ex.Y, a22 = ey.Y;
+            float a11 = ex.x, a12 = ey.x, a21 = ex.y, a22 = ey.y;
             float det = a11 * a22 - a12 * a21;
             if (det != 0.0f)
             {
                 det = 1.0f / det;
             }
 
-            return new Vector2(det * (a22 * b.X - a12 * b.Y), det * (a11 * b.Y - a21 * b.X));
+            return new Vector2(det * (a22 * b.x - a12 * b.y), det * (a11 * b.y - a21 * b.x));
         }
 
         public static void Add(ref Mat22 A, ref Mat22 B, out Mat22 R)

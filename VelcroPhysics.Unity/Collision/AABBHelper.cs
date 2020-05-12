@@ -1,6 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision
 {
@@ -22,8 +23,8 @@ namespace VelcroPhysics.Collision
         public static void ComputeCircleAABB(ref Vector2 pos, float radius, ref Transform transform, out AABB aabb)
         {
             Vector2 p = transform.p + MathUtils.Mul(transform.q, pos);
-            aabb.LowerBound = new Vector2(p.X - radius, p.Y - radius);
-            aabb.UpperBound = new Vector2(p.X + radius, p.Y + radius);
+            aabb.LowerBound = new Vector2(p.x - radius, p.y - radius);
+            aabb.UpperBound = new Vector2(p.x + radius, p.y + radius);
         }
 
         public static void ComputePolygonAABB(Vertices vertices, ref Transform transform, out AABB aabb)

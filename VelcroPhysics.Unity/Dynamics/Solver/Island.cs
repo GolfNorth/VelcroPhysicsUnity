@@ -22,10 +22,11 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Dynamics.Joints;
 using VelcroPhysics.Utilities;
+using Debug = UnityEngine.Debug;
 
 namespace VelcroPhysics.Dynamics.Solver
 {
@@ -200,14 +201,14 @@ namespace VelcroPhysics.Dynamics.Solver
                 Vector2 translation = h * v;
                 if (Vector2.Dot(translation, translation) > Settings.MaxTranslationSquared)
                 {
-                    float ratio = Settings.MaxTranslation / translation.Length();
+                    float ratio = Settings.MaxTranslation / translation.magnitude;
                     v *= ratio;
                 }
 
                 float rotation = h * w;
                 if (rotation * rotation > Settings.MaxRotationSquared)
                 {
-                    float ratio = Settings.MaxRotation / Math.Abs(rotation);
+                    float ratio = Settings.MaxRotation / Mathf.Abs(rotation);
                     w *= ratio;
                 }
 
@@ -292,7 +293,7 @@ namespace VelcroPhysics.Dynamics.Solver
                     else
                     {
                         b.SleepTime += h;
-                        minSleepTime = Math.Min(minSleepTime, b.SleepTime);
+                        minSleepTime = Mathf.Min(minSleepTime, b.SleepTime);
                     }
                 }
 
@@ -367,14 +368,14 @@ namespace VelcroPhysics.Dynamics.Solver
                 Vector2 translation = h * v;
                 if (Vector2.Dot(translation, translation) > Settings.MaxTranslationSquared)
                 {
-                    float ratio = Settings.MaxTranslation / translation.Length();
+                    float ratio = Settings.MaxTranslation / translation.magnitude;
                     v *= ratio;
                 }
 
                 float rotation = h * w;
                 if (rotation * rotation > Settings.MaxRotationSquared)
                 {
-                    float ratio = Settings.MaxRotation / Math.Abs(rotation);
+                    float ratio = Settings.MaxRotation / Mathf.Abs(rotation);
                     w *= ratio;
                 }
 

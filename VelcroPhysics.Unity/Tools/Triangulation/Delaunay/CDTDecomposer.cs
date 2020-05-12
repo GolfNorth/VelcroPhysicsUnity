@@ -4,8 +4,7 @@
 */
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay;
 using VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep;
@@ -37,7 +36,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
             Polygon.Polygon poly = new Polygon.Polygon();
 
             foreach (Vector2 vertex in vertices)
-                poly.Points.Add(new TriangulationPoint(vertex.X, vertex.Y));
+                poly.Points.Add(new TriangulationPoint(vertex.x, vertex.y));
 
             if (vertices.Holes != null)
             {
@@ -46,7 +45,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
                     Polygon.Polygon hole = new Polygon.Polygon();
 
                     foreach (Vector2 vertex in holeVertices)
-                        hole.Points.Add(new TriangulationPoint(vertex.X, vertex.Y));
+                        hole.Points.Add(new TriangulationPoint(vertex.x, vertex.y));
 
                     poly.AddHole(hole);
                 }

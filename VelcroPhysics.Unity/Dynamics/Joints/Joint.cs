@@ -21,8 +21,7 @@
 */
 
 using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 
 namespace VelcroPhysics.Dynamics.Joints
@@ -168,14 +167,14 @@ namespace VelcroPhysics.Dynamics.Joints
             if (!Enabled)
                 return;
 
-            float jointErrorSquared = GetReactionForce(invDt).LengthSquared();
+            float jointErrorSquared = GetReactionForce(invDt).sqrMagnitude;
 
-            if (Math.Abs(jointErrorSquared) <= _breakpointSquared)
+            if (Mathf.Abs(jointErrorSquared) <= _breakpointSquared)
                 return;
 
             Enabled = false;
 
-            Broke?.Invoke(this, (float)Math.Sqrt(jointErrorSquared));
+            Broke?.Invoke(this, (float)Mathf.Sqrt(jointErrorSquared));
         }
 
         internal abstract void SolveVelocityConstraints(ref SolverData data);

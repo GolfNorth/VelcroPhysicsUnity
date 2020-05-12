@@ -1,5 +1,4 @@
-using System;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 
 namespace VelcroPhysics.Shared
 {
@@ -19,8 +18,8 @@ namespace VelcroPhysics.Shared
         public Rot(float angle)
         {
             // TODO_ERIN optimize
-            s = (float)Math.Sin(angle);
-            c = (float)Math.Cos(angle);
+            s = (float)Mathf.Sin(angle);
+            c = (float)Mathf.Cos(angle);
         }
 
         /// <summary>
@@ -38,8 +37,8 @@ namespace VelcroPhysics.Shared
             else
             {
                 // TODO_ERIN optimize
-                s = (float)Math.Sin(angle);
-                c = (float)Math.Cos(angle);
+                s = (float)Mathf.Sin(angle);
+                c = (float)Mathf.Cos(angle);
             }
         }
 
@@ -57,7 +56,7 @@ namespace VelcroPhysics.Shared
         /// </summary>
         public float GetAngle()
         {
-            return (float)Math.Atan2(s, c);
+            return (float)Mathf.Atan2(s, c);
         }
 
         /// <summary>

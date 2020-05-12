@@ -20,8 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -94,7 +93,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
             //Velcro feature: Setting default MaxLength
             Vector2 d = WorldAnchorB - WorldAnchorA;
-            MaxLength = d.Length();
+            MaxLength = d.magnitude;
         }
 
         /// <summary>
@@ -167,7 +166,7 @@ namespace VelcroPhysics.Dynamics.Joints
             _rB = MathUtils.Mul(qB, LocalAnchorB - _localCenterB);
             _u = cB + _rB - cA - _rA;
 
-            _length = _u.Length();
+            _length = _u.magnitude;
 
             float C = _length - MaxLength;
             if (C > 0.0f)
@@ -185,7 +184,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
             else
             {
-                _u = Vector2.Zero;
+                _u = Vector2.zero;
                 _mass = 0.0f;
                 _impulse = 0.0f;
                 return;
@@ -241,7 +240,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
             float impulse = -_mass * Cdot;
             float oldImpulse = _impulse;
-            _impulse = Math.Min(0.0f, _impulse + impulse);
+            _impulse = Mathf.Min(0.0f, _impulse + impulse);
             impulse = _impulse - oldImpulse;
 
             Vector2 P = impulse * _u;
@@ -269,7 +268,7 @@ namespace VelcroPhysics.Dynamics.Joints
             Vector2 rB = MathUtils.Mul(qB, LocalAnchorB - _localCenterB);
             Vector2 u = cB + rB - cA - rA;
 
-            float length = u.Length();
+            float length = u.magnitude;
             u.Normalize();
             float C = length - MaxLength;
 

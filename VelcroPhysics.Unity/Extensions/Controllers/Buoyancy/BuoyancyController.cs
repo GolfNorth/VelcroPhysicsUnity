@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Extensions.Controllers.ControllerBase;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Extensions.Controllers.Buoyancy
 {
@@ -67,7 +68,7 @@ namespace VelcroPhysics.Extensions.Controllers.Buoyancy
             set
             {
                 _container = value;
-                _offset = _container.UpperBound.Y;
+                _offset = _container.UpperBound.y;
             }
         }
 
@@ -89,8 +90,8 @@ namespace VelcroPhysics.Extensions.Controllers.Buoyancy
             {
                 Body body = kv.Value;
 
-                Vector2 areac = Vector2.Zero;
-                Vector2 massc = Vector2.Zero;
+                Vector2 areac = Vector2.zero;
+                Vector2 massc = Vector2.zero;
                 float area = 0;
                 float mass = 0;
 
@@ -106,18 +107,18 @@ namespace VelcroPhysics.Extensions.Controllers.Buoyancy
                     Vector2 sc;
                     float sarea = ComputeSubmergedArea(shape, ref _normal, _offset, ref body._xf, out sc);
                     area += sarea;
-                    areac.X += sarea * sc.X;
-                    areac.Y += sarea * sc.Y;
+                    areac.x += sarea * sc.x;
+                    areac.y += sarea * sc.y;
 
                     mass += sarea * shape.Density;
-                    massc.X += sarea * sc.X * shape.Density;
-                    massc.Y += sarea * sc.Y * shape.Density;
+                    massc.x += sarea * sc.x * shape.Density;
+                    massc.y += sarea * sc.y * shape.Density;
                 }
 
-                areac.X /= area;
-                areac.Y /= area;
-                massc.X /= mass;
-                massc.Y /= mass;
+                areac.x /= area;
+                areac.y /= area;
+                massc.x /= mass;
+                massc.y /= mass;
 
                 if (area < Settings.Epsilon)
                     continue;
@@ -144,7 +145,7 @@ namespace VelcroPhysics.Extensions.Controllers.Buoyancy
                     {
                         CircleShape circleShape = (CircleShape)shape;
 
-                        sc = Vector2.Zero;
+                        sc = Vector2.zero;
 
                         Vector2 p = MathUtils.Mul(ref xf, circleShape.Position);
                         float l = -(Vector2.Dot(normal, p) - offset);
@@ -162,20 +163,20 @@ namespace VelcroPhysics.Extensions.Controllers.Buoyancy
 
                         //Magic
                         float l2 = l * l;
-                        float area = circleShape._2radius * (float)((Math.Asin(l / circleShape.Radius) + Settings.Pi / 2) + l * Math.Sqrt(circleShape._2radius - l2));
-                        float com = -2.0f / 3.0f * (float)Math.Pow(circleShape._2radius - l2, 1.5f) / area;
+                        float area = circleShape._2radius * (float)((Mathf.Asin(l / circleShape.Radius) + Settings.Pi / 2) + l * Mathf.Sqrt(circleShape._2radius - l2));
+                        float com = -2.0f / 3.0f * (float)Mathf.Pow(circleShape._2radius - l2, 1.5f) / area;
 
-                        sc.X = p.X + normal.X * com;
-                        sc.Y = p.Y + normal.Y * com;
+                        sc.x = p.x + normal.x * com;
+                        sc.y = p.y + normal.y * com;
 
                         return area;
                     }
                 case ShapeType.Edge:
-                    sc = Vector2.Zero;
+                    sc = Vector2.zero;
                     return 0;
                 case ShapeType.Polygon:
                     {
-                        sc = Vector2.Zero;
+                        sc = Vector2.zero;
 
                         PolygonShape polygonShape = (PolygonShape)shape;
 
@@ -245,8 +246,8 @@ namespace VelcroPhysics.Extensions.Controllers.Buoyancy
                         float intoLambda = (0 - depths[intoIndex]) / (depths[intoIndex2] - depths[intoIndex]);
                         float outoLambda = (0 - depths[outoIndex]) / (depths[outoIndex2] - depths[outoIndex]);
 
-                        Vector2 intoVec = new Vector2(polygonShape.Vertices[intoIndex].X * (1 - intoLambda) + polygonShape.Vertices[intoIndex2].X * intoLambda, polygonShape.Vertices[intoIndex].Y * (1 - intoLambda) + polygonShape.Vertices[intoIndex2].Y * intoLambda);
-                        Vector2 outoVec = new Vector2(polygonShape.Vertices[outoIndex].X * (1 - outoLambda) + polygonShape.Vertices[outoIndex2].X * outoLambda, polygonShape.Vertices[outoIndex].Y * (1 - outoLambda) + polygonShape.Vertices[outoIndex2].Y * outoLambda);
+                        Vector2 intoVec = new Vector2(polygonShape.Vertices[intoIndex].x * (1 - intoLambda) + polygonShape.Vertices[intoIndex2].x * intoLambda, polygonShape.Vertices[intoIndex].y * (1 - intoLambda) + polygonShape.Vertices[intoIndex2].y * intoLambda);
+                        Vector2 outoVec = new Vector2(polygonShape.Vertices[outoIndex].x * (1 - outoLambda) + polygonShape.Vertices[outoIndex2].x * outoLambda, polygonShape.Vertices[outoIndex].y * (1 - outoLambda) + polygonShape.Vertices[outoIndex2].y * outoLambda);
 
                         //Initialize accumulator
                         float area = 0;
@@ -292,7 +293,7 @@ namespace VelcroPhysics.Extensions.Controllers.Buoyancy
                         return area;
                     }
                 case ShapeType.Chain:
-                    sc = Vector2.Zero;
+                    sc = Vector2.zero;
                     return 0;
                 case ShapeType.Unknown:
                 case ShapeType.TypeCount:

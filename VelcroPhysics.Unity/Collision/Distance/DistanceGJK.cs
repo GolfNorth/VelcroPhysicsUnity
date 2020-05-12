@@ -21,8 +21,7 @@
 */
 
 using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Narrowphase;
 using VelcroPhysics.Shared.Optimization;
 using VelcroPhysics.Utilities;
@@ -112,7 +111,7 @@ namespace VelcroPhysics.Collision.Distance
                 Vector2 d = simplex.GetSearchDirection();
 
                 // Ensure the search direction is numerically fit.
-                if (d.LengthSquared() < Settings.Epsilon * Settings.Epsilon)
+                if (d.sqrMagnitude < Settings.Epsilon * Settings.Epsilon)
                 {
                     // The origin is probably contained by a line segment
                     // or triangle. Thus the shapes are overlapped.
@@ -161,11 +160,11 @@ namespace VelcroPhysics.Collision.Distance
             }
 
             if (Settings.EnableDiagnostics) //Velcro: We only gather diagnostics when enabled
-                GJKMaxIters = Math.Max(GJKMaxIters, iter);
+                GJKMaxIters = Mathf.Max(GJKMaxIters, iter);
 
             // Prepare output.
             simplex.GetWitnessPoints(out output.PointA, out output.PointB);
-            output.Distance = (output.PointA - output.PointB).Length();
+            output.Distance = (output.PointA - output.PointB).magnitude;
             output.Iterations = iter;
 
             // Cache the simplex.

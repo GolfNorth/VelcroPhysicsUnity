@@ -1,7 +1,8 @@
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Shared.Optimization;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Narrowphase
 {
@@ -15,7 +16,7 @@ namespace VelcroPhysics.Collision.Narrowphase
         /// </summary>
         public static void Initialize(ref Manifold manifold, ref Transform xfA, float radiusA, ref Transform xfB, float radiusB, out Vector2 normal, out FixedArray2<Vector2> points, out FixedArray2<float> separations)
         {
-            normal = Vector2.Zero;
+            normal = Vector2.zero;
             points = new FixedArray2<Vector2>();
             separations = new FixedArray2<float>();
 
@@ -31,7 +32,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                         normal = new Vector2(1.0f, 0.0f);
                         Vector2 pointA = MathUtils.Mul(ref xfA, manifold.LocalPoint);
                         Vector2 pointB = MathUtils.Mul(ref xfB, manifold.Points.Value0.LocalPoint);
-                        if (Vector2.DistanceSquared(pointA, pointB) > Settings.Epsilon * Settings.Epsilon)
+                        if (Mathf.Sqrt(Vector2.Distance(pointA, pointB)) > Settings.Epsilon * Settings.Epsilon)
                         {
                             normal = pointB - pointA;
                             normal.Normalize();

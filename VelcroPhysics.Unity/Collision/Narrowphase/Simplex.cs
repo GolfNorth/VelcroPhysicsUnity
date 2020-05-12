@@ -1,10 +1,10 @@
 using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Distance;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Shared.Optimization;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Narrowphase
 {
@@ -99,7 +99,7 @@ namespace VelcroPhysics.Collision.Narrowphase
 
                 default:
                     Debug.Assert(false);
-                    return Vector2.Zero;
+                    return Vector2.zero;
             }
         }
 
@@ -109,7 +109,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             {
                 case 0:
                     Debug.Assert(false);
-                    return Vector2.Zero;
+                    return Vector2.zero;
 
                 case 1:
                     return V[0].W;
@@ -118,11 +118,11 @@ namespace VelcroPhysics.Collision.Narrowphase
                     return V[0].A * V[0].W + V[1].A * V[1].W;
 
                 case 3:
-                    return Vector2.Zero;
+                    return Vector2.zero;
 
                 default:
                     Debug.Assert(false);
-                    return Vector2.Zero;
+                    return Vector2.zero;
             }
         }
 
@@ -131,8 +131,8 @@ namespace VelcroPhysics.Collision.Narrowphase
             switch (Count)
             {
                 case 0:
-                    pA = Vector2.Zero;
-                    pB = Vector2.Zero;
+                    pA = Vector2.zero;
+                    pB = Vector2.zero;
                     Debug.Assert(false);
                     break;
 
@@ -167,7 +167,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                     return 0.0f;
 
                 case 2:
-                    return (V[0].W - V[1].W).Length();
+                    return (V[0].W - V[1].W).magnitude;
 
                 case 3:
                     return MathUtils.Cross(V[1].W - V[0].W, V[2].W - V[0].W);

@@ -20,9 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -101,9 +99,9 @@ namespace VelcroPhysics.Dynamics.Joints
                 LocalAnchorB = BodyB.GetLocalPoint(anchorB);
 
                 Vector2 dA = anchorA - worldAnchorA;
-                LengthA = dA.Length();
+                LengthA = dA.magnitude;
                 Vector2 dB = anchorB - worldAnchorB;
-                LengthB = dB.Length();
+                LengthB = dB.magnitude;
             }
             else
             {
@@ -111,9 +109,9 @@ namespace VelcroPhysics.Dynamics.Joints
                 LocalAnchorB = anchorB;
 
                 Vector2 dA = anchorA - BodyA.GetLocalPoint(worldAnchorA);
-                LengthA = dA.Length();
+                LengthA = dA.magnitude;
                 Vector2 dB = anchorB - BodyB.GetLocalPoint(worldAnchorB);
-                LengthB = dB.Length();
+                LengthB = dB.magnitude;
             }
 
             Debug.Assert(ratio != 0.0f);
@@ -168,7 +166,7 @@ namespace VelcroPhysics.Dynamics.Joints
                 Vector2 p = BodyA.GetWorldPoint(LocalAnchorA);
                 Vector2 s = WorldAnchorA;
                 Vector2 d = p - s;
-                return d.Length();
+                return d.magnitude;
             }
         }
 
@@ -182,7 +180,7 @@ namespace VelcroPhysics.Dynamics.Joints
                 Vector2 p = BodyB.GetWorldPoint(LocalAnchorB);
                 Vector2 s = WorldAnchorB;
                 Vector2 d = p - s;
-                return d.Length();
+                return d.magnitude;
             }
         }
 
@@ -236,8 +234,8 @@ namespace VelcroPhysics.Dynamics.Joints
             _uA = cA + _rA - WorldAnchorA;
             _uB = cB + _rB - WorldAnchorB;
 
-            float lengthA = _uA.Length();
-            float lengthB = _uB.Length();
+            float lengthA = _uA.magnitude;
+            float lengthB = _uB.magnitude;
 
             if (lengthA > 10.0f * Settings.LinearSlop)
             {
@@ -245,7 +243,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
             else
             {
-                _uA = Vector2.Zero;
+                _uA = Vector2.zero;
             }
 
             if (lengthB > 10.0f * Settings.LinearSlop)
@@ -254,7 +252,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
             else
             {
-                _uB = Vector2.Zero;
+                _uB = Vector2.zero;
             }
 
             // Compute effective mass.
@@ -339,8 +337,8 @@ namespace VelcroPhysics.Dynamics.Joints
             Vector2 uA = cA + rA - WorldAnchorA;
             Vector2 uB = cB + rB - WorldAnchorB;
 
-            float lengthA = uA.Length();
-            float lengthB = uB.Length();
+            float lengthA = uA.magnitude;
+            float lengthB = uB.magnitude;
 
             if (lengthA > 10.0f * Settings.LinearSlop)
             {
@@ -348,7 +346,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
             else
             {
-                uA = Vector2.Zero;
+                uA = Vector2.zero;
             }
 
             if (lengthB > 10.0f * Settings.LinearSlop)
@@ -357,7 +355,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
             else
             {
-                uB = Vector2.Zero;
+                uB = Vector2.zero;
             }
 
             // Compute effective mass.
@@ -375,7 +373,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
 
             float C = Constant - lengthA - Ratio * lengthB;
-            float linearError = Math.Abs(C);
+            float linearError = Mathf.Abs(C);
 
             float impulse = -mass * C;
 

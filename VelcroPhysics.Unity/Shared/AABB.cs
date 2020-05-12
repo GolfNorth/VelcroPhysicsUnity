@@ -1,5 +1,4 @@
-using System;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.RayCast;
 using VelcroPhysics.Utilities;
 
@@ -30,13 +29,13 @@ namespace VelcroPhysics.Shared
 
         public AABB(ref Vector2 min, ref Vector2 max)
         {
-            LowerBound = new Vector2(Math.Min(min.X, max.X), Math.Min(min.Y, max.Y));
-            UpperBound = new Vector2(Math.Max(min.X, max.X), Math.Max(min.Y, max.Y));
+            LowerBound = new Vector2(Mathf.Min(min.x, max.x), Mathf.Min(min.y, max.y));
+            UpperBound = new Vector2(Mathf.Max(min.x, max.x), Mathf.Max(min.y, max.y));
         }
 
-        public float Width => UpperBound.X - LowerBound.X;
+        public float Width => UpperBound.x - LowerBound.x;
 
-        public float Height => UpperBound.Y - LowerBound.Y;
+        public float Height => UpperBound.y - LowerBound.y;
 
         /// <summary>
         /// Get the center of the AABB.
@@ -55,8 +54,8 @@ namespace VelcroPhysics.Shared
         {
             get
             {
-                float wx = UpperBound.X - LowerBound.X;
-                float wy = UpperBound.Y - LowerBound.Y;
+                float wx = UpperBound.x - LowerBound.x;
+                float wy = UpperBound.y - LowerBound.y;
                 return 2.0f * (wx + wy);
             }
         }
@@ -71,9 +70,9 @@ namespace VelcroPhysics.Shared
             {
                 Vertices vertices = new Vertices(4);
                 vertices.Add(UpperBound);
-                vertices.Add(new Vector2(UpperBound.X, LowerBound.Y));
+                vertices.Add(new Vector2(UpperBound.x, LowerBound.y));
                 vertices.Add(LowerBound);
-                vertices.Add(new Vector2(LowerBound.X, UpperBound.Y));
+                vertices.Add(new Vector2(LowerBound.x, UpperBound.y));
                 return vertices;
             }
         }
@@ -86,7 +85,7 @@ namespace VelcroPhysics.Shared
         /// <summary>
         /// Second quadrant
         /// </summary>
-        public AABB Q2 => new AABB(new Vector2(LowerBound.X, Center.Y), new Vector2(Center.X, UpperBound.Y));
+        public AABB Q2 => new AABB(new Vector2(LowerBound.x, Center.y), new Vector2(Center.x, UpperBound.y));
 
         /// <summary>
         /// Third quadrant
@@ -96,7 +95,7 @@ namespace VelcroPhysics.Shared
         /// <summary>
         /// Forth quadrant
         /// </summary>
-        public AABB Q4 => new AABB(new Vector2(Center.X, LowerBound.Y), new Vector2(UpperBound.X, Center.Y));
+        public AABB Q4 => new AABB(new Vector2(Center.x, LowerBound.y), new Vector2(UpperBound.x, Center.y));
 
         /// <summary>
         /// Verify that the bounds are sorted. And the bounds are valid numbers (not NaN).
@@ -107,7 +106,7 @@ namespace VelcroPhysics.Shared
         public bool IsValid()
         {
             Vector2 d = UpperBound - LowerBound;
-            bool valid = d.X >= 0.0f && d.Y >= 0.0f;
+            bool valid = d.x >= 0.0f && d.y >= 0.0f;
             return valid && LowerBound.IsValid() && UpperBound.IsValid();
         }
 
@@ -141,10 +140,10 @@ namespace VelcroPhysics.Shared
         /// </returns>
         public bool Contains(ref AABB aabb)
         {
-            bool result = LowerBound.X <= aabb.LowerBound.X;
-            result = result && LowerBound.Y <= aabb.LowerBound.Y;
-            result = result && aabb.UpperBound.X <= UpperBound.X;
-            result = result && aabb.UpperBound.Y <= UpperBound.Y;
+            bool result = LowerBound.x <= aabb.LowerBound.x;
+            result = result && LowerBound.y <= aabb.LowerBound.y;
+            result = result && aabb.UpperBound.x <= UpperBound.x;
+            result = result && aabb.UpperBound.y <= UpperBound.y;
             return result;
         }
 
@@ -158,8 +157,8 @@ namespace VelcroPhysics.Shared
         public bool Contains(ref Vector2 point)
         {
             //using epsilon to try and guard against float rounding errors.
-            return (point.X > (LowerBound.X + float.Epsilon) && point.X < (UpperBound.X - float.Epsilon) &&
-                    (point.Y > (LowerBound.Y + float.Epsilon) && point.Y < (UpperBound.Y - float.Epsilon)));
+            return (point.x > (LowerBound.x + float.Epsilon) && point.x < (UpperBound.x - float.Epsilon) &&
+                    (point.y > (LowerBound.y + float.Epsilon) && point.y < (UpperBound.y - float.Epsilon)));
         }
 
         /// <summary>
@@ -173,7 +172,7 @@ namespace VelcroPhysics.Shared
             Vector2 d1 = b.LowerBound - a.UpperBound;
             Vector2 d2 = a.LowerBound - b.UpperBound;
 
-            return (d1.X <= 0) && (d1.Y <= 0) && (d2.X <= 0) && (d2.Y <= 0);
+            return (d1.x <= 0) && (d1.y <= 0) && (d2.x <= 0) && (d2.y <= 0);
         }
 
         /// <summary>
@@ -195,14 +194,14 @@ namespace VelcroPhysics.Shared
             Vector2 d = input.Point2 - input.Point1;
             Vector2 absD = MathUtils.Abs(d);
 
-            Vector2 normal = Vector2.Zero;
+            Vector2 normal = Vector2.zero;
 
             for (int i = 0; i < 2; ++i)
             {
-                float absD_i = i == 0 ? absD.X : absD.Y;
-                float lowerBound_i = i == 0 ? LowerBound.X : LowerBound.Y;
-                float upperBound_i = i == 0 ? UpperBound.X : UpperBound.Y;
-                float p_i = i == 0 ? p.X : p.Y;
+                float absD_i = i == 0 ? absD.x : absD.y;
+                float lowerBound_i = i == 0 ? LowerBound.x : LowerBound.y;
+                float upperBound_i = i == 0 ? UpperBound.x : UpperBound.y;
+                float p_i = i == 0 ? p.x : p.y;
 
                 if (absD_i < Settings.Epsilon)
                 {
@@ -214,7 +213,7 @@ namespace VelcroPhysics.Shared
                 }
                 else
                 {
-                    float d_i = i == 0 ? d.X : d.Y;
+                    float d_i = i == 0 ? d.x : d.y;
 
                     float inv_d = 1.0f / d_i;
                     float t1 = (lowerBound_i - p_i) * inv_d;
@@ -234,18 +233,18 @@ namespace VelcroPhysics.Shared
                     {
                         if (i == 0)
                         {
-                            normal.X = s;
+                            normal.x = s;
                         }
                         else
                         {
-                            normal.Y = s;
+                            normal.y = s;
                         }
 
                         tmin = t1;
                     }
 
                     // Pull the max down
-                    tmax = Math.Min(tmax, t2);
+                    tmax = Mathf.Min(tmax, t2);
 
                     if (tmin > tmax)
                     {

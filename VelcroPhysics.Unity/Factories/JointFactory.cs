@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Dynamics.Joints;
 
@@ -127,7 +127,7 @@ namespace VelcroPhysics.Factories
 
         public static WheelJoint CreateWheelJoint(World world, Body bodyA, Body bodyB, Vector2 axis)
         {
-            return CreateWheelJoint(world, bodyA, bodyB, Vector2.Zero, axis);
+            return CreateWheelJoint(world, bodyA, bodyB, Vector2.zero, axis);
         }
 
         #endregion
@@ -143,7 +143,7 @@ namespace VelcroPhysics.Factories
 
         public static DistanceJoint CreateDistanceJoint(World world, Body bodyA, Body bodyB)
         {
-            return CreateDistanceJoint(world, bodyA, bodyB, Vector2.Zero, Vector2.Zero);
+            return CreateDistanceJoint(world, bodyA, bodyB, Vector2.zero, Vector2.zero);
         }
 
         #endregion
@@ -159,7 +159,7 @@ namespace VelcroPhysics.Factories
 
         public static FrictionJoint CreateFrictionJoint(World world, Body bodyA, Body bodyB)
         {
-            return CreateFrictionJoint(world, bodyA, bodyB, Vector2.Zero);
+            return CreateFrictionJoint(world, bodyA, bodyB, Vector2.zero);
         }
 
         #endregion

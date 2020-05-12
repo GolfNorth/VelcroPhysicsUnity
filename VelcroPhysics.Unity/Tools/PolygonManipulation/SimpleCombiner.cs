@@ -19,8 +19,7 @@
 */
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 
 namespace VelcroPhysics.Tools.PolygonManipulation
@@ -57,7 +56,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                 Vector2 b = triangle[1];
                 Vector2 c = triangle[2];
 
-                if ((a.X == b.X && a.Y == b.Y) || (b.X == c.X && b.Y == c.Y) || (a.X == c.X && a.Y == c.Y))
+                if ((a.x == b.x && a.y == b.y) || (b.x == c.x && b.y == c.y) || (a.x == c.x && a.y == c.y))
                     covered[i] = true;
             }
 
@@ -125,7 +124,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                         if (poly.Count >= 3)
                             polys.Add(new Vertices(poly));
                         else
-                            Debug.WriteLine("Skipping corrupt poly.");
+                            Debug.Log("Skipping corrupt poly.");
                     }
 
                     if (poly.Count >= 3)
@@ -153,7 +152,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             int secondT = -1;
             for (int i = 0; i < vertices.Count; i++)
             {
-                if (t[0].X == vertices[i].X && t[0].Y == vertices[i].Y)
+                if (t[0].x == vertices[i].x && t[0].y == vertices[i].y)
                 {
                     if (firstP == -1)
                     {
@@ -166,7 +165,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                         secondT = 0;
                     }
                 }
-                else if (t[1].X == vertices[i].X && t[1].Y == vertices[i].Y)
+                else if (t[1].x == vertices[i].x && t[1].y == vertices[i].y)
                 {
                     if (firstP == -1)
                     {
@@ -179,7 +178,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                         secondT = 1;
                     }
                 }
-                else if (t[2].X == vertices[i].X && t[2].Y == vertices[i].Y)
+                else if (t[2].x == vertices[i].x && t[2].y == vertices[i].y)
                 {
                     if (firstP == -1)
                     {

@@ -1,7 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Narrowphase
 {
@@ -28,7 +29,7 @@ namespace VelcroPhysics.Collision.Narrowphase
 
             manifold.Type = ManifoldType.Circles;
             manifold.LocalPoint = circleA.Position;
-            manifold.LocalNormal = Vector2.Zero;
+            manifold.LocalNormal = Vector2.zero;
             manifold.PointCount = 1;
 
             ManifoldPoint p0 = manifold.Points[0];
@@ -102,7 +103,7 @@ namespace VelcroPhysics.Collision.Narrowphase
 
             if (u1 <= 0.0f)
             {
-                if (Vector2.DistanceSquared(cLocal, v1) > radius * radius)
+                if (Mathf.Sqrt(Vector2.Distance(cLocal, v1)) > radius * radius)
                 {
                     return;
                 }
@@ -117,7 +118,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
             else if (u2 <= 0.0f)
             {
-                if (Vector2.DistanceSquared(cLocal, v2) > radius * radius)
+                if (Mathf.Sqrt(Vector2.Distance(cLocal, v2)) > radius * radius)
                 {
                     return;
                 }

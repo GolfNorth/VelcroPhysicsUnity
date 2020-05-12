@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+using UnityEngine;
 
 namespace VelcroPhysics.Shared
 {
@@ -27,7 +27,7 @@ namespace VelcroPhysics.Shared
         /// </summary>
         public void SetIdentity()
         {
-            p = Vector2.Zero;
+            p = Vector2.zero;
             q.SetIdentity();
         }
 

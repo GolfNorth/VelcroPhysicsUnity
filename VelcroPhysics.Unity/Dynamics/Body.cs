@@ -20,10 +20,8 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Broadphase;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Filtering;
@@ -33,9 +31,9 @@ using VelcroPhysics.Collision.TOI;
 using VelcroPhysics.Dynamics.Joints;
 using VelcroPhysics.Extensions.Controllers.ControllerBase;
 using VelcroPhysics.Extensions.PhysicsLogics.PhysicsLogicBase;
-using VelcroPhysics.Shared;
 using VelcroPhysics.Templates;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Dynamics
 {
@@ -133,7 +131,7 @@ namespace VelcroPhysics.Dynamics
         /// Gets the total number revolutions the body has made.
         /// </summary>
         /// <value>The revolutions.</value>
-        public float Revolutions => Rotation / (float)Math.PI;
+        public float Revolutions => Rotation / (float)Mathf.PI;
 
         /// <summary>
         /// Gets or sets the body type.
@@ -154,7 +152,7 @@ namespace VelcroPhysics.Dynamics
 
                 if (_type == BodyType.Static)
                 {
-                    _linearVelocity = Vector2.Zero;
+                    _linearVelocity = Vector2.zero;
                     _angularVelocity = 0.0f;
                     _sweep.A0 = _sweep.A;
                     _sweep.C0 = _sweep.C;
@@ -163,7 +161,7 @@ namespace VelcroPhysics.Dynamics
 
                 Awake = true;
 
-                _force = Vector2.Zero;
+                _force = Vector2.zero;
                 _torque = 0.0f;
 
                 // Delete the attached contacts.
@@ -199,7 +197,7 @@ namespace VelcroPhysics.Dynamics
             get { return _linearVelocity; }
             set
             {
-                Debug.Assert(!float.IsNaN(value.X) && !float.IsNaN(value.Y));
+                Debug.Assert(!float.IsNaN(value.x) && !float.IsNaN(value.y));
 
                 if (_type == BodyType.Static)
                     return;
@@ -419,7 +417,7 @@ namespace VelcroPhysics.Dynamics
             get { return _xf.p; }
             set
             {
-                Debug.Assert(!float.IsNaN(value.X) && !float.IsNaN(value.Y));
+                Debug.Assert(!float.IsNaN(value.x) && !float.IsNaN(value.y));
 
                 SetTransform(ref value, Rotation);
             }
@@ -492,7 +490,7 @@ namespace VelcroPhysics.Dynamics
 
                 // Update center of mass velocity.
                 Vector2 a = _sweep.C - oldCenter;
-                _linearVelocity += new Vector2(-_angularVelocity * a.Y, _angularVelocity * a.X);
+                _linearVelocity += new Vector2(-_angularVelocity * a.y, _angularVelocity * a.x);
             }
         }
 
@@ -654,8 +652,8 @@ namespace VelcroPhysics.Dynamics
         {
             _torque = 0;
             _angularVelocity = 0;
-            _force = Vector2.Zero;
-            _linearVelocity = Vector2.Zero;
+            _force = Vector2.zero;
+            _linearVelocity = Vector2.zero;
         }
 
         /// <summary>
@@ -831,10 +829,10 @@ namespace VelcroPhysics.Dynamics
         /// <param name="point">The world position of the point of application.</param>
         public void ApplyForce(ref Vector2 force, ref Vector2 point)
         {
-            Debug.Assert(!float.IsNaN(force.X));
-            Debug.Assert(!float.IsNaN(force.Y));
-            Debug.Assert(!float.IsNaN(point.X));
-            Debug.Assert(!float.IsNaN(point.Y));
+            Debug.Assert(!float.IsNaN(force.x));
+            Debug.Assert(!float.IsNaN(force.y));
+            Debug.Assert(!float.IsNaN(point.x));
+            Debug.Assert(!float.IsNaN(point.y));
 
             if (_type != BodyType.Dynamic)
                 return;
@@ -955,7 +953,7 @@ namespace VelcroPhysics.Dynamics
             _invMass = 0.0f;
             _inertia = 0.0f;
             _invI = 0.0f;
-            _sweep.LocalCenter = Vector2.Zero;
+            _sweep.LocalCenter = Vector2.zero;
 
             //Velcro: We have mass on static bodies to support attaching joints to them
             // Kinematic bodies have zero mass.
@@ -970,7 +968,7 @@ namespace VelcroPhysics.Dynamics
             Debug.Assert(BodyType == BodyType.Dynamic || BodyType == BodyType.Static);
 
             // Accumulate mass over all fixtures.
-            Vector2 localCenter = Vector2.Zero;
+            Vector2 localCenter = Vector2.zero;
             foreach (Fixture f in FixtureList)
             {
                 if (f.Shape._density == 0.0f)
@@ -1023,7 +1021,7 @@ namespace VelcroPhysics.Dynamics
 
             // Update center of mass velocity.
             Vector2 a = _sweep.C - oldCenter;
-            _linearVelocity += new Vector2(-_angularVelocity * a.Y, _angularVelocity * a.X);
+            _linearVelocity += new Vector2(-_angularVelocity * a.y, _angularVelocity * a.x);
         }
 
         /// <summary>

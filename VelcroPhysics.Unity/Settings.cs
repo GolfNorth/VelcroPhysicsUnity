@@ -20,7 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
+using UnityEngine;
 using VelcroPhysics.Collision.Filtering;
 
 namespace VelcroPhysics
@@ -262,7 +262,7 @@ namespace VelcroPhysics
         /// <returns></returns>
         public static float MixFriction(float friction1, float friction2)
         {
-            return (float)Math.Sqrt(friction1 * friction2);
+            return Mathf.Sqrt(friction1 * friction2);
         }
 
         /// <summary>

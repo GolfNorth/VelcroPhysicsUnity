@@ -1,8 +1,7 @@
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Narrowphase;
-using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Dynamics.Solver
 {
@@ -21,7 +20,7 @@ namespace VelcroPhysics.Dynamics.Solver
                         normal = pointB - pointA;
 
                         //Velcro: Fix to handle zero normalization
-                        if (normal != Vector2.Zero)
+                        if (normal != Vector2.zero)
                             normal.Normalize();
 
                         point = 0.5f * (pointA + pointB);
@@ -54,8 +53,8 @@ namespace VelcroPhysics.Dynamics.Solver
                     }
                     break;
                 default:
-                    normal = Vector2.Zero;
-                    point = Vector2.Zero;
+                    normal = Vector2.zero;
+                    point = Vector2.zero;
                     separation = 0;
                     break;
             }

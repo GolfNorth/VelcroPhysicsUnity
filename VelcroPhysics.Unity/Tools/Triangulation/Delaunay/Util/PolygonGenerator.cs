@@ -30,7 +30,9 @@
  */
 
 using System;
+using UnityEngine;
 using VelcroPhysics.Tools.Triangulation.Delaunay.Polygon;
+using Random = System.Random;
 
 namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
 {
@@ -38,7 +40,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
     {
         private static readonly Random RNG = new Random();
 
-        private static double PI_2 = 2.0 * Math.PI;
+        private static double PI_2 = 2.0 * Mathf.PI;
 
         public static Polygon.Polygon RandomCircleSweep(double scale, int vertexCount)
         {
@@ -66,7 +68,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
                     radius = radius > scale / 2 ? scale / 2 : radius;
                     radius = radius < scale / 10 ? scale / 10 : radius;
                 } while (radius < scale / 10 || radius > scale / 2);
-                point = new PolygonPoint(radius * Math.Cos((PI_2 * i) / vertexCount),
+                point = new PolygonPoint(radius * Math.Cos( (PI_2 * i) / vertexCount),
                     radius * Math.Sin((PI_2 * i) / vertexCount));
                 points[i] = point;
             }

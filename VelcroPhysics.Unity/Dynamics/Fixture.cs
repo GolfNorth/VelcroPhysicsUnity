@@ -20,8 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Broadphase;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Filtering;
@@ -30,6 +29,8 @@ using VelcroPhysics.Collision.RayCast;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Templates;
+using Debug = UnityEngine.Debug;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Dynamics
 {

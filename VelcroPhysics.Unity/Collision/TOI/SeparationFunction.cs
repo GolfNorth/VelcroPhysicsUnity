@@ -1,9 +1,8 @@
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Distance;
 using VelcroPhysics.Collision.Narrowphase;
-using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.TOI
 {
@@ -20,7 +19,7 @@ namespace VelcroPhysics.Collision.TOI
 
             if (count == 1)
             {
-                localPoint = Vector2.Zero;
+                localPoint = Vector2.zero;
                 type = SeparationFunctionType.Points;
                 Vector2 localPointA = proxyA.Vertices[cache.IndexA[0]];
                 Vector2 localPointB = proxyB.Vertices[cache.IndexB[0]];
@@ -37,7 +36,7 @@ namespace VelcroPhysics.Collision.TOI
                 Vector2 localPointB2 = proxyB.Vertices[cache.IndexB[1]];
 
                 Vector2 a = localPointB2 - localPointB1;
-                axis = new Vector2(a.Y, -a.X);
+                axis = new Vector2(a.y, -a.x);
                 axis.Normalize();
                 Vector2 normal = MathUtils.Mul(ref xfB.q, axis);
 
@@ -61,7 +60,7 @@ namespace VelcroPhysics.Collision.TOI
                 Vector2 localPointA2 = proxyA.Vertices[cache.IndexA[1]];
 
                 Vector2 a = localPointA2 - localPointA1;
-                axis = new Vector2(a.Y, -a.X);
+                axis = new Vector2(a.y, -a.x);
                 axis.Normalize();
                 Vector2 normal = MathUtils.Mul(ref xfA.q, axis);
 

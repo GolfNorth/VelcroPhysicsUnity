@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Dynamics.Joints;
@@ -93,7 +93,7 @@ namespace VelcroPhysics.Tools.PathGenerator
             for (int i = 0; i < centers.Count; i++)
             {
                 // copy the type from original body
-                Body b = BodyFactory.CreateBody(world, new Vector2(centers[i].X, centers[i].Y), centers[i].Z, type, userData);
+                Body b = BodyFactory.CreateBody(world, new Vector2(centers[i].x, centers[i].y), centers[i].z, type, userData);
 
                 foreach (Shape shape in shapes)
                 {

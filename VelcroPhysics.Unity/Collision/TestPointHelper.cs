@@ -1,6 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision
 {

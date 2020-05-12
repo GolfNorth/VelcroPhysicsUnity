@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Utilities;
+using Debug = System.Diagnostics.Debug;
 
 namespace VelcroPhysics.Shared
 {
@@ -84,8 +85,8 @@ namespace VelcroPhysics.Shared
                 Vector2 vi = this[i];
                 Vector2 vj = this[j];
 
-                area += vi.X * vj.Y;
-                area -= vi.Y * vj.X;
+                area += vi.x * vj.y;
+                area -= vi.y * vj.x;
             }
             area /= 2.0f;
             return area;
@@ -112,7 +113,7 @@ namespace VelcroPhysics.Shared
                 return new Vector2(float.NaN, float.NaN);
 
             // Same algorithm is used by Box2D
-            Vector2 c = Vector2.Zero;
+            Vector2 c = Vector2.zero;
             float area = 0.0f;
             const float inv3 = 1.0f / 3.0f;
 
@@ -122,7 +123,7 @@ namespace VelcroPhysics.Shared
                 Vector2 current = this[i];
                 Vector2 next = (i + 1 < Count ? this[i + 1] : this[0]);
 
-                float triangleArea = 0.5f * (current.X * next.Y - current.Y * next.X);
+                float triangleArea = 0.5f * (current.x * next.y - current.y * next.x);
                 area += triangleArea;
 
                 // Area weighted centroid
@@ -145,22 +146,22 @@ namespace VelcroPhysics.Shared
 
             for (int i = 0; i < Count; ++i)
             {
-                if (this[i].X < lowerBound.X)
+                if (this[i].x < lowerBound.x)
                 {
-                    lowerBound.X = this[i].X;
+                    lowerBound.x = this[i].x;
                 }
-                if (this[i].X > upperBound.X)
+                if (this[i].x > upperBound.x)
                 {
-                    upperBound.X = this[i].X;
+                    upperBound.x = this[i].x;
                 }
 
-                if (this[i].Y < lowerBound.Y)
+                if (this[i].y < lowerBound.y)
                 {
-                    lowerBound.Y = this[i].Y;
+                    lowerBound.y = this[i].y;
                 }
-                if (this[i].Y > upperBound.Y)
+                if (this[i].y > upperBound.y)
                 {
-                    upperBound.Y = this[i].Y;
+                    upperBound.y = this[i].y;
                 }
             }
 
@@ -188,7 +189,7 @@ namespace VelcroPhysics.Shared
             Debug.Assert(!AttachedToBody, "Translating vertices that are used by a Body can result in unstable behavior. Use Body.Position instead.");
 
             for (int i = 0; i < Count; i++)
-                this[i] = Vector2.Add(this[i], value);
+                this[i] += value;
 
             if (Holes != null && Holes.Count > 0)
             {
@@ -217,7 +218,7 @@ namespace VelcroPhysics.Shared
             Debug.Assert(!AttachedToBody, "Scaling vertices that are used by a Body can result in unstable behavior.");
 
             for (int i = 0; i < Count; i++)
-                this[i] = Vector2.Multiply(this[i], value);
+                this[i] *= value;
 
             if (Holes != null && Holes.Count > 0)
             {
@@ -238,13 +239,13 @@ namespace VelcroPhysics.Shared
         {
             Debug.Assert(!AttachedToBody, "Rotating vertices that are used by a Body can result in unstable behavior.");
 
-            float num1 = (float)Math.Cos(value);
-            float num2 = (float)Math.Sin(value);
+            float num1 = (float)Mathf.Cos(value);
+            float num2 = (float)Mathf.Sin(value);
 
             for (int i = 0; i < Count; i++)
             {
                 Vector2 position = this[i];
-                this[i] = new Vector2((position.X * num1 + position.Y * -num2), (position.X * num2 + position.Y * num1));
+                this[i] = new Vector2((position.x * num1 + position.y * -num2), (position.x * num2 + position.y * num1));
             }
 
             if (Holes != null && Holes.Count > 0)
@@ -290,7 +291,7 @@ namespace VelcroPhysics.Shared
 
                     Vector2 r = this[j] - this[i];
 
-                    float s = edge.X * r.Y - edge.Y * r.X;
+                    float s = edge.x * r.y - edge.y * r.x;
 
                     if (s <= 0.0f)
                         return false;
@@ -379,7 +380,7 @@ namespace VelcroPhysics.Shared
             {
                 int next = i + 1 < Count ? i + 1 : 0;
                 Vector2 edge = this[next] - this[i];
-                if (edge.LengthSquared() <= float.Epsilon * float.Epsilon)
+                if (edge.sqrMagnitude <= float.Epsilon * float.Epsilon)
                 {
                     return PolygonError.SideTooSmall;
                 }
@@ -452,16 +453,16 @@ namespace VelcroPhysics.Shared
                 }
 
                 // Test edge for intersection with ray from point
-                if (p1.Y <= point.Y)
+                if (p1.y <= point.y)
                 {
-                    if (p2.Y > point.Y && area > 0f)
+                    if (p2.y > point.y && area > 0f)
                     {
                         ++wn;
                     }
                 }
                 else
                 {
-                    if (p2.Y <= point.Y && area < 0f)
+                    if (p2.y <= point.y && area < 0f)
                     {
                         --wn;
                     }
@@ -477,7 +478,7 @@ namespace VelcroPhysics.Shared
         /// </summary>
         public bool PointInPolygonAngle(ref Vector2 point)
         {
-            double angle = 0;
+            float angle = 0;
 
             // Iterate through polygon's edges
             for (int i = 0; i < Count; i++)
@@ -486,10 +487,10 @@ namespace VelcroPhysics.Shared
                 Vector2 p1 = this[i] - point;
                 Vector2 p2 = this[NextIndex(i)] - point;
 
-                angle += MathUtils.VectorAngle(ref p1, ref p2);
+                angle += Vector2.Angle(p1, p2);
             }
 
-            if (Math.Abs(angle) < Math.PI)
+            if (Mathf.Abs(angle) < Mathf.PI)
             {
                 return false;
             }
@@ -505,7 +506,7 @@ namespace VelcroPhysics.Shared
         {
             // Transform main polygon
             for (int i = 0; i < Count; i++)
-                this[i] = Vector2.Transform(this[i], transform);
+                this[i].Transform(transform);
 
             // Transform holes
             if (Holes != null && Holes.Count > 0)
@@ -513,7 +514,7 @@ namespace VelcroPhysics.Shared
                 for (int i = 0; i < Holes.Count; i++)
                 {
                     Vector2[] temp = Holes[i].ToArray();
-                    Vector2.Transform(temp, ref transform, temp);
+                    temp.Transform(ref transform, temp);
 
                     Holes[i] = new Vertices(temp);
                 }

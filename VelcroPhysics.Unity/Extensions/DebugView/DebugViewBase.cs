@@ -3,9 +3,10 @@
 * Copyright (c) 2017 Ian Qvist
 */
 
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Shared;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Extensions.DebugView
 {

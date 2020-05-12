@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Factories;
@@ -117,7 +116,7 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                 offset.Normalize();
 
                 if (!offset.IsValid())
-                    offset = Vector2.One;
+                    offset = Vector2.one;
 
                 newPolygon[n][cutAdded[n]] += Settings.Epsilon * offset;
 
@@ -132,7 +131,7 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                 offset.Normalize();
 
                 if (!offset.IsValid())
-                    offset = Vector2.One;
+                    offset = Vector2.one;
 
                 newPolygon[n][cutAdded[n] + 1] += Settings.Epsilon * offset;
             }

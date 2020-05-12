@@ -4,8 +4,7 @@
 */
 
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 
 namespace VelcroPhysics.Tools.Triangulation.Seidel
@@ -43,7 +42,7 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
 
             foreach (Vector2 vertex in vertices)
             {
-                compatList.Add(new Point(vertex.X, vertex.Y));
+                compatList.Add(new Point(vertex.x, vertex.y));
             }
 
             Triangulator t = new Triangulator(compatList, sheer);
@@ -77,7 +76,7 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
 
             foreach (Vector2 vertex in vertices)
             {
-                compatList.Add(new Point(vertex.X, vertex.Y));
+                compatList.Add(new Point(vertex.x, vertex.y));
             }
 
             Triangulator t = new Triangulator(compatList, sheer);

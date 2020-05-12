@@ -20,12 +20,12 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.RayCast;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Tools.ConvexHull.GiftWrap;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Shapes
 {
@@ -94,7 +94,7 @@ namespace VelcroPhysics.Collision.Shapes
                     int i1 = i;
                     int i2 = i + 1 < _vertices.Count ? i + 1 : 0;
                     Vector2 edge = _vertices[i2] - _vertices[i1];
-                    Debug.Assert(edge.LengthSquared() > Settings.Epsilon * Settings.Epsilon);
+                    Debug.Assert(edge.sqrMagnitude > Settings.Epsilon * Settings.Epsilon);
                     Vector2 temp = MathUtils.Cross(edge, 1.0f);
                     temp.Normalize();
                     _normals.Add(temp);
@@ -142,7 +142,7 @@ namespace VelcroPhysics.Collision.Shapes
                 return;
 
             //Velcro optimization: Consolidated the calculate centroid and mass code to a single method.
-            Vector2 center = Vector2.Zero;
+            Vector2 center = Vector2.zero;
             float area = 0.0f;
             float I = 0.0f;
 
@@ -150,7 +150,7 @@ namespace VelcroPhysics.Collision.Shapes
 
             // pRef is the reference point for forming triangles.
             // It's location doesn't change the result (except for rounding error).
-            Vector2 s = Vector2.Zero;
+            Vector2 s = Vector2.zero;
 
             // This code would put the reference point inside the polygon.
             for (int i = 0; i < Vertices.Count; ++i)
@@ -175,8 +175,8 @@ namespace VelcroPhysics.Collision.Shapes
                 // Area weighted centroid
                 center += triangleArea * k_inv3 * (e1 + e2);
 
-                float ex1 = e1.X, ey1 = e1.Y;
-                float ex2 = e2.X, ey2 = e2.Y;
+                float ex1 = e1.x, ey1 = e1.y;
+                float ex2 = e2.x, ey2 = e2.y;
 
                 float intx2 = ex1 * ex1 + ex2 * ex1 + ex2 * ex2;
                 float inty2 = ey1 * ey1 + ey2 * ey1 + ey2 * ey2;

@@ -21,11 +21,11 @@
 */
 
 using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Distance;
 using VelcroPhysics.Collision.Narrowphase;
 using VelcroPhysics.Shared;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.TOI
 {
@@ -72,7 +72,7 @@ namespace VelcroPhysics.Collision.TOI
             float tMax = input.TMax;
 
             float totalRadius = input.ProxyA.Radius + input.ProxyB.Radius;
-            float target = Math.Max(Settings.LinearSlop, totalRadius - 3.0f * Settings.LinearSlop);
+            float target = Mathf.Max(Settings.LinearSlop, totalRadius - 3.0f * Settings.LinearSlop);
             const float tolerance = 0.25f * Settings.LinearSlop;
             Debug.Assert(target > tolerance);
 
@@ -198,7 +198,7 @@ namespace VelcroPhysics.Collision.TOI
 
                         float s = SeparationFunction.Evaluate(indexA, indexB, t, input.ProxyA, ref sweepA, input.ProxyB, ref sweepB, ref axis, ref localPoint, type);
 
-                        if (Math.Abs(s - target) < tolerance)
+                        if (Mathf.Abs(s - target) < tolerance)
                         {
                             // t2 holds a tentative value for t1
                             t2 = t;
@@ -224,7 +224,7 @@ namespace VelcroPhysics.Collision.TOI
                     }
 
                     if (Settings.EnableDiagnostics) //Velcro: We only gather diagnostics when enabled
-                        TOIMaxRootIters = Math.Max(TOIMaxRootIters, rootIterCount);
+                        TOIMaxRootIters = Mathf.Max(TOIMaxRootIters, rootIterCount);
 
                     ++pushBackIter;
 
@@ -254,7 +254,7 @@ namespace VelcroPhysics.Collision.TOI
             }
 
             if (Settings.EnableDiagnostics) //Velcro: We only gather diagnostics when enabled
-                TOIMaxIters = Math.Max(TOIMaxIters, iter);
+                TOIMaxIters = Mathf.Max(TOIMaxIters, iter);
         }
     }
 }

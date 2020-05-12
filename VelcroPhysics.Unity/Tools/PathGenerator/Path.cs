@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
+using VelcroPhysics.Utilities;
 
 namespace VelcroPhysics.Tools.PathGenerator
 {
@@ -100,7 +102,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         public void Translate(ref Vector2 vector)
         {
             for (int i = 0; i < ControlPoints.Count; i++)
-                ControlPoints[i] = Vector2.Add(ControlPoints[i], vector);
+                ControlPoints[i] = ControlPoints[i] + vector;
         }
 
         /// <summary>
@@ -110,7 +112,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         public void Scale(ref Vector2 value)
         {
             for (int i = 0; i < ControlPoints.Count; i++)
-                ControlPoints[i] = Vector2.Multiply(ControlPoints[i], value);
+                ControlPoints[i] = ControlPoints[i] * value;
         }
 
         /// <summary>
@@ -123,7 +125,7 @@ namespace VelcroPhysics.Tools.PathGenerator
             Matrix.CreateRotationZ(value, out rotationMatrix);
 
             for (int i = 0; i < ControlPoints.Count; i++)
-                ControlPoints[i] = Vector2.Transform(ControlPoints[i], rotationMatrix);
+                ControlPoints[i].Transform(rotationMatrix);
         }
 
         public override string ToString()
@@ -193,7 +195,7 @@ namespace VelcroPhysics.Tools.PathGenerator
                 // relative time
                 float lt = (time - _deltaT * p) / _deltaT;
 
-                temp = Vector2.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2], ControlPoints[p3], lt);
+                temp = VectorUtils.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2], ControlPoints[p3], lt);
 
                 RemoveAt(ControlPoints.Count - 1);
             }
@@ -218,7 +220,7 @@ namespace VelcroPhysics.Tools.PathGenerator
                 // relative time
                 float lt = (time - _deltaT * p) / _deltaT;
 
-                temp = Vector2.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2], ControlPoints[p3], lt);
+                temp = VectorUtils.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2], ControlPoints[p3], lt);
             }
 
             return temp;
@@ -238,15 +240,15 @@ namespace VelcroPhysics.Tools.PathGenerator
 
             Vector2 output, temp;
 
-            Vector2.Subtract(ref a, ref b, out temp);
+            temp = a - b;
 
 #if (XBOX360 || WINDOWS_PHONE)
 output = new Vector2();
 #endif
-            output.X = -temp.Y;
-            output.Y = temp.X;
+            output.x = -temp.y;
+            output.y = temp.x;
 
-            Vector2.Normalize(ref output, out output);
+            output = output.normalized;
 
             return output;
         }
@@ -314,9 +316,9 @@ output = new Vector2();
             for (int i = 1; i < divisions; i++)
             {
                 Vector2 normal = GetPositionNormal(t);
-                float angle = (float)Math.Atan2(normal.Y, normal.X);
+                float angle = (float)Mathf.Atan2(normal.y, normal.x);
 
-                verts.Add(new Vector3(end, angle));
+                verts.Add(new Vector3(end.x, end.y, angle));
 
                 // until we reach the correct distance down the curve
                 while (deltaLength >= Vector2.Distance(start, end))

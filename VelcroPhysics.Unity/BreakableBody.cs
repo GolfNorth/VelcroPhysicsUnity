@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Dynamics.Solver;
@@ -16,7 +15,7 @@ namespace VelcroPhysics.Dynamics
     {
         private float[] _angularVelocitiesCache = new float[8];
         private bool _break;
-        private Vector2[] _velocitiesCache = new Vector2[8];
+        private UnityEngine.Vector2[] _velocitiesCache = new UnityEngine.Vector2[8];
         private readonly World _world;
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace VelcroPhysics.Dynamics
 
                     for (int i = 0; i < count; ++i)
                     {
-                        maxImpulse = Math.Max(maxImpulse, impulse.Points[i].NormalImpulse);
+                        maxImpulse = Mathf.Max(maxImpulse, impulse.Points[i].NormalImpulse);
                     }
 
                     if (maxImpulse > Strength)

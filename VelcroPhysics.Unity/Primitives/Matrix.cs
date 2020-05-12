@@ -4,7 +4,7 @@
 
 /*
 MIT License
-Copyright © 2006 The Mono.Xna Team
+Copyright ï¿½ 2006 The Mono.Xna Team
 
 All rights reserved.
 
@@ -29,8 +29,10 @@ SOFTWARE.
 
 #endregion License
 
+
 using System;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Microsoft.Xna.Framework
 {
@@ -76,9 +78,9 @@ namespace Microsoft.Xna.Framework
             get { return new Vector3(M31, M32, M33); }
             set
             {
-                M31 = value.X;
-                M32 = value.Y;
-                M33 = value.Z;
+                M31 = value.x;
+                M32 = value.y;
+                M33 = value.z;
             }
         }
 
@@ -87,9 +89,9 @@ namespace Microsoft.Xna.Framework
             get { return new Vector3(-M21, -M22, -M23); }
             set
             {
-                M21 = -value.X;
-                M22 = -value.Y;
-                M23 = -value.Z;
+                M21 = -value.x;
+                M22 = -value.y;
+                M23 = -value.z;
             }
         }
 
@@ -98,9 +100,9 @@ namespace Microsoft.Xna.Framework
             get { return new Vector3(-M31, -M32, -M33); }
             set
             {
-                M31 = -value.X;
-                M32 = -value.Y;
-                M33 = -value.Z;
+                M31 = -value.x;
+                M32 = -value.y;
+                M33 = -value.z;
             }
         }
 
@@ -109,9 +111,9 @@ namespace Microsoft.Xna.Framework
             get { return new Vector3(-M11, -M12, -M13); }
             set
             {
-                M11 = -value.X;
-                M12 = -value.Y;
-                M13 = -value.Z;
+                M11 = -value.x;
+                M12 = -value.y;
+                M13 = -value.z;
             }
         }
 
@@ -120,9 +122,9 @@ namespace Microsoft.Xna.Framework
             get { return new Vector3(M11, M12, M13); }
             set
             {
-                M11 = value.X;
-                M12 = value.Y;
-                M13 = value.Z;
+                M11 = value.x;
+                M12 = value.y;
+                M13 = value.z;
             }
         }
 
@@ -131,9 +133,9 @@ namespace Microsoft.Xna.Framework
             get { return new Vector3(M41, M42, M43); }
             set
             {
-                M41 = value.X;
-                M42 = value.Y;
-                M43 = value.Z;
+                M41 = value.x;
+                M42 = value.y;
+                M43 = value.z;
             }
         }
 
@@ -142,9 +144,9 @@ namespace Microsoft.Xna.Framework
             get { return new Vector3(M21, M22, M23); }
             set
             {
-                M21 = value.X;
-                M22 = value.Y;
-                M23 = value.Z;
+                M21 = value.x;
+                M22 = value.y;
+                M23 = value.z;
             }
         }
 
@@ -238,9 +240,9 @@ namespace Microsoft.Xna.Framework
         public static void CreateWorld(ref Vector3 position, ref Vector3 forward, ref Vector3 up, out Matrix result)
         {
             Vector3 x, y, z;
-            Vector3.Normalize(ref forward, out z);
-            Vector3.Cross(ref forward, ref up, out x);
-            Vector3.Cross(ref x, ref forward, out y);
+            z = forward.normalized;
+            x = Vector3.Cross(forward, up);
+            y = Vector3.Cross(x, forward);
             x.Normalize();
             y.Normalize();
 
@@ -332,10 +334,10 @@ namespace Microsoft.Xna.Framework
         {
             Vector3 translation = objectPosition - cameraPosition;
             Vector3 backwards, right, up;
-            Vector3.Normalize(ref translation, out backwards);
-            Vector3.Normalize(ref cameraUpVector, out up);
-            Vector3.Cross(ref backwards, ref up, out right);
-            Vector3.Cross(ref backwards, ref right, out up);
+            backwards = translation.normalized;
+            up = cameraUpVector.normalized;
+            right = Vector3.Cross(backwards, up);
+            up = Vector3.Cross(backwards, right);
             result = Identity;
             result.Backward = backwards;
             result.Right = right;
@@ -387,15 +389,15 @@ namespace Microsoft.Xna.Framework
             Vector3 vx = Vector3.Normalize(Vector3.Cross(cameraUpVector, vz));
             Vector3 vy = Vector3.Cross(vz, vx);
             result = Identity;
-            result.M11 = vx.X;
-            result.M12 = vy.X;
-            result.M13 = vz.X;
-            result.M21 = vx.Y;
-            result.M22 = vy.Y;
-            result.M23 = vz.Y;
-            result.M31 = vx.Z;
-            result.M32 = vy.Z;
-            result.M33 = vz.Z;
+            result.M11 = vx.x;
+            result.M12 = vy.x;
+            result.M13 = vz.x;
+            result.M21 = vx.y;
+            result.M22 = vy.y;
+            result.M23 = vz.y;
+            result.M31 = vx.z;
+            result.M32 = vy.z;
+            result.M33 = vz.z;
             result.M41 = -Vector3.Dot(vx, cameraPosition);
             result.M42 = -Vector3.Dot(vy, cameraPosition);
             result.M43 = -Vector3.Dot(vz, cameraPosition);
@@ -508,7 +510,7 @@ namespace Microsoft.Xna.Framework
                 throw new ArgumentOutOfRangeException("nearPlaneDistance",
                                                       "Near plane distance is larger than Far plane distance. Near plane distance must be smaller than Far plane distance.");
 
-            float yscale = (float)1 / (float)Math.Tan(fieldOfView / 2);
+            float yscale = (float)1 / (float)Mathf.Tan(fieldOfView / 2);
             float xscale = yscale / aspectRatio;
 
             result.M11 = xscale;
@@ -537,8 +539,8 @@ namespace Microsoft.Xna.Framework
         {
             Matrix returnMatrix = Identity;
 
-            returnMatrix.M22 = (float)Math.Cos(radians);
-            returnMatrix.M23 = (float)Math.Sin(radians);
+            returnMatrix.M22 = (float)Mathf.Cos(radians);
+            returnMatrix.M23 = (float)Mathf.Sin(radians);
             returnMatrix.M32 = -returnMatrix.M23;
             returnMatrix.M33 = returnMatrix.M22;
 
@@ -550,8 +552,8 @@ namespace Microsoft.Xna.Framework
         {
             result = Identity;
 
-            result.M22 = (float)Math.Cos(radians);
-            result.M23 = (float)Math.Sin(radians);
+            result.M22 = (float)Mathf.Cos(radians);
+            result.M23 = (float)Mathf.Sin(radians);
             result.M32 = -result.M23;
             result.M33 = result.M22;
         }
@@ -561,8 +563,8 @@ namespace Microsoft.Xna.Framework
         {
             Matrix returnMatrix = Identity;
 
-            returnMatrix.M11 = (float)Math.Cos(radians);
-            returnMatrix.M13 = (float)Math.Sin(radians);
+            returnMatrix.M11 = (float)Mathf.Cos(radians);
+            returnMatrix.M13 = (float)Mathf.Sin(radians);
             returnMatrix.M31 = -returnMatrix.M13;
             returnMatrix.M33 = returnMatrix.M11;
 
@@ -574,8 +576,8 @@ namespace Microsoft.Xna.Framework
         {
             result = Identity;
 
-            result.M11 = (float)Math.Cos(radians);
-            result.M13 = (float)Math.Sin(radians);
+            result.M11 = (float)Mathf.Cos(radians);
+            result.M13 = (float)Mathf.Sin(radians);
             result.M31 = -result.M13;
             result.M33 = result.M11;
         }
@@ -585,8 +587,8 @@ namespace Microsoft.Xna.Framework
         {
             Matrix returnMatrix = Identity;
 
-            returnMatrix.M11 = (float)Math.Cos(radians);
-            returnMatrix.M12 = (float)Math.Sin(radians);
+            returnMatrix.M11 = (float)Mathf.Cos(radians);
+            returnMatrix.M12 = (float)Mathf.Sin(radians);
             returnMatrix.M21 = -returnMatrix.M12;
             returnMatrix.M22 = returnMatrix.M11;
 
@@ -598,8 +600,8 @@ namespace Microsoft.Xna.Framework
         {
             result = Identity;
 
-            result.M11 = (float)Math.Cos(radians);
-            result.M12 = (float)Math.Sin(radians);
+            result.M11 = (float)Mathf.Cos(radians);
+            result.M12 = (float)Mathf.Sin(radians);
             result.M21 = -result.M12;
             result.M22 = result.M11;
         }
@@ -653,9 +655,9 @@ namespace Microsoft.Xna.Framework
         {
             Matrix returnMatrix = Identity;
 
-            returnMatrix.M11 = scales.X;
-            returnMatrix.M22 = scales.Y;
-            returnMatrix.M33 = scales.Z;
+            returnMatrix.M11 = scales.x;
+            returnMatrix.M22 = scales.y;
+            returnMatrix.M33 = scales.z;
 
             return returnMatrix;
         }
@@ -665,9 +667,9 @@ namespace Microsoft.Xna.Framework
         {
             result = Identity;
 
-            result.M11 = scales.X;
-            result.M22 = scales.Y;
-            result.M33 = scales.Z;
+            result.M11 = scales.x;
+            result.M22 = scales.y;
+            result.M33 = scales.z;
         }
 
 
@@ -697,9 +699,9 @@ namespace Microsoft.Xna.Framework
         {
             Matrix returnMatrix = Identity;
 
-            returnMatrix.M41 = position.X;
-            returnMatrix.M42 = position.Y;
-            returnMatrix.M43 = position.Z;
+            returnMatrix.M41 = position.x;
+            returnMatrix.M42 = position.y;
+            returnMatrix.M43 = position.z;
 
             return returnMatrix;
         }
@@ -709,9 +711,9 @@ namespace Microsoft.Xna.Framework
         {
             result = Identity;
 
-            result.M41 = position.X;
-            result.M42 = position.Y;
-            result.M43 = position.Z;
+            result.M41 = position.x;
+            result.M42 = position.y;
+            result.M43 = position.z;
         }
 
         public static Matrix Divide(Matrix matrix1, Matrix matrix2)

@@ -20,10 +20,10 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
 using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Utilities
 {
@@ -31,7 +31,7 @@ namespace VelcroPhysics.Utilities
     {
         public static float Cross(ref Vector2 a, ref Vector2 b)
         {
-            return a.X * b.Y - a.Y * b.X;
+            return a.x * b.y - a.y * b.x;
         }
 
         public static float Cross(Vector2 a, Vector2 b)
@@ -42,22 +42,22 @@ namespace VelcroPhysics.Utilities
         /// Perform the cross product on two vectors.
         public static Vector3 Cross(Vector3 a, Vector3 b)
         {
-            return new Vector3(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
+            return new Vector3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);
         }
 
         public static Vector2 Cross(Vector2 a, float s)
         {
-            return new Vector2(s * a.Y, -s * a.X);
+            return new Vector2(s * a.y, -s * a.x);
         }
 
         public static Vector2 Cross(float s, Vector2 a)
         {
-            return new Vector2(-s * a.Y, s * a.X);
+            return new Vector2(-s * a.y, s * a.x);
         }
 
         public static Vector2 Abs(Vector2 v)
         {
-            return new Vector2(Math.Abs(v.X), Math.Abs(v.Y));
+            return new Vector2(Mathf.Abs(v.x), Mathf.Abs(v.y));
         }
 
         public static Vector2 Mul(ref Mat22 A, Vector2 v)
@@ -67,7 +67,7 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 Mul(ref Mat22 A, ref Vector2 v)
         {
-            return new Vector2(A.ex.X * v.X + A.ey.X * v.Y, A.ex.Y * v.X + A.ey.Y * v.Y);
+            return new Vector2(A.ex.x * v.x + A.ey.x * v.y, A.ex.y * v.x + A.ey.y * v.y);
         }
 
         public static Vector2 Mul(ref Transform T, Vector2 v)
@@ -77,8 +77,8 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 Mul(ref Transform T, ref Vector2 v)
         {
-            float x = (T.q.c * v.X - T.q.s * v.Y) + T.p.X;
-            float y = (T.q.s * v.X + T.q.c * v.Y) + T.p.Y;
+            float x = (T.q.c * v.x - T.q.s * v.y) + T.p.y;
+            float y = (T.q.s * v.x + T.q.c * v.y) + T.p.y;
 
             return new Vector2(x, y);
         }
@@ -90,7 +90,7 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 MulT(ref Mat22 A, ref Vector2 v)
         {
-            return new Vector2(v.X * A.ex.X + v.Y * A.ex.Y, v.X * A.ey.X + v.Y * A.ey.Y);
+            return new Vector2(v.x * A.ex.x + v.y * A.ex.y, v.x * A.ey.x + v.y * A.ey.y);
         }
 
         public static Vector2 MulT(ref Transform T, Vector2 v)
@@ -100,8 +100,8 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 MulT(ref Transform T, ref Vector2 v)
         {
-            float px = v.X - T.p.X;
-            float py = v.Y - T.p.Y;
+            float px = v.x - T.p.x;
+            float py = v.y - T.p.y;
             float x = (T.q.c * px + T.q.s * py);
             float y = (-T.q.s * px + T.q.c * py);
 
@@ -112,16 +112,16 @@ namespace VelcroPhysics.Utilities
         public static void MulT(ref Mat22 A, ref Mat22 B, out Mat22 C)
         {
             C = new Mat22();
-            C.ex.X = A.ex.X * B.ex.X + A.ex.Y * B.ex.Y;
-            C.ex.Y = A.ey.X * B.ex.X + A.ey.Y * B.ex.Y;
-            C.ey.X = A.ex.X * B.ey.X + A.ex.Y * B.ey.Y;
-            C.ey.Y = A.ey.X * B.ey.X + A.ey.Y * B.ey.Y;
+            C.ex.x = A.ex.x * B.ex.x + A.ex.y * B.ex.y;
+            C.ex.y = A.ey.x * B.ex.x + A.ey.y * B.ex.y;
+            C.ey.x = A.ex.x * B.ey.x + A.ex.y * B.ey.y;
+            C.ey.y = A.ey.x * B.ey.x + A.ey.y * B.ey.y;
         }
 
         /// Multiply a matrix times a vector.
         public static Vector3 Mul(Mat33 A, Vector3 v)
         {
-            return v.X * A.ex + v.Y * A.ey + v.Z * A.ez;
+            return v.x * A.ex + v.y * A.ey + v.z * A.ez;
         }
 
         // v2 = A.q.Rot(B.q.Rot(v1) + B.p) + A.p
@@ -153,7 +153,7 @@ namespace VelcroPhysics.Utilities
         /// Multiply a matrix times a vector.
         public static Vector2 Mul22(Mat33 A, Vector2 v)
         {
-            return new Vector2(A.ex.X * v.X + A.ey.X * v.Y, A.ex.Y * v.X + A.ey.Y * v.Y);
+            return new Vector2(A.ex.x * v.x + A.ey.x * v.y, A.ex.y * v.x + A.ey.y * v.y);
         }
 
         /// Multiply two rotations: q * r
@@ -171,8 +171,8 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 MulT(Transform T, Vector2 v)
         {
-            float px = v.X - T.p.X;
-            float py = v.Y - T.p.Y;
+            float px = v.x - T.p.x;
+            float py = v.y - T.p.y;
             float x = (T.q.c * px + T.q.s * py);
             float y = (-T.q.s * px + T.q.c * py);
 
@@ -205,19 +205,19 @@ namespace VelcroPhysics.Utilities
         /// Rotate a vector
         public static Vector2 Mul(Rot q, Vector2 v)
         {
-            return new Vector2(q.c * v.X - q.s * v.Y, q.s * v.X + q.c * v.Y);
+            return new Vector2(q.c * v.x - q.s * v.y, q.s * v.x + q.c * v.y);
         }
 
         /// Inverse rotate a vector
         public static Vector2 MulT(Rot q, Vector2 v)
         {
-            return new Vector2(q.c * v.X + q.s * v.Y, -q.s * v.X + q.c * v.Y);
+            return new Vector2(q.c * v.x + q.s * v.y, -q.s * v.x + q.c * v.y);
         }
 
         /// Get the skew vector such that dot(skew_vec, other) == cross(vec, other)
         public static Vector2 Skew(Vector2 input)
         {
-            return new Vector2(-input.Y, input.X);
+            return new Vector2(-input.y, input.x);
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace VelcroPhysics.Utilities
 
         public static bool IsValid(this Vector2 x)
         {
-            return IsValid(x.X) && IsValid(x.Y);
+            return IsValid(x.x) && IsValid(x.y);
         }
 
         /// <summary>
@@ -259,16 +259,17 @@ namespace VelcroPhysics.Utilities
             x = x * (1.5f - xhalf * x * x);
             return x;
         }
-
+        
         public static int Clamp(int a, int low, int high)
         {
-            return Math.Max(low, Math.Min(a, high));
+            return Mathf.Max(low, Mathf.Min(a, high));
         }
 
         public static float Clamp(float a, float low, float high)
         {
-            return Math.Max(low, Math.Min(a, high));
+            return Mathf.Max(low, Mathf.Min(a, high));
         }
+
 
         public static Vector2 Clamp(Vector2 a, Vector2 low, Vector2 high)
         {
@@ -277,36 +278,13 @@ namespace VelcroPhysics.Utilities
 
         public static void Cross(ref Vector2 a, ref Vector2 b, out float c)
         {
-            c = a.X * b.Y - a.Y * b.X;
-        }
-
-        /// <summary>
-        /// Return the angle between two vectors on a plane
-        /// The angle is from vector 1 to vector 2, positive anticlockwise
-        /// The result is between -pi -> pi
-        /// </summary>
-        public static double VectorAngle(ref Vector2 p1, ref Vector2 p2)
-        {
-            double theta1 = Math.Atan2(p1.Y, p1.X);
-            double theta2 = Math.Atan2(p2.Y, p2.X);
-            double dtheta = theta2 - theta1;
-            while (dtheta > Math.PI)
-                dtheta -= (2 * Math.PI);
-            while (dtheta < -Math.PI)
-                dtheta += (2 * Math.PI);
-
-            return (dtheta);
+            c = a.x * b.y - a.y * b.x;
         }
 
         /// Perform the dot product on two vectors.
         public static float Dot(Vector3 a, Vector3 b)
         {
-            return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
-        }
-
-        public static double VectorAngle(Vector2 p1, Vector2 p2)
-        {
-            return VectorAngle(ref p1, ref p2);
+            return a.x * b.x + a.y * b.y + a.z * b.z;
         }
 
         /// <summary>
@@ -330,7 +308,7 @@ namespace VelcroPhysics.Utilities
         /// </returns>
         public static float Area(ref Vector2 a, ref Vector2 b, ref Vector2 c)
         {
-            return a.X * (b.Y - c.Y) + b.X * (c.Y - a.Y) + c.X * (a.Y - b.Y);
+            return a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y);
         }
 
         /// <summary>
@@ -348,12 +326,12 @@ namespace VelcroPhysics.Utilities
 
         public static void Cross(float s, ref Vector2 a, out Vector2 b)
         {
-            b = new Vector2(-s * a.Y, s * a.X);
+            b = new Vector2(-s * a.y, s * a.x);
         }
 
         public static bool FloatEquals(float value1, float value2)
         {
-            return Math.Abs(value1 - value2) <= Settings.Epsilon;
+            return Mathf.Abs(value1 - value2) <= Settings.Epsilon;
         }
 
         /// <summary>

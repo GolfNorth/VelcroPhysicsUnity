@@ -31,9 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using UnityEngine;
 using VelcroPhysics.Shared.Optimization;
 using VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep;
+using Debug = System.Diagnostics.Debug;
 
 namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay
 {

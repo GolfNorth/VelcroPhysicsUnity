@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Utilities;
 
 namespace VelcroPhysics.Shared
@@ -28,9 +28,9 @@ namespace VelcroPhysics.Shared
         /// </summary>
         public void SetZero()
         {
-            ex = Vector3.Zero;
-            ey = Vector3.Zero;
-            ez = Vector3.Zero;
+            ex = Vector3.zero;
+            ey = Vector3.zero;
+            ez = Vector3.zero;
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace VelcroPhysics.Shared
         /// <returns></returns>
         public Vector2 Solve22(Vector2 b)
         {
-            float a11 = ex.X, a12 = ey.X, a21 = ex.Y, a22 = ey.Y;
+            float a11 = ex.x, a12 = ey.x, a21 = ex.y, a22 = ey.y;
             float det = a11 * a22 - a12 * a21;
 
             if (det != 0.0f)
@@ -67,29 +67,29 @@ namespace VelcroPhysics.Shared
                 det = 1.0f / det;
             }
 
-            return new Vector2(det * (a22 * b.X - a12 * b.Y), det * (a11 * b.Y - a21 * b.X));
+            return new Vector2(det * (a22 * b.x - a12 * b.y), det * (a11 * b.y - a21 * b.x));
         }
 
         /// Get the inverse of this matrix as a 2-by-2.
         /// Returns the zero matrix if singular.
         public void GetInverse22(ref Mat33 M)
         {
-            float a = ex.X, b = ey.X, c = ex.Y, d = ey.Y;
+            float a = ex.x, b = ey.x, c = ex.y, d = ey.y;
             float det = a * d - b * c;
             if (det != 0.0f)
             {
                 det = 1.0f / det;
             }
 
-            M.ex.X = det * d;
-            M.ey.X = -det * b;
-            M.ex.Z = 0.0f;
-            M.ex.Y = -det * c;
-            M.ey.Y = det * a;
-            M.ey.Z = 0.0f;
-            M.ez.X = 0.0f;
-            M.ez.Y = 0.0f;
-            M.ez.Z = 0.0f;
+            M.ex.x = det * d;
+            M.ey.x = -det * b;
+            M.ex.z = 0.0f;
+            M.ex.y = -det * c;
+            M.ey.y = det * a;
+            M.ey.z = 0.0f;
+            M.ez.x = 0.0f;
+            M.ez.y = 0.0f;
+            M.ez.z = 0.0f;
         }
 
         /// Get the symmetric inverse of this matrix as a 3-by-3.
@@ -102,21 +102,21 @@ namespace VelcroPhysics.Shared
                 det = 1.0f / det;
             }
 
-            float a11 = ex.X, a12 = ey.X, a13 = ez.X;
-            float a22 = ey.Y, a23 = ez.Y;
-            float a33 = ez.Z;
+            float a11 = ex.x, a12 = ey.x, a13 = ez.x;
+            float a22 = ey.y, a23 = ez.y;
+            float a33 = ez.z;
 
-            M.ex.X = det * (a22 * a33 - a23 * a23);
-            M.ex.Y = det * (a13 * a23 - a12 * a33);
-            M.ex.Z = det * (a12 * a23 - a13 * a22);
+            M.ex.x = det * (a22 * a33 - a23 * a23);
+            M.ex.y = det * (a13 * a23 - a12 * a33);
+            M.ex.z = det * (a12 * a23 - a13 * a22);
 
-            M.ey.X = M.ex.Y;
-            M.ey.Y = det * (a11 * a33 - a13 * a13);
-            M.ey.Z = det * (a13 * a12 - a11 * a23);
+            M.ey.x = M.ex.y;
+            M.ey.y = det * (a11 * a33 - a13 * a13);
+            M.ey.z = det * (a13 * a12 - a11 * a23);
 
-            M.ez.X = M.ex.Z;
-            M.ez.Y = M.ey.Z;
-            M.ez.Z = det * (a11 * a22 - a12 * a12);
+            M.ez.x = M.ex.z;
+            M.ez.y = M.ey.z;
+            M.ez.z = det * (a11 * a22 - a12 * a12);
         }
     }
 }

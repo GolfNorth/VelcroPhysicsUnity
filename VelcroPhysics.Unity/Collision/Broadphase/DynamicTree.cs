@@ -22,8 +22,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.RayCast;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -142,8 +141,8 @@ namespace VelcroPhysics.Collision.Broadphase
 
                     int child1 = node.Child1;
                     int child2 = node.Child2;
-                    int balance = Math.Abs(_nodes[child2].Height - _nodes[child1].Height);
-                    maxBalance = Math.Max(maxBalance, balance);
+                    int balance = Mathf.Abs(_nodes[child2].Height - _nodes[child1].Height);
+                    maxBalance = Mathf.Max(maxBalance, balance);
                 }
 
                 return maxBalance;
@@ -218,22 +217,22 @@ namespace VelcroPhysics.Collision.Broadphase
             // Predict AABB displacement.
             Vector2 d = Settings.AABBMultiplier * displacement;
 
-            if (d.X < 0.0f)
+            if (d.x < 0.0f)
             {
-                b.LowerBound.X += d.X;
+                b.LowerBound.x += d.x;
             }
             else
             {
-                b.UpperBound.X += d.X;
+                b.UpperBound.x += d.x;
             }
 
-            if (d.Y < 0.0f)
+            if (d.y < 0.0f)
             {
-                b.LowerBound.Y += d.Y;
+                b.LowerBound.y += d.y;
             }
             else
             {
-                b.UpperBound.Y += d.Y;
+                b.UpperBound.y += d.y;
             }
 
             _nodes[proxyId].AABB = b;
@@ -319,11 +318,11 @@ namespace VelcroPhysics.Collision.Broadphase
             Vector2 p1 = input.Point1;
             Vector2 p2 = input.Point2;
             Vector2 r = p2 - p1;
-            Debug.Assert(r.LengthSquared() > 0.0f);
+            Debug.Assert(r.sqrMagnitude > 0.0f);
             r.Normalize();
 
             // v is perpendicular to the segment.
-            Vector2 absV = MathUtils.Abs(new Vector2(-r.Y, r.X)); //Velcro: Inlined the 'v' variable
+            Vector2 absV = MathUtils.Abs(new Vector2(-r.y, r.x)); //Velcro: Inlined the 'v' variable
 
             // Separating axis for segment (Gino, p80).
             // |dot(v, p1 - c)| > dot(|v|, h)
@@ -334,8 +333,8 @@ namespace VelcroPhysics.Collision.Broadphase
             AABB segmentAABB = new AABB();
             {
                 Vector2 t = p1 + maxFraction * (p2 - p1);
-                Vector2.Min(ref p1, ref t, out segmentAABB.LowerBound);
-                Vector2.Max(ref p1, ref t, out segmentAABB.UpperBound);
+                segmentAABB.LowerBound = Vector2.Min(p1, t);
+                segmentAABB.UpperBound = Vector2.Max(p1, t);
             }
 
             _raycastStack.Clear();
@@ -360,7 +359,7 @@ namespace VelcroPhysics.Collision.Broadphase
                 // |dot(v, p1 - c)| > dot(|v|, h)
                 Vector2 c = node.AABB.Center;
                 Vector2 h = node.AABB.Extents;
-                float separation = Math.Abs(Vector2.Dot(new Vector2(-r.Y, r.X), p1 - c)) - Vector2.Dot(absV, h);
+                float separation = Mathf.Abs(Vector2.Dot(new Vector2(-r.y, r.x), p1 - c)) - Vector2.Dot(absV, h);
                 if (separation > 0.0f)
                 {
                     continue;
@@ -576,7 +575,7 @@ namespace VelcroPhysics.Collision.Broadphase
                 Debug.Assert(child1 != NullNode);
                 Debug.Assert(child2 != NullNode);
 
-                _nodes[index].Height = 1 + Math.Max(_nodes[child1].Height, _nodes[child2].Height);
+                _nodes[index].Height = 1 + Mathf.Max(_nodes[child1].Height, _nodes[child2].Height);
                 _nodes[index].AABB.Combine(ref _nodes[child1].AABB, ref _nodes[child2].AABB);
 
                 index = _nodes[index].ParentOrNext;
@@ -629,7 +628,7 @@ namespace VelcroPhysics.Collision.Broadphase
                     int child2 = _nodes[index].Child2;
 
                     _nodes[index].AABB.Combine(ref _nodes[child1].AABB, ref _nodes[child2].AABB);
-                    _nodes[index].Height = 1 + Math.Max(_nodes[child1].Height, _nodes[child2].Height);
+                    _nodes[index].Height = 1 + Mathf.Max(_nodes[child1].Height, _nodes[child2].Height);
 
                     index = _nodes[index].ParentOrNext;
                 }
@@ -711,8 +710,8 @@ namespace VelcroPhysics.Collision.Broadphase
                     A.AABB.Combine(ref B.AABB, ref G.AABB);
                     C.AABB.Combine(ref A.AABB, ref F.AABB);
 
-                    A.Height = 1 + Math.Max(B.Height, G.Height);
-                    C.Height = 1 + Math.Max(A.Height, F.Height);
+                    A.Height = 1 + Mathf.Max(B.Height, G.Height);
+                    C.Height = 1 + Mathf.Max(A.Height, F.Height);
                 }
                 else
                 {
@@ -722,8 +721,8 @@ namespace VelcroPhysics.Collision.Broadphase
                     A.AABB.Combine(ref B.AABB, ref F.AABB);
                     C.AABB.Combine(ref A.AABB, ref G.AABB);
 
-                    A.Height = 1 + Math.Max(B.Height, F.Height);
-                    C.Height = 1 + Math.Max(A.Height, G.Height);
+                    A.Height = 1 + Mathf.Max(B.Height, F.Height);
+                    C.Height = 1 + Mathf.Max(A.Height, G.Height);
                 }
 
                 return iC;
@@ -771,8 +770,8 @@ namespace VelcroPhysics.Collision.Broadphase
                     A.AABB.Combine(ref C.AABB, ref E.AABB);
                     B.AABB.Combine(ref A.AABB, ref D.AABB);
 
-                    A.Height = 1 + Math.Max(C.Height, E.Height);
-                    B.Height = 1 + Math.Max(A.Height, D.Height);
+                    A.Height = 1 + Mathf.Max(C.Height, E.Height);
+                    B.Height = 1 + Mathf.Max(A.Height, D.Height);
                 }
                 else
                 {
@@ -782,8 +781,8 @@ namespace VelcroPhysics.Collision.Broadphase
                     A.AABB.Combine(ref C.AABB, ref D.AABB);
                     B.AABB.Combine(ref A.AABB, ref E.AABB);
 
-                    A.Height = 1 + Math.Max(C.Height, D.Height);
-                    B.Height = 1 + Math.Max(A.Height, E.Height);
+                    A.Height = 1 + Mathf.Max(C.Height, D.Height);
+                    B.Height = 1 + Mathf.Max(A.Height, E.Height);
                 }
 
                 return iB;
@@ -809,7 +808,7 @@ namespace VelcroPhysics.Collision.Broadphase
 
             int height1 = ComputeHeight(node.Child1);
             int height2 = ComputeHeight(node.Child2);
-            return 1 + Math.Max(height1, height2);
+            return 1 + Mathf.Max(height1, height2);
         }
 
         /// <summary>
@@ -882,7 +881,7 @@ namespace VelcroPhysics.Collision.Broadphase
 
             int height1 = _nodes[child1].Height;
             int height2 = _nodes[child2].Height;
-            int height = 1 + Math.Max(height1, height2);
+            int height = 1 + Mathf.Max(height1, height2);
             Debug.Assert(node.Height == height);
 
             AABB AABB = new AABB();
@@ -978,7 +977,7 @@ namespace VelcroPhysics.Collision.Broadphase
                 TreeNode<T> parent = _nodes[parentIndex];
                 parent.Child1 = index1;
                 parent.Child2 = index2;
-                parent.Height = 1 + Math.Max(child1.Height, child2.Height);
+                parent.Height = 1 + Mathf.Max(child1.Height, child2.Height);
                 parent.AABB.Combine(ref child1.AABB, ref child2.AABB);
                 parent.ParentOrNext = NullNode;
 

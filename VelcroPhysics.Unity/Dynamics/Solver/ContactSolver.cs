@@ -21,15 +21,14 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Narrowphase;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Shared.Optimization;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Dynamics.Solver
 {
@@ -133,8 +132,8 @@ namespace VelcroPhysics.Dynamics.Solver
                         vcp.TangentImpulse = 0.0f;
                     }
 
-                    vcp.rA = Vector2.Zero;
-                    vcp.rB = Vector2.Zero;
+                    vcp.rA = Vector2.zero;
+                    vcp.rB = Vector2.zero;
                     vcp.NormalMass = 0.0f;
                     vcp.TangentMass = 0.0f;
                     vcp.VelocityBias = 0.0f;
@@ -367,7 +366,7 @@ namespace VelcroPhysics.Dynamics.Solver
                         float lambda = -vcp.NormalMass * (vn - vcp.VelocityBias);
 
                         // b2Clamp the accumulated impulse
-                        float newImpulse = Math.Max(vcp.NormalImpulse + lambda, 0.0f);
+                        float newImpulse = Mathf.Max(vcp.NormalImpulse + lambda, 0.0f);
                         lambda = newImpulse - vcp.NormalImpulse;
                         vcp.NormalImpulse = newImpulse;
 
@@ -419,7 +418,7 @@ namespace VelcroPhysics.Dynamics.Solver
                     VelocityConstraintPoint cp2 = vc.Points[1];
 
                     Vector2 a = new Vector2(cp1.NormalImpulse, cp2.NormalImpulse);
-                    Debug.Assert(a.X >= 0.0f && a.Y >= 0.0f);
+                    Debug.Assert(a.x >= 0.0f && a.y >= 0.0f);
 
                     // Relative velocity at contact
                     Vector2 dv1 = vB + MathUtils.Cross(wB, cp1.rB) - vA - MathUtils.Cross(wA, cp1.rA);
@@ -429,11 +428,11 @@ namespace VelcroPhysics.Dynamics.Solver
                     float vn1 = Vector2.Dot(dv1, normal);
                     float vn2 = Vector2.Dot(dv2, normal);
 
-                    Vector2 b = Vector2.Zero;
-                    b.X = vn1 - cp1.VelocityBias;
-                    b.Y = vn2 - cp2.VelocityBias;
+                    Vector2 b = Vector2.zero;
+                    b.x = vn1 - cp1.VelocityBias;
+                    b.y = vn2 - cp2.VelocityBias;
 
-                    const float k_errorTol = 1e-3f;
+                    //const float k_errorTol = 1e-3f;
 
                     // Compute b'
                     b -= MathUtils.Mul(ref vc.K, a);
@@ -451,14 +450,14 @@ namespace VelcroPhysics.Dynamics.Solver
                         //
                         Vector2 x = -MathUtils.Mul(ref vc.NormalMass, b);
 
-                        if (x.X >= 0.0f && x.Y >= 0.0f)
+                        if (x.x >= 0.0f && x.y >= 0.0f)
                         {
                             // Get the incremental impulse
                             Vector2 d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.X * normal;
-                            Vector2 P2 = d.Y * normal;
+                            Vector2 P1 = d.x * normal;
+                            Vector2 P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -466,8 +465,8 @@ namespace VelcroPhysics.Dynamics.Solver
                             wB += iB * (MathUtils.Cross(cp1.rB, P1) + MathUtils.Cross(cp2.rB, P2));
 
                             // Accumulate
-                            cp1.NormalImpulse = x.X;
-                            cp2.NormalImpulse = x.Y;
+                            cp1.NormalImpulse = x.x;
+                            cp2.NormalImpulse = x.y;
 
 #if B2_DEBUG_SOLVER
                             // Postconditions
@@ -478,8 +477,8 @@ namespace VelcroPhysics.Dynamics.Solver
                             vn1 = Vector2.Dot(dv1, normal);
                             vn2 = Vector2.Dot(dv2, normal);
 
-                            Debug.Assert(Math.Abs(vn1 - cp1.VelocityBias) < k_errorTol);
-                            Debug.Assert(Math.Abs(vn2 - cp2.VelocityBias) < k_errorTol);
+                            Debug.Assert(Mathf.Abs(vn1 - cp1.VelocityBias) < k_errorTol);
+                            Debug.Assert(Mathf.Abs(vn2 - cp2.VelocityBias) < k_errorTol);
 #endif
                             break;
                         }
@@ -490,19 +489,19 @@ namespace VelcroPhysics.Dynamics.Solver
                         //   0 = a11 * x1 + a12 * 0 + b1' 
                         // vn2 = a21 * x1 + a22 * 0 + b2'
                         //
-                        x.X = -cp1.NormalMass * b.X;
-                        x.Y = 0.0f;
+                        x.x = -cp1.NormalMass * b.x;
+                        x.y = 0.0f;
                         vn1 = 0.0f;
-                        vn2 = vc.K.ex.Y * x.X + b.Y;
+                        vn2 = vc.K.ex.y * x.x + b.y;
 
-                        if (x.X >= 0.0f && vn2 >= 0.0f)
+                        if (x.x >= 0.0f && vn2 >= 0.0f)
                         {
                             // Get the incremental impulse
                             Vector2 d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.X * normal;
-                            Vector2 P2 = d.Y * normal;
+                            Vector2 P1 = d.x * normal;
+                            Vector2 P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -510,8 +509,8 @@ namespace VelcroPhysics.Dynamics.Solver
                             wB += iB * (MathUtils.Cross(cp1.rB, P1) + MathUtils.Cross(cp2.rB, P2));
 
                             // Accumulate
-                            cp1.NormalImpulse = x.X;
-                            cp2.NormalImpulse = x.Y;
+                            cp1.NormalImpulse = x.x;
+                            cp2.NormalImpulse = x.y;
 
 #if B2_DEBUG_SOLVER
                             // Postconditions
@@ -520,7 +519,7 @@ namespace VelcroPhysics.Dynamics.Solver
                             // Compute normal velocity
                             vn1 = Vector2.Dot(dv1, normal);
 
-                            Debug.Assert(Math.Abs(vn1 - cp1.VelocityBias) < k_errorTol);
+                            Debug.Assert(Mathf.Abs(vn1 - cp1.VelocityBias) < k_errorTol);
 #endif
                             break;
                         }
@@ -531,19 +530,19 @@ namespace VelcroPhysics.Dynamics.Solver
                         // vn1 = a11 * 0 + a12 * x2 + b1' 
                         //   0 = a21 * 0 + a22 * x2 + b2'
                         //
-                        x.X = 0.0f;
-                        x.Y = -cp2.NormalMass * b.Y;
-                        vn1 = vc.K.ey.X * x.Y + b.X;
+                        x.x = 0.0f;
+                        x.y = -cp2.NormalMass * b.y;
+                        vn1 = vc.K.ey.x * x.y + b.x;
                         vn2 = 0.0f;
 
-                        if (x.Y >= 0.0f && vn1 >= 0.0f)
+                        if (x.y >= 0.0f && vn1 >= 0.0f)
                         {
                             // Resubstitute for the incremental impulse
                             Vector2 d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.X * normal;
-                            Vector2 P2 = d.Y * normal;
+                            Vector2 P1 = d.x * normal;
+                            Vector2 P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -551,8 +550,8 @@ namespace VelcroPhysics.Dynamics.Solver
                             wB += iB * (MathUtils.Cross(cp1.rB, P1) + MathUtils.Cross(cp2.rB, P2));
 
                             // Accumulate
-                            cp1.NormalImpulse = x.X;
-                            cp2.NormalImpulse = x.Y;
+                            cp1.NormalImpulse = x.x;
+                            cp2.NormalImpulse = x.y;
 
 #if B2_DEBUG_SOLVER
                             // Postconditions
@@ -561,7 +560,7 @@ namespace VelcroPhysics.Dynamics.Solver
                             // Compute normal velocity
                             vn2 = Vector2.Dot(dv2, normal);
 
-                            Debug.Assert(Math.Abs(vn2 - cp2.VelocityBias) < k_errorTol);
+                            Debug.Assert(Mathf.Abs(vn2 - cp2.VelocityBias) < k_errorTol);
 #endif
                             break;
                         }
@@ -571,10 +570,10 @@ namespace VelcroPhysics.Dynamics.Solver
                         // 
                         // vn1 = b1
                         // vn2 = b2;
-                        x.X = 0.0f;
-                        x.Y = 0.0f;
-                        vn1 = b.X;
-                        vn2 = b.Y;
+                        x.x = 0.0f;
+                        x.y = 0.0f;
+                        vn1 = b.x;
+                        vn2 = b.y;
 
                         if (vn1 >= 0.0f && vn2 >= 0.0f)
                         {
@@ -582,8 +581,8 @@ namespace VelcroPhysics.Dynamics.Solver
                             Vector2 d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.X * normal;
-                            Vector2 P2 = d.Y * normal;
+                            Vector2 P1 = d.x * normal;
+                            Vector2 P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -591,8 +590,8 @@ namespace VelcroPhysics.Dynamics.Solver
                             wB += iB * (MathUtils.Cross(cp1.rB, P1) + MathUtils.Cross(cp2.rB, P2));
 
                             // Accumulate
-                            cp1.NormalImpulse = x.X;
-                            cp2.NormalImpulse = x.Y;
+                            cp1.NormalImpulse = x.x;
+                            cp2.NormalImpulse = x.y;
 
                             break;
                         }
@@ -668,7 +667,7 @@ namespace VelcroPhysics.Dynamics.Solver
                     Vector2 rB = point - cB;
 
                     // Track max constraint error.
-                    minSeparation = Math.Min(minSeparation, separation);
+                    minSeparation = Mathf.Min(minSeparation, separation);
 
                     // Prevent large corrections and allow slop.
                     float C = MathUtils.Clamp(Settings.Baumgarte * (separation + Settings.LinearSlop), -Settings.MaxLinearCorrection, 0.0f);
@@ -755,7 +754,7 @@ namespace VelcroPhysics.Dynamics.Solver
                     Vector2 rB = point - cB;
 
                     // Track max constraint error.
-                    minSeparation = Math.Min(minSeparation, separation);
+                    minSeparation = Mathf.Min(minSeparation, separation);
 
                     // Prevent large corrections and allow slop.
                     float C = MathUtils.Clamp(Settings.Baumgarte * (separation + Settings.LinearSlop), -Settings.MaxLinearCorrection, 0.0f);

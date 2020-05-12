@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 
 namespace VelcroPhysics.Tools.Triangulation.Earclip {
@@ -28,17 +28,17 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip {
             Vector2 b = this[1];
             Vector2 c = this[2];
 
-            if (x < a.X && x < b.X && x < c.X) return false;
-            if (x > a.X && x > b.X && x > c.X) return false;
-            if (y < a.Y && y < b.Y && y < c.Y) return false;
-            if (y > a.Y && y > b.Y && y > c.Y) return false;
+            if (x < a.x && x < b.x && x < c.x) return false;
+            if (x > a.x && x > b.x && x > c.x) return false;
+            if (y < a.y && y < b.y && y < c.y) return false;
+            if (y > a.y && y > b.y && y > c.y) return false;
 
-            float vx2 = x - a.X;
-            float vy2 = y - a.Y;
-            float vx1 = b.X - a.X;
-            float vy1 = b.Y - a.Y;
-            float vx0 = c.X - a.X;
-            float vy0 = c.Y - a.Y;
+            float vx2 = x - a.x;
+            float vy2 = y - a.y;
+            float vx1 = b.x - a.x;
+            float vy1 = b.y - a.y;
+            float vx0 = c.x - a.x;
+            float vy0 = c.y - a.y;
 
             float dot00 = vx0 * vx0 + vy0 * vy0;
             float dot01 = vx0 * vx1 + vy0 * vy1;

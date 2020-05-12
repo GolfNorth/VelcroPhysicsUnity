@@ -1,10 +1,9 @@
-using System;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Shapes;
-using VelcroPhysics.Shared;
 using VelcroPhysics.Shared.Optimization;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Narrowphase
 {
@@ -24,8 +23,8 @@ namespace VelcroPhysics.Collision.Narrowphase
             bool front;
             Vector2 lowerLimit, upperLimit;
             Vector2 normal;
-            Vector2 normal0 = Vector2.Zero;
-            Vector2 normal2 = Vector2.Zero;
+            Vector2 normal0 = Vector2.zero;
+            Vector2 normal2 = Vector2.zero;
 
             Transform xf = MathUtils.MulT(xfA, xfB);
 
@@ -41,7 +40,7 @@ namespace VelcroPhysics.Collision.Narrowphase
 
             Vector2 edge1 = v2 - v1;
             edge1.Normalize();
-            Vector2 normal1 = new Vector2(edge1.Y, -edge1.X);
+            Vector2 normal1 = new Vector2(edge1.y, -edge1.x);
             float offset1 = Vector2.Dot(normal1, centroidB - v1);
             float offset0 = 0.0f, offset2 = 0.0f;
             bool convex1 = false, convex2 = false;
@@ -51,7 +50,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             {
                 Vector2 edge0 = v1 - v0;
                 edge0.Normalize();
-                normal0 = new Vector2(edge0.Y, -edge0.X);
+                normal0 = new Vector2(edge0.y, -edge0.x);
                 convex1 = MathUtils.Cross(edge0, edge1) >= 0.0f;
                 offset0 = Vector2.Dot(normal0, centroidB - v0);
             }
@@ -61,7 +60,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             {
                 Vector2 edge2 = v3 - v2;
                 edge2.Normalize();
-                normal2 = new Vector2(edge2.Y, -edge2.X);
+                normal2 = new Vector2(edge2.y, -edge2.x);
                 convex2 = MathUtils.Cross(edge1, edge2) > 0.0f;
                 offset2 = Vector2.Dot(normal2, centroidB - v2);
             }
@@ -267,7 +266,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             polygonAxis.Index = -1;
             polygonAxis.Separation = -Settings.MaxFloat;
 
-            Vector2 perp = new Vector2(-normal.Y, normal.X);
+            Vector2 perp = new Vector2(-normal.y, normal.x);
 
             for (int i = 0; i < count; ++i)
             {
@@ -275,7 +274,7 @@ namespace VelcroPhysics.Collision.Narrowphase
 
                 float s1 = Vector2.Dot(n, vertices[i] - v1);
                 float s2 = Vector2.Dot(n, vertices[i] - v2);
-                float s = Math.Min(s1, s2);
+                float s = Mathf.Min(s1, s2);
 
                 if (s > radius)
                 {
@@ -407,7 +406,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                 rf.Normal = normals[rf.i1];
             }
 
-            rf.SideNormal1 = new Vector2(rf.Normal.Y, -rf.Normal.X);
+            rf.SideNormal1 = new Vector2(rf.Normal.y, -rf.Normal.x);
             rf.SideNormal2 = -rf.SideNormal1;
             rf.SideOffset1 = Vector2.Dot(rf.SideNormal1, rf.v1);
             rf.SideOffset2 = Vector2.Dot(rf.SideNormal2, rf.v2);

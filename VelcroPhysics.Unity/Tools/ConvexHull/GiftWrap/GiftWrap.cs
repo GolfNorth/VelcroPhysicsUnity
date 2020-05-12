@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
 
@@ -24,11 +24,11 @@ namespace VelcroPhysics.Tools.ConvexHull.GiftWrap
 
             // Find the right most point on the hull
             int i0 = 0;
-            float x0 = vertices[0].X;
+            float x0 = vertices[0].x;
             for (int i = 1; i < vertices.Count; ++i)
             {
-                float x = vertices[i].X;
-                if (x > x0 || (x == x0 && vertices[i].Y < vertices[i0].Y))
+                float x = vertices[i].x;
+                if (x > x0 || (x == x0 && vertices[i].y < vertices[i0].y))
                 {
                     i0 = i;
                     x0 = x;
@@ -61,7 +61,7 @@ namespace VelcroPhysics.Tools.ConvexHull.GiftWrap
                     }
 
                     // Collinearity check
-                    if (c == 0.0f && v.LengthSquared() > r.LengthSquared())
+                    if (c == 0.0f && v.sqrMagnitude > r.sqrMagnitude)
                     {
                         ie = j;
                     }

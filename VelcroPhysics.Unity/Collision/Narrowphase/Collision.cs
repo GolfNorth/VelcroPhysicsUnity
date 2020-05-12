@@ -20,12 +20,12 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Distance;
 using VelcroPhysics.Collision.Shapes;
-using VelcroPhysics.Shared;
 using VelcroPhysics.Shared.Optimization;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Narrowphase
 {

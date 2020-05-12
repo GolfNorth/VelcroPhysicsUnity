@@ -20,11 +20,11 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Dynamics.Joints
 {
@@ -137,7 +137,7 @@ namespace VelcroPhysics.Dynamics.Joints
                 _localAnchorC = revolute.LocalAnchorA;
                 _localAnchorA = revolute.LocalAnchorB;
                 _referenceAngleA = revolute.ReferenceAngle;
-                _localAxisC = Vector2.Zero;
+                _localAxisC = Vector2.zero;
 
                 coordinateA = aA - aC - _referenceAngleA;
             }
@@ -169,7 +169,7 @@ namespace VelcroPhysics.Dynamics.Joints
                 _localAnchorD = revolute.LocalAnchorA;
                 _localAnchorB = revolute.LocalAnchorB;
                 _referenceAngleB = revolute.ReferenceAngle;
-                _localAxisD = Vector2.Zero;
+                _localAxisD = Vector2.zero;
 
                 coordinateB = aB - aD - _referenceAngleB;
             }
@@ -279,7 +279,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
             if (_typeA == JointType.Revolute)
             {
-                _JvAC = Vector2.Zero;
+                _JvAC = Vector2.zero;
                 _JwA = 1.0f;
                 _JwC = 1.0f;
                 _mass += _iA + _iC;
@@ -297,7 +297,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
             if (_typeB == JointType.Revolute)
             {
-                _JvBD = Vector2.Zero;
+                _JvBD = Vector2.zero;
                 _JwB = _ratio;
                 _JwD = _ratio;
                 _mass += _ratio * _ratio * (_iB + _iD);
@@ -401,7 +401,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
             if (_typeA == JointType.Revolute)
             {
-                JvAC = Vector2.Zero;
+                JvAC = Vector2.zero;
                 JwA = 1.0f;
                 JwC = 1.0f;
                 mass += _iA + _iC;
@@ -425,7 +425,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
             if (_typeB == JointType.Revolute)
             {
-                JvBD = Vector2.Zero;
+                JvBD = Vector2.zero;
                 JwB = _ratio;
                 JwD = _ratio;
                 mass += _ratio * _ratio * (_iB + _iD);

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.RayCast
 {
@@ -25,7 +24,7 @@ namespace VelcroPhysics.Collision.RayCast
             Vector2 v1 = start;
             Vector2 v2 = end;
             Vector2 e = v2 - v1;
-            Vector2 normal = new Vector2(e.Y, -e.X); //TODO: Could possibly cache the normal.
+            Vector2 normal = new Vector2(e.y, -e.x); //TODO: Could possibly cache the normal.
             normal.Normalize();
 
             // q = p1 + t * d
@@ -100,7 +99,7 @@ namespace VelcroPhysics.Collision.RayCast
             }
 
             // Find the point of intersection of the line with the circle.
-            float a = -(c + (float)Math.Sqrt(sigma));
+            float a = -(c + (float)Mathf.Sqrt(sigma));
 
             // Is the intersection point on the segment?
             if (0.0f <= a && a <= input.MaxFraction * rr)

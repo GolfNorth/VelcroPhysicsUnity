@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Shapes;
-using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Narrowphase
 {
@@ -68,7 +67,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                 cf.TypeA = ContactFeatureType.Vertex;
                 manifold.PointCount = 1;
                 manifold.Type = ManifoldType.Circles;
-                manifold.LocalNormal = Vector2.Zero;
+                manifold.LocalNormal = Vector2.zero;
                 manifold.LocalPoint = P1;
                 manifold.Points.Value0.Id.Key = 0;
                 manifold.Points.Value0.Id.ContactFeature = cf;
@@ -106,7 +105,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                 cf.TypeA = (byte)ContactFeatureType.Vertex;
                 manifold.PointCount = 1;
                 manifold.Type = ManifoldType.Circles;
-                manifold.LocalNormal = Vector2.Zero;
+                manifold.LocalNormal = Vector2.zero;
                 manifold.LocalPoint = P2;
                 manifold.Points.Value0.Id.Key = 0;
                 manifold.Points.Value0.Id.ContactFeature = cf;
@@ -125,10 +124,10 @@ namespace VelcroPhysics.Collision.Narrowphase
                 return;
             }
 
-            Vector2 n = new Vector2(-e.Y, e.X);
+            Vector2 n = new Vector2(-e.y, e.x);
             if (Vector2.Dot(n, Q - A) < 0.0f)
             {
-                n = new Vector2(-n.X, -n.Y);
+                n = new Vector2(-n.x, -n.y);
             }
             n.Normalize();
 

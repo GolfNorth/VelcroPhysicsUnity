@@ -20,8 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -147,12 +146,12 @@ namespace VelcroPhysics.Dynamics.Joints
 
         public override Vector2 GetReactionForce(float invDt)
         {
-            return invDt * new Vector2(_impulse.X, _impulse.Y);
+            return invDt * new Vector2(_impulse.x, _impulse.y);
         }
 
         public override float GetReactionTorque(float invDt)
         {
-            return invDt * _impulse.Z;
+            return invDt * _impulse.z;
         }
 
         internal override void InitVelocityConstraints(ref SolverData data)
@@ -192,15 +191,15 @@ namespace VelcroPhysics.Dynamics.Joints
             float iA = _invIA, iB = _invIB;
 
             Mat33 K = new Mat33();
-            K.ex.X = mA + mB + _rA.Y * _rA.Y * iA + _rB.Y * _rB.Y * iB;
-            K.ey.X = -_rA.Y * _rA.X * iA - _rB.Y * _rB.X * iB;
-            K.ez.X = -_rA.Y * iA - _rB.Y * iB;
-            K.ex.Y = K.ey.X;
-            K.ey.Y = mA + mB + _rA.X * _rA.X * iA + _rB.X * _rB.X * iB;
-            K.ez.Y = _rA.X * iA + _rB.X * iB;
-            K.ex.Z = K.ez.X;
-            K.ey.Z = K.ez.Y;
-            K.ez.Z = iA + iB;
+            K.ex.x = mA + mB + _rA.y * _rA.y * iA + _rB.y * _rB.y * iB;
+            K.ey.x = -_rA.y * _rA.x * iA - _rB.y * _rB.x * iB;
+            K.ez.x = -_rA.y * iA - _rB.y * iB;
+            K.ex.y = K.ey.x;
+            K.ey.y = mA + mB + _rA.x * _rA.x * iA + _rB.x * _rB.x * iB;
+            K.ez.y = _rA.x * iA + _rB.x * iB;
+            K.ex.z = K.ez.x;
+            K.ey.z = K.ez.y;
+            K.ez.z = iA + iB;
 
             if (FrequencyHz > 0.0f)
             {
@@ -227,9 +226,9 @@ namespace VelcroPhysics.Dynamics.Joints
                 _bias = C * h * k * _gamma;
 
                 invM += _gamma;
-                _mass.ez.Z = invM != 0.0f ? 1.0f / invM : 0.0f;
+                _mass.ez.z = invM != 0.0f ? 1.0f / invM : 0.0f;
             }
-            else if (K.ez.Z == 0.0f)
+            else if (K.ez.z == 0.0f)
             {
                 K.GetInverse22(ref _mass);
                 _gamma = 0.0f;
@@ -247,17 +246,17 @@ namespace VelcroPhysics.Dynamics.Joints
                 // Scale impulses to support a variable time step.
                 _impulse *= data.Step.dtRatio;
 
-                Vector2 P = new Vector2(_impulse.X, _impulse.Y);
+                Vector2 P = new Vector2(_impulse.x, _impulse.y);
 
                 vA -= mA * P;
-                wA -= iA * (MathUtils.Cross(_rA, P) + _impulse.Z);
+                wA -= iA * (MathUtils.Cross(_rA, P) + _impulse.z);
 
                 vB += mB * P;
-                wB += iB * (MathUtils.Cross(_rB, P) + _impulse.Z);
+                wB += iB * (MathUtils.Cross(_rB, P) + _impulse.z);
             }
             else
             {
-                _impulse = Vector3.Zero;
+                _impulse = Vector3.zero;
             }
 
             data.Velocities[_indexA].V = vA;
@@ -280,8 +279,8 @@ namespace VelcroPhysics.Dynamics.Joints
             {
                 float Cdot2 = wB - wA;
 
-                float impulse2 = -_mass.ez.Z * (Cdot2 + _bias + _gamma * _impulse.Z);
-                _impulse.Z += impulse2;
+                float impulse2 = -_mass.ez.z * (Cdot2 + _bias + _gamma * _impulse.z);
+                _impulse.z += impulse2;
 
                 wA -= iA * impulse2;
                 wB += iB * impulse2;
@@ -289,8 +288,8 @@ namespace VelcroPhysics.Dynamics.Joints
                 Vector2 Cdot1 = vB + MathUtils.Cross(wB, _rB) - vA - MathUtils.Cross(wA, _rA);
 
                 Vector2 impulse1 = -MathUtils.Mul22(_mass, Cdot1);
-                _impulse.X += impulse1.X;
-                _impulse.Y += impulse1.Y;
+                _impulse.x += impulse1.x;
+                _impulse.y += impulse1.y;
 
                 Vector2 P = impulse1;
 
@@ -304,18 +303,18 @@ namespace VelcroPhysics.Dynamics.Joints
             {
                 Vector2 Cdot1 = vB + MathUtils.Cross(wB, _rB) - vA - MathUtils.Cross(wA, _rA);
                 float Cdot2 = wB - wA;
-                Vector3 Cdot = new Vector3(Cdot1.X, Cdot1.Y, Cdot2);
+                Vector3 Cdot = new Vector3(Cdot1.x, Cdot1.y, Cdot2);
 
                 Vector3 impulse = -MathUtils.Mul(_mass, Cdot);
                 _impulse += impulse;
 
-                Vector2 P = new Vector2(impulse.X, impulse.Y);
+                Vector2 P = new Vector2(impulse.x, impulse.y);
 
                 vA -= mA * P;
-                wA -= iA * (MathUtils.Cross(_rA, P) + impulse.Z);
+                wA -= iA * (MathUtils.Cross(_rA, P) + impulse.z);
 
                 vB += mB * P;
-                wB += iB * (MathUtils.Cross(_rB, P) + impulse.Z);
+                wB += iB * (MathUtils.Cross(_rB, P) + impulse.z);
             }
 
             data.Velocities[_indexA].V = vA;
@@ -342,21 +341,21 @@ namespace VelcroPhysics.Dynamics.Joints
             float positionError, angularError;
 
             Mat33 K = new Mat33();
-            K.ex.X = mA + mB + rA.Y * rA.Y * iA + rB.Y * rB.Y * iB;
-            K.ey.X = -rA.Y * rA.X * iA - rB.Y * rB.X * iB;
-            K.ez.X = -rA.Y * iA - rB.Y * iB;
-            K.ex.Y = K.ey.X;
-            K.ey.Y = mA + mB + rA.X * rA.X * iA + rB.X * rB.X * iB;
-            K.ez.Y = rA.X * iA + rB.X * iB;
-            K.ex.Z = K.ez.X;
-            K.ey.Z = K.ez.Y;
-            K.ez.Z = iA + iB;
+            K.ex.x = mA + mB + rA.y * rA.y * iA + rB.y * rB.y * iB;
+            K.ey.x = -rA.y * rA.x * iA - rB.y * rB.x * iB;
+            K.ez.x = -rA.y * iA - rB.y * iB;
+            K.ex.y = K.ey.x;
+            K.ey.y = mA + mB + rA.x * rA.x * iA + rB.x * rB.x * iB;
+            K.ez.y = rA.x * iA + rB.x * iB;
+            K.ex.z = K.ez.x;
+            K.ey.z = K.ez.y;
+            K.ez.z = iA + iB;
 
             if (FrequencyHz > 0.0f)
             {
                 Vector2 C1 = cB + rB - cA - rA;
 
-                positionError = C1.Length();
+                positionError = C1.magnitude;
                 angularError = 0.0f;
 
                 Vector2 P = -K.Solve22(C1);
@@ -372,29 +371,29 @@ namespace VelcroPhysics.Dynamics.Joints
                 Vector2 C1 = cB + rB - cA - rA;
                 float C2 = aB - aA - ReferenceAngle;
 
-                positionError = C1.Length();
-                angularError = Math.Abs(C2);
+                positionError = C1.magnitude;
+                angularError = Mathf.Abs(C2);
 
-                Vector3 C = new Vector3(C1.X, C1.Y, C2);
+                Vector3 C = new Vector3(C1.x, C1.y, C2);
 
                 Vector3 impulse;
-                if (K.ez.Z > 0.0f)
+                if (K.ez.z > 0.0f)
                 {
                     impulse = -K.Solve33(C);
                 }
                 else
                 {
                     Vector2 impulse2 = -K.Solve22(C1);
-                    impulse = new Vector3(impulse2.X, impulse2.Y, 0.0f);
+                    impulse = new Vector3(impulse2.x, impulse2.y, 0.0f);
                 }
 
-                Vector2 P = new Vector2(impulse.X, impulse.Y);
+                Vector2 P = new Vector2(impulse.x, impulse.y);
 
                 cA -= mA * P;
-                aA -= iA * (MathUtils.Cross(rA, P) + impulse.Z);
+                aA -= iA * (MathUtils.Cross(rA, P) + impulse.z);
 
                 cB += mB * P;
-                aB += iB * (MathUtils.Cross(rB, P) + impulse.Z);
+                aB += iB * (MathUtils.Cross(rB, P) + impulse.z);
             }
 
             data.Positions[_indexA].C = cA;

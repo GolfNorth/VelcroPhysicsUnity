@@ -3,9 +3,7 @@
 * Copyright (c) 2017 Ian Qvist
 */
 
-using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 
 namespace VelcroPhysics.Dynamics.Joints
@@ -88,7 +86,7 @@ namespace VelcroPhysics.Dynamics.Joints
         {
             //TODO
             //return _inv_dt * _impulse;
-            return Vector2.Zero;
+            return Vector2.zero;
         }
 
         public override float GetReactionTorque(float invDt)
@@ -116,8 +114,8 @@ namespace VelcroPhysics.Dynamics.Joints
 
             float p = (_bias - data.Velocities[indexB].W + data.Velocities[indexA].W) * _massFactor;
 
-            data.Velocities[indexA].W -= BodyA._invI * Math.Sign(p) * Math.Min(Math.Abs(p), MaxImpulse);
-            data.Velocities[indexB].W += BodyB._invI * Math.Sign(p) * Math.Min(Math.Abs(p), MaxImpulse);
+            data.Velocities[indexA].W -= BodyA._invI * Mathf.Sign(p) * Mathf.Min(Mathf.Abs(p), MaxImpulse);
+            data.Velocities[indexB].W += BodyB._invI * Mathf.Sign(p) * Mathf.Min(Mathf.Abs(p), MaxImpulse);
         }
 
         internal override bool SolvePositionConstraints(ref SolverData data)

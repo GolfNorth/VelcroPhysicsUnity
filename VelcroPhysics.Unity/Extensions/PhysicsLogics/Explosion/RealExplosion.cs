@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.RayCast;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Dynamics;
@@ -12,7 +12,7 @@ using VelcroPhysics.Utilities;
 namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
 {
     // Original Code by Steven Lu - see http://www.box2d.org/forum/viewtopic.php?f=3&t=1688
-    // Ported by Nicolás Hormazábal
+    // Ported by Nicolï¿½s Hormazï¿½bal
 
     /* Methodology:
      * Force applied at a ray is inversely proportional to the square of distance from source
@@ -38,7 +38,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
         /// <summary>
         /// Two degrees: maximum angle from edges to first ray tested
         /// </summary>
-        private const float MaxEdgeOffset = MathHelper.Pi / 90;
+        private const float MaxEdgeOffset = Mathf.PI / 90;
 
         private List<ShapeData> _data = new List<ShapeData>();
         private RayDataComparer _rdc;
@@ -59,7 +59,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
         /// Max angle between rays (used when segment is large).
         /// Defaults to 15 degrees
         /// </summary>
-        public float MaxAngle = MathHelper.Pi / 15;
+        public float MaxAngle = Mathf.PI / 15;
 
         /// <summary>
         /// Maximum number of shapes involved in the explosion.
@@ -143,13 +143,13 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                 {
                     // We create a "diamond" approximation of the circle
                     Vertices v = new Vertices();
-                    Vector2 vec = Vector2.Zero + new Vector2(cs.Radius, 0);
+                    Vector2 vec = Vector2.zero + new Vector2(cs.Radius, 0);
                     v.Add(vec);
-                    vec = Vector2.Zero + new Vector2(0, cs.Radius);
+                    vec = Vector2.zero + new Vector2(0, cs.Radius);
                     v.Add(vec);
-                    vec = Vector2.Zero + new Vector2(-cs.Radius, cs.Radius);
+                    vec = Vector2.zero + new Vector2(-cs.Radius, cs.Radius);
                     v.Add(vec);
-                    vec = Vector2.Zero + new Vector2(0, -cs.Radius);
+                    vec = Vector2.zero + new Vector2(0, -cs.Radius);
                     v.Add(vec);
                     ps = new PolygonShape(v, 0);
                 }
@@ -159,7 +159,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                 if ((shapes[i].Body.BodyType == BodyType.Dynamic) && ps != null)
                 {
                     Vector2 toCentroid = shapes[i].Body.GetWorldPoint(ps.MassData.Centroid) - pos;
-                    float angleToCentroid = (float)Math.Atan2(toCentroid.Y, toCentroid.X);
+                    float angleToCentroid = (float)Mathf.Atan2(toCentroid.y, toCentroid.x);
                     float min = float.MaxValue;
                     float max = float.MinValue;
                     float minAbsolute = 0.0f;
@@ -168,19 +168,19 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                     for (int j = 0; j < ps.Vertices.Count; ++j)
                     {
                         Vector2 toVertex = (shapes[i].Body.GetWorldPoint(ps.Vertices[j]) - pos);
-                        float newAngle = (float)Math.Atan2(toVertex.Y, toVertex.X);
+                        float newAngle = (float)Mathf.Atan2(toVertex.y, toVertex.x);
                         float diff = (newAngle - angleToCentroid);
 
-                        diff = (diff - MathHelper.Pi) % (2 * MathHelper.Pi);
+                        diff = (diff - Mathf.PI ) % (2 * Mathf.PI);
 
                         // the minus pi is important. It means cutoff for going other direction is at 180 deg where it needs to be
 
                         if (diff < 0.0f)
-                            diff += 2 * MathHelper.Pi; // correction for not handling negs
+                            diff += 2 * Mathf.PI; // correction for not handling negs
 
-                        diff -= MathHelper.Pi;
+                        diff -= Mathf.PI;
 
-                        if (Math.Abs(diff) > MathHelper.Pi)
+                        if (Mathf.Abs(diff) > Mathf.PI)
                             continue; // Something's wrong, point not in shape but exists angle diff > 180
 
                         if (diff > max)
@@ -218,7 +218,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                 if (i == valIndex - 1)
                 {
                     // the single edgecase
-                    midpt = (vals[0] + MathHelper.Pi * 2 + vals[i]);
+                    midpt = (vals[0] + Mathf.PI * 2 + vals[i]);
                 }
                 else
                 {
@@ -228,7 +228,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                 midpt = midpt / 2;
 
                 Vector2 p1 = pos;
-                Vector2 p2 = radius * new Vector2((float)Math.Cos(midpt), (float)Math.Sin(midpt)) + pos;
+                Vector2 p2 = radius * new Vector2((float)Mathf.Cos(midpt), (float)Mathf.Sin(midpt)) + pos;
 
                 // RaycastOne
                 bool hitClosest = false;
@@ -275,7 +275,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                         _data[0] = fi;
                         while (_data.First().Min >= _data.First().Max)
                         {
-                            fi.Min -= MathHelper.Pi * 2;
+                            fi.Min -= Mathf.PI * 2;
                             _data[0] = fi;
                         }
                     }
@@ -285,7 +285,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                     while ((_data.Count > 0)
                            && (_data.Last().Min >= _data.Last().Max)) // just making sure min<max
                     {
-                        last.Min = _data.Last().Min - 2 * MathHelper.Pi;
+                        last.Min = _data.Last().Min - 2 * Mathf.PI;
                         _data[lastPos] = last;
                     }
                     rayMissed = false;
@@ -303,8 +303,8 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
 
                 float arclen = _data[i].Max - _data[i].Min;
 
-                float first = MathHelper.Min(MaxEdgeOffset, EdgeRatio * arclen);
-                int insertedRays = (int)Math.Ceiling(((arclen - 2.0f * first) - (MinRays - 1) * MaxAngle) / MaxAngle);
+                float first = Mathf.Min(MaxEdgeOffset, EdgeRatio * arclen);
+                int insertedRays = (int)Mathf.Ceil(((arclen - 2.0f * first) - (MinRays - 1) * MaxAngle) / MaxAngle);
 
                 if (insertedRays < 0)
                     insertedRays = 0;
@@ -318,8 +318,8 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                      j += offset)
                 {
                     Vector2 p1 = pos;
-                    Vector2 p2 = pos + radius * new Vector2((float)Math.Cos(j), (float)Math.Sin(j));
-                    Vector2 hitpoint = Vector2.Zero;
+                    Vector2 p2 = pos + radius * new Vector2((float)Mathf.Cos(j), (float)Mathf.Sin(j));
+                    Vector2 hitpoint = Vector2.zero;
                     float minlambda = float.MaxValue;
 
                     List<Fixture> fl = _data[i].Body.FixtureList;
@@ -343,10 +343,10 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
 
                         // the force that is to be applied for this particular ray.
                         // offset is angular coverage. lambda*length of segment is distance.
-                        float impulse = (arclen / (MinRays + insertedRays)) * maxForce * 180.0f / MathHelper.Pi * (1.0f - Math.Min(1.0f, minlambda));
+                        float impulse = (arclen / (MinRays + insertedRays)) * maxForce * 180.0f / Mathf.PI * (1.0f - Mathf.Min(1.0f, minlambda));
 
                         // We Apply the impulse!!!
-                        Vector2 vectImp = Vector2.Dot(impulse * new Vector2((float)Math.Cos(j), (float)Math.Sin(j)), -ro.Normal) * new Vector2((float)Math.Cos(j), (float)Math.Sin(j));
+                        Vector2 vectImp = Vector2.Dot(impulse * new Vector2((float)Mathf.Cos(j), (float)Mathf.Sin(j)), -ro.Normal) * new Vector2((float)Mathf.Cos(j), (float)Mathf.Sin(j));
                         _data[i].Body.ApplyLinearImpulse(ref vectImp, ref hitpoint);
 
                         // We gather the fixtures for returning them
@@ -369,7 +369,7 @@ namespace VelcroPhysics.Extensions.PhysicsLogics.Explosion
                 if (!IsActiveOn(fix.Body))
                     continue;
 
-                float impulse = MinRays * maxForce * 180.0f / MathHelper.Pi;
+                float impulse = MinRays * maxForce * 180.0f / Mathf.PI;
                 Vector2 hitPoint;
 
                 CircleShape circShape = fix.Shape as CircleShape;

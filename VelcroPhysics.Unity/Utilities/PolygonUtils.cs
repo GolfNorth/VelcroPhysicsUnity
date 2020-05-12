@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Tools.TextureTools;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Utilities
 {
@@ -91,7 +91,7 @@ namespace VelcroPhysics.Utilities
             {
                 int numberOfEdges = (segments * 4 + 8);
 
-                float stepSize = MathHelper.TwoPi / (numberOfEdges - 4);
+                float stepSize = Mathf.PI * 2f / (numberOfEdges - 4);
                 int perPhase = numberOfEdges / 4;
 
                 Vector2 posOffset = new Vector2(width / 2 - xRadius, height / 2 - yRadius);
@@ -101,17 +101,17 @@ namespace VelcroPhysics.Utilities
                 {
                     if (i - perPhase == 0 || i - perPhase * 3 == 0)
                     {
-                        posOffset.X *= -1;
+                        posOffset.x *= -1;
                         phase--;
                     }
                     else if (i - perPhase * 2 == 0)
                     {
-                        posOffset.Y *= -1;
+                        posOffset.y *= -1;
                         phase--;
                     }
 
-                    vertices.Add(posOffset + new Vector2(xRadius * (float)Math.Cos(stepSize * -(i + phase)),
-                                     -yRadius * (float)Math.Sin(stepSize * -(i + phase))));
+                    vertices.Add(posOffset + new Vector2(xRadius * Mathf.Cos(stepSize * -(i + phase)),
+                                     -yRadius * Mathf.Sin(stepSize * -(i + phase))));
                 }
             }
 
@@ -154,12 +154,12 @@ namespace VelcroPhysics.Utilities
         {
             Vertices vertices = new Vertices();
 
-            float stepSize = MathHelper.TwoPi / numberOfEdges;
+            float stepSize = Mathf.PI * 2f / numberOfEdges;
 
             vertices.Add(new Vector2(xRadius, 0));
             for (int i = numberOfEdges - 1; i > 0; --i)
-                vertices.Add(new Vector2(xRadius * (float)Math.Cos(stepSize * i),
-                    -yRadius * (float)Math.Sin(stepSize * i)));
+                vertices.Add(new Vector2(xRadius * Mathf.Cos(stepSize * i),
+                    -yRadius * Mathf.Sin(stepSize * i)));
 
             return vertices;
         }
@@ -175,8 +175,8 @@ namespace VelcroPhysics.Utilities
             float stepSize = radians / sides;
             for (int i = sides - 1; i > 0; i--)
             {
-                vertices.Add(new Vector2(radius * (float)Math.Cos(stepSize * i),
-                    radius * (float)Math.Sin(stepSize * i)));
+                vertices.Add(new Vector2(radius * Mathf.Cos(stepSize * i),
+                    radius * Mathf.Sin(stepSize * i)));
             }
 
             return vertices;
@@ -247,11 +247,11 @@ namespace VelcroPhysics.Utilities
             // top
             vertices.Add(new Vector2(topRadius, newHeight));
 
-            float stepSize = MathHelper.Pi / topEdges;
+            float stepSize = Mathf.PI / topEdges;
             for (int i = 1; i < topEdges; i++)
             {
-                vertices.Add(new Vector2(topRadius * (float)Math.Cos(stepSize * i),
-                    topRadius * (float)Math.Sin(stepSize * i) + newHeight));
+                vertices.Add(new Vector2(topRadius * Mathf.Cos(stepSize * i),
+                    topRadius * Mathf.Sin(stepSize * i) + newHeight));
             }
 
             vertices.Add(new Vector2(-topRadius, newHeight));
@@ -259,11 +259,11 @@ namespace VelcroPhysics.Utilities
             // bottom
             vertices.Add(new Vector2(-bottomRadius, -newHeight));
 
-            stepSize = MathHelper.Pi / bottomEdges;
+            stepSize = Mathf.PI / bottomEdges;
             for (int i = 1; i < bottomEdges; i++)
             {
-                vertices.Add(new Vector2(-bottomRadius * (float)Math.Cos(stepSize * i),
-                    -bottomRadius * (float)Math.Sin(stepSize * i) - newHeight));
+                vertices.Add(new Vector2(-bottomRadius * Mathf.Cos(stepSize * i),
+                    -bottomRadius * Mathf.Sin(stepSize * i) - newHeight));
             }
 
             vertices.Add(new Vector2(bottomRadius, -newHeight));
@@ -283,9 +283,9 @@ namespace VelcroPhysics.Utilities
         {
             Vertices vertices = new Vertices();
 
-            float stepSize = MathHelper.TwoPi / numberOfTeeth;
+            float stepSize = Mathf.PI * 2f / numberOfTeeth;
             tipPercentage /= 100f;
-            MathHelper.Clamp(tipPercentage, 0f, 1f);
+            Mathf.Clamp(tipPercentage, 0f, 1f);
             float toothTipStepSize = (stepSize / 2f) * tipPercentage;
 
             float toothAngleStepSize = (stepSize - (toothTipStepSize * 2f)) / 2f;
@@ -296,24 +296,24 @@ namespace VelcroPhysics.Utilities
                 {
                     vertices.Add(
                         new Vector2(radius *
-                                    (float)Math.Cos(stepSize * i + toothAngleStepSize * 2f + toothTipStepSize),
+                                    Mathf.Cos(stepSize * i + toothAngleStepSize * 2f + toothTipStepSize),
                             -radius *
-                            (float)Math.Sin(stepSize * i + toothAngleStepSize * 2f + toothTipStepSize)));
+                            Mathf.Sin(stepSize * i + toothAngleStepSize * 2f + toothTipStepSize)));
 
                     vertices.Add(
                         new Vector2((radius + toothHeight) *
-                                    (float)Math.Cos(stepSize * i + toothAngleStepSize + toothTipStepSize),
+                                    Mathf.Cos(stepSize * i + toothAngleStepSize + toothTipStepSize),
                             -(radius + toothHeight) *
-                            (float)Math.Sin(stepSize * i + toothAngleStepSize + toothTipStepSize)));
+                            Mathf.Sin(stepSize * i + toothAngleStepSize + toothTipStepSize)));
                 }
 
                 vertices.Add(new Vector2((radius + toothHeight) *
-                                         (float)Math.Cos(stepSize * i + toothAngleStepSize),
+                                         Mathf.Cos(stepSize * i + toothAngleStepSize),
                     -(radius + toothHeight) *
-                    (float)Math.Sin(stepSize * i + toothAngleStepSize)));
+                    Mathf.Sin(stepSize * i + toothAngleStepSize)));
 
-                vertices.Add(new Vector2(radius * (float)Math.Cos(stepSize * i),
-                    -radius * (float)Math.Sin(stepSize * i)));
+                vertices.Add(new Vector2(radius * Mathf.Cos(stepSize * i),
+                    -radius * Mathf.Sin(stepSize * i)));
             }
 
             return vertices;

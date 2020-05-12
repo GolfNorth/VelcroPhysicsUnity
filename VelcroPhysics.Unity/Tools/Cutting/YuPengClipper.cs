@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Tools.Cutting.Simple;
 using VelcroPhysics.Tools.PolygonManipulation;
 using VelcroPhysics.Utilities;
+using Debug = System.Diagnostics.Debug;
 
 namespace VelcroPhysics.Tools.Cutting
 {
@@ -67,9 +67,9 @@ namespace VelcroPhysics.Tools.Cutting
             Vector2 lbSubject = subject.GetAABB().LowerBound;
             Vector2 lbClip = clip.GetAABB().LowerBound;
             Vector2 translate;
-            Vector2.Min(ref lbSubject, ref lbClip, out translate);
-            translate = Vector2.One - translate;
-            if (translate != Vector2.Zero)
+            translate = Vector2.Min(lbSubject, lbClip);
+            translate = Vector2.one - translate;
+            if (translate != Vector2.zero)
             {
                 slicedSubject.Translate(ref translate);
                 slicedClip.Translate(ref translate);
@@ -182,7 +182,7 @@ namespace VelcroPhysics.Tools.Cutting
                 int iNext = slicedPoly1.NextIndex(i);
 
                 //If they are closer than the distance remove vertex
-                if ((slicedPoly1[iNext] - slicedPoly1[i]).LengthSquared() <= ClipperEpsilonSquared)
+                if ((slicedPoly1[iNext] - slicedPoly1[i]).sqrMagnitude <= ClipperEpsilonSquared)
                 {
                     slicedPoly1.RemoveAt(i);
                     --i;
@@ -193,7 +193,7 @@ namespace VelcroPhysics.Tools.Cutting
                 int iNext = slicedPoly2.NextIndex(i);
 
                 //If they are closer than the distance remove vertex
-                if ((slicedPoly2[iNext] - slicedPoly2[i]).LengthSquared() <= ClipperEpsilonSquared)
+                if ((slicedPoly2[iNext] - slicedPoly2[i]).sqrMagnitude <= ClipperEpsilonSquared)
                 {
                     slicedPoly2.RemoveAt(i);
                     --i;
@@ -213,7 +213,7 @@ namespace VelcroPhysics.Tools.Cutting
             for (int i = 0; i < poly.Count; ++i)
             {
                 simplicies.Add(new Edge(poly[i], poly[poly.NextIndex(i)]));
-                coeff.Add(CalculateSimplexCoefficient(Vector2.Zero, poly[i], poly[poly.NextIndex(i)]));
+                coeff.Add(CalculateSimplexCoefficient(Vector2.zero, poly[i], poly[poly.NextIndex(i)]));
             }
         }
 
@@ -387,8 +387,8 @@ namespace VelcroPhysics.Tools.Cutting
             {
                 result = coefficient;
             }
-            if (PointOnLineSegment(Vector2.Zero, e.EdgeStart, point) ||
-                PointOnLineSegment(Vector2.Zero, e.EdgeEnd, point))
+            if (PointOnLineSegment(Vector2.zero, e.EdgeStart, point) ||
+                PointOnLineSegment(Vector2.zero, e.EdgeEnd, point))
             {
                 result = .5f * coefficient;
             }
@@ -401,7 +401,7 @@ namespace VelcroPhysics.Tools.Cutting
         /// <remarks>Used by method <c>CalculateIntersections()</c>.</remarks>
         private static float GetAlpha(Vector2 start, Vector2 end, Vector2 point)
         {
-            return (point - start).LengthSquared() / (end - start).LengthSquared();
+            return (point - start).sqrMagnitude / (end - start).sqrMagnitude;
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace VelcroPhysics.Tools.Cutting
         private static bool PointInSimplex(Vector2 point, Edge edge)
         {
             Vertices polygon = new Vertices();
-            polygon.Add(Vector2.Zero);
+            polygon.Add(Vector2.zero);
             polygon.Add(edge.EdgeStart);
             polygon.Add(edge.EdgeEnd);
             return (polygon.PointInPolygon(ref point) == 1);
@@ -456,7 +456,7 @@ namespace VelcroPhysics.Tools.Cutting
 
         private static bool VectorEqual(Vector2 vec1, Vector2 vec2)
         {
-            return (vec2 - vec1).LengthSquared() <= ClipperEpsilonSquared;
+            return (vec2 - vec1).sqrMagnitude <= ClipperEpsilonSquared;
         }
 
         #region Nested type: Edge

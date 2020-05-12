@@ -20,7 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -176,10 +176,10 @@ namespace VelcroPhysics.Dynamics.Joints
             float iA = _invIA, iB = _invIB;
 
             Mat22 K = new Mat22();
-            K.ex.X = mA + mB + iA * _rA.Y * _rA.Y + iB * _rB.Y * _rB.Y;
-            K.ex.Y = -iA * _rA.X * _rA.Y - iB * _rB.X * _rB.Y;
-            K.ey.X = K.ex.Y;
-            K.ey.Y = mA + mB + iA * _rA.X * _rA.X + iB * _rB.X * _rB.X;
+            K.ex.x = mA + mB + iA * _rA.y * _rA.y + iB * _rB.y * _rB.y;
+            K.ex.y = -iA * _rA.x * _rA.y - iB * _rB.x * _rB.y;
+            K.ey.x = K.ex.y;
+            K.ey.y = mA + mB + iA * _rA.x * _rA.x + iB * _rB.x * _rB.x;
 
             _linearMass = K.Inverse;
 
@@ -195,7 +195,7 @@ namespace VelcroPhysics.Dynamics.Joints
                 _linearImpulse *= data.Step.dtRatio;
                 _angularImpulse *= data.Step.dtRatio;
 
-                Vector2 P = new Vector2(_linearImpulse.X, _linearImpulse.Y);
+                Vector2 P = new Vector2(_linearImpulse.x, _linearImpulse.y);
                 vA -= mA * P;
                 wA -= iA * (MathUtils.Cross(_rA, P) + _angularImpulse);
                 vB += mB * P;
@@ -203,7 +203,7 @@ namespace VelcroPhysics.Dynamics.Joints
             }
             else
             {
-                _linearImpulse = Vector2.Zero;
+                _linearImpulse = Vector2.zero;
                 _angularImpulse = 0.0f;
             }
 
@@ -249,7 +249,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
                 float maxImpulse = h * MaxForce;
 
-                if (_linearImpulse.LengthSquared() > maxImpulse * maxImpulse)
+                if (_linearImpulse.sqrMagnitude > maxImpulse * maxImpulse)
                 {
                     _linearImpulse.Normalize();
                     _linearImpulse *= maxImpulse;

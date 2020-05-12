@@ -1,8 +1,6 @@
-using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
-using VelcroPhysics.Shared;
+using UnityEngine;
 using VelcroPhysics.Utilities;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.TOI
 {
@@ -47,8 +45,8 @@ namespace VelcroPhysics.Collision.TOI
         public void GetTransform(out Transform xfb, float beta)
         {
             xfb = new Transform();
-            xfb.p.X = (1.0f - beta) * C0.X + beta * C.X;
-            xfb.p.Y = (1.0f - beta) * C0.Y + beta * C.Y;
+            xfb.p.x = (1.0f - beta) * C0.x + beta * C.x;
+            xfb.p.y = (1.0f - beta) * C0.y + beta * C.y;
             float angle = (1.0f - beta) * A0 + beta * A;
             xfb.q.Set(angle);
 
@@ -74,7 +72,7 @@ namespace VelcroPhysics.Collision.TOI
         /// </summary>
         public void Normalize()
         {
-            float d = MathHelper.TwoPi * (float)Math.Floor(A0 / MathHelper.TwoPi);
+            float d = Mathf.PI * 2f * (float)Mathf.Floor(A0 / (Mathf.PI * 2f));
             A0 -= d;
             A -= d;
         }

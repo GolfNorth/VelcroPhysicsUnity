@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using VelcroPhysics.Collision.Shapes;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Templates;
 using VelcroPhysics.Tools.Triangulation.TriangulationBase;
 using VelcroPhysics.Utilities;
+using UnityEngine;
 
 namespace VelcroPhysics.Factories
 {
@@ -107,14 +107,14 @@ namespace VelcroPhysics.Factories
         public static Fixture AttachLineArc(float radians, int sides, float radius, bool closed, Body body)
         {
             Vertices arc = PolygonUtils.CreateArc(radians, sides, radius);
-            arc.Rotate((MathHelper.Pi - radians) / 2);
+            arc.Rotate((Mathf.PI - radians) / 2);
             return closed ? AttachLoopShape(arc, body) : AttachChainShape(arc, body);
         }
 
         public static List<Fixture> AttachSolidArc(float density, float radians, int sides, float radius, Body body)
         {
             Vertices arc = PolygonUtils.CreateArc(radians, sides, radius);
-            arc.Rotate((MathHelper.Pi - radians) / 2);
+            arc.Rotate((Mathf.PI - radians) / 2);
 
             //Close the arc
             arc.Add(arc[0]);

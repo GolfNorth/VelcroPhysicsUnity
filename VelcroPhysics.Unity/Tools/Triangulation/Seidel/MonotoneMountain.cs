@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace VelcroPhysics.Tools.Triangulation.Seidel
 {
@@ -149,14 +148,14 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
         {
             Point a = (p.Next - p);
             Point b = (p.Prev - p);
-            return (float)Math.Atan2(a.Cross(b), a.Dot(b));
+            return (float)Mathf.Atan2(a.Cross(b), a.Dot(b));
         }
 
         private bool AngleSign()
         {
             Point a = (_head.Next - _head);
             Point b = (_tail - _head);
-            return Math.Atan2(a.Cross(b), a.Dot(b)) >= 0;
+            return Mathf.Atan2(a.Cross(b), a.Dot(b)) >= 0;
         }
 
         // Determines if the inslide angle is convex or reflex

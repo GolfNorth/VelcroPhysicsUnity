@@ -23,7 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.Broadphase;
 using VelcroPhysics.Collision.ContactSystem;
 using VelcroPhysics.Collision.Distance;
@@ -35,6 +35,7 @@ using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Extensions.Controllers.ControllerBase;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Templates;
+using Debug = UnityEngine.Debug;
 
 namespace VelcroPhysics.Dynamics
 {
@@ -398,7 +399,7 @@ namespace VelcroPhysics.Dynamics
             // Build and simulate all awake islands.
             int stackSize = BodyList.Count;
             if (stackSize > _stack.Length)
-                _stack = new Body[Math.Max(_stack.Length * 2, stackSize)];
+                _stack = new Body[Mathf.Max(_stack.Length * 2, stackSize)];
 
             for (int index = BodyList.Count - 1; index >= 0; index--)
             {
@@ -685,7 +686,7 @@ namespace VelcroPhysics.Dynamics
                         float beta = output.T;
                         if (output.State == TOIOutputState.Touching)
                         {
-                            alpha = Math.Min(alpha0 + (1.0f - alpha0) * beta, 1.0f);
+                            alpha = Mathf.Min(alpha0 + (1.0f - alpha0) * beta, 1.0f);
                         }
                         else
                         {
@@ -1113,7 +1114,7 @@ namespace VelcroPhysics.Dynamics
             for (int i = 0; i < BodyList.Count; i++)
             {
                 Body body = BodyList[i];
-                body._force = Vector2.Zero;
+                body._force = Vector2.zero;
                 body._torque = 0.0f;
             }
         }

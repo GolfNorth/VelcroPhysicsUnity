@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
 
@@ -237,8 +236,8 @@ namespace VelcroPhysics.Tools.Triangulation.Bayazit
 
         private static float SquareDist(Vector2 a, Vector2 b)
         {
-            float dx = b.X - a.X;
-            float dy = b.Y - a.Y;
+            float dx = b.x - a.x;
+            float dy = b.y - a.y;
             return dx * dx + dy * dy;
         }
     }

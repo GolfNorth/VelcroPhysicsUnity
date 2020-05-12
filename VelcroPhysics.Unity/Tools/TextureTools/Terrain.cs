@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Factories;
 using VelcroPhysics.Shared;
@@ -113,7 +113,7 @@ namespace VelcroPhysics.Tools.TextureTools
         public void Initialize()
         {
             // find top left of terrain in world space
-            _topLeft = new Vector2(Center.X - (Width * 0.5f), Center.Y - (-Height * 0.5f));
+            _topLeft = new Vector2(Center.x - (Width * 0.5f), Center.y - (-Height * 0.5f));
 
             // convert the terrains size to a point cloud size
             _localWidth = Width * PointsPerUnit;
@@ -148,9 +148,9 @@ namespace VelcroPhysics.Tools.TextureTools
             {
                 for (int y = 0; y < data.GetUpperBound(1); y++)
                 {
-                    if (x + offset.X >= 0 && x + offset.X < _localWidth && y + offset.Y >= 0 && y + offset.Y < _localHeight)
+                    if (x + offset.x >= 0 && x + offset.x < _localWidth && y + offset.y >= 0 && y + offset.y < _localHeight)
                     {
-                        _terrainMap[(int)(x + offset.X), (int)(y + offset.Y)] = data[x, y];
+                        _terrainMap[(int)(x + offset.x), (int)(y + offset.y)] = data[x, y];
                     }
                 }
             }
@@ -170,23 +170,23 @@ namespace VelcroPhysics.Tools.TextureTools
             Vector2 p = location - _topLeft;
 
             // find map position for each axis
-            p.X = p.X * _localWidth / Width;
-            p.Y = p.Y * -_localHeight / Height;
+            p.x = p.x * _localWidth / Width;
+            p.y = p.y * -_localHeight / Height;
 
-            if (p.X >= 0 && p.X < _localWidth && p.Y >= 0 && p.Y < _localHeight)
+            if (p.x >= 0 && p.x < _localWidth && p.y >= 0 && p.y < _localHeight)
             {
-                _terrainMap[(int)p.X, (int)p.Y] = value;
+                _terrainMap[(int)p.x, (int)p.y] = value;
 
                 // expand dirty area
-                if (p.X < _dirtyArea.LowerBound.X)
-                    _dirtyArea.LowerBound.X = p.X;
-                if (p.X > _dirtyArea.UpperBound.X)
-                    _dirtyArea.UpperBound.X = p.X;
+                if (p.x < _dirtyArea.LowerBound.x)
+                    _dirtyArea.LowerBound.x = p.x;
+                if (p.x > _dirtyArea.UpperBound.x)
+                    _dirtyArea.UpperBound.x = p.x;
 
-                if (p.Y < _dirtyArea.LowerBound.Y)
-                    _dirtyArea.LowerBound.Y = p.Y;
-                if (p.Y > _dirtyArea.UpperBound.Y)
-                    _dirtyArea.UpperBound.Y = p.Y;
+                if (p.y < _dirtyArea.LowerBound.y)
+                    _dirtyArea.LowerBound.y = p.y;
+                if (p.y > _dirtyArea.UpperBound.y)
+                    _dirtyArea.UpperBound.y = p.y;
             }
         }
 
@@ -196,19 +196,19 @@ namespace VelcroPhysics.Tools.TextureTools
         public void RegenerateTerrain()
         {
             //iterate effected cells
-            int xStart = (int)(_dirtyArea.LowerBound.X / CellSize);
+            int xStart = (int)(_dirtyArea.LowerBound.x / CellSize);
             if (xStart < 0)
                 xStart = 0;
 
-            int xEnd = (int)(_dirtyArea.UpperBound.X / CellSize) + 1;
+            int xEnd = (int)(_dirtyArea.UpperBound.x / CellSize) + 1;
             if (xEnd > _xnum)
                 xEnd = _xnum;
 
-            int yStart = (int)(_dirtyArea.LowerBound.Y / CellSize);
+            int yStart = (int)(_dirtyArea.LowerBound.y / CellSize);
             if (yStart < 0)
                 yStart = 0;
 
-            int yEnd = (int)(_dirtyArea.UpperBound.Y / CellSize) + 1;
+            int yEnd = (int)(_dirtyArea.UpperBound.y / CellSize) + 1;
             if (yEnd > _ynum)
                 yEnd = _ynum;
 

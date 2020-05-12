@@ -1,5 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using UnityEngine;
 using VelcroPhysics.Dynamics;
+using VelcroPhysics.Utilities;
 
 namespace VelcroPhysics.Extensions.Controllers.Wind
 {
@@ -48,17 +49,17 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
 
                         forceVector = Direction;
 
-                        if (forceVector.Length() == 0)
+                        if (forceVector.magnitude == 0)
                             forceVector = new Vector2(0, 1);
                     }
 
                     //TODO: Consider Divergence:
-                    //forceVector = Vector2.Transform(forceVector, Matrix.CreateRotationZ((MathHelper.Pi - MathHelper.Pi/2) * (float)Randomize.NextDouble()));
+                    //forceVector = Vector2.Transform(forceVector, Matrix.CreateRotationZ((Mathf.PI - Mathf.PI/2) * (float)Randomize.NextDouble()));
 
                     // Calculate random Variation
                     if (Variation != 0)
                     {
-                        float strengthVariation = (float)Randomize.NextDouble() * MathHelper.Clamp(Variation, 0, 1);
+                        float strengthVariation = (float)Randomize.NextDouble() * MathUtils.Clamp(Variation, 0, 1);
                         forceVector.Normalize();
                         body.ApplyForce(forceVector * strength * decayMultiplier * strengthVariation);
                     }

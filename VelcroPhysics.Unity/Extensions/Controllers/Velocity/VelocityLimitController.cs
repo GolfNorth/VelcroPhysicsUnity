@@ -1,4 +1,4 @@
-﻿using System;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Extensions.Controllers.ControllerBase;
@@ -90,17 +90,17 @@ namespace VelcroPhysics.Extensions.Controllers.Velocity
                 {
                     //Translation
                     // Check for large velocities.
-                    float translationX = dt * body._linearVelocity.X;
-                    float translationY = dt * body._linearVelocity.Y;
+                    float translationX = dt * body._linearVelocity.x;
+                    float translationY = dt * body._linearVelocity.y;
                     float result = translationX * translationX + translationY * translationY;
 
                     if (result > dt * _maxLinearSqared)
                     {
-                        float sq = (float)Math.Sqrt(result);
+                        float sq = (float)Mathf.Sqrt(result);
 
                         float ratio = _maxLinearVelocity / sq;
-                        body._linearVelocity.X *= ratio;
-                        body._linearVelocity.Y *= ratio;
+                        body._linearVelocity.x *= ratio;
+                        body._linearVelocity.y *= ratio;
                     }
                 }
 
@@ -110,7 +110,7 @@ namespace VelcroPhysics.Extensions.Controllers.Velocity
                     float rotation = dt * body._angularVelocity;
                     if (rotation * rotation > _maxAngularSqared)
                     {
-                        float ratio = _maxAngularVelocity / Math.Abs(rotation);
+                        float ratio = _maxAngularVelocity / Mathf.Abs(rotation);
                         body._angularVelocity *= ratio;
                     }
                 }

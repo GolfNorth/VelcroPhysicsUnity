@@ -3,7 +3,7 @@
 * Copyright (c) 2017 Ian Qvist
 */
 
-using Microsoft.Xna.Framework;
+using UnityEngine;
 
 namespace VelcroPhysics.Utilities
 {
@@ -38,7 +38,7 @@ namespace VelcroPhysics.Utilities
 
         public static void ToDisplayUnits(ref Vector2 simUnits, out Vector2 displayUnits)
         {
-            Vector2.Multiply(ref simUnits, _displayUnitsToSimUnitsRatio, out displayUnits);
+            displayUnits = simUnits * _displayUnitsToSimUnitsRatio;
         }
 
         public static Vector3 ToDisplayUnits(Vector3 simUnits)
@@ -53,9 +53,9 @@ namespace VelcroPhysics.Utilities
 
         public static void ToDisplayUnits(float x, float y, out Vector2 displayUnits)
         {
-            displayUnits = Vector2.Zero;
-            displayUnits.X = x * _displayUnitsToSimUnitsRatio;
-            displayUnits.Y = y * _displayUnitsToSimUnitsRatio;
+            displayUnits = Vector2.zero;
+            displayUnits.x = x * _displayUnitsToSimUnitsRatio;
+            displayUnits.y = y * _displayUnitsToSimUnitsRatio;
         }
 
         public static float ToSimUnits(float displayUnits)
@@ -85,7 +85,7 @@ namespace VelcroPhysics.Utilities
 
         public static void ToSimUnits(ref Vector2 displayUnits, out Vector2 simUnits)
         {
-            Vector2.Multiply(ref displayUnits, _simUnitsToDisplayUnitsRatio, out simUnits);
+            simUnits = displayUnits * _simUnitsToDisplayUnitsRatio;
         }
 
         public static Vector2 ToSimUnits(float x, float y)
@@ -100,9 +100,9 @@ namespace VelcroPhysics.Utilities
 
         public static void ToSimUnits(float x, float y, out Vector2 simUnits)
         {
-            simUnits = Vector2.Zero;
-            simUnits.X = x * _simUnitsToDisplayUnitsRatio;
-            simUnits.Y = y * _simUnitsToDisplayUnitsRatio;
+            simUnits = Vector2.zero;
+            simUnits.x = x * _simUnitsToDisplayUnitsRatio;
+            simUnits.y = y * _simUnitsToDisplayUnitsRatio;
         }
     }
 }

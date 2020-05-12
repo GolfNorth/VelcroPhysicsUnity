@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
 
@@ -129,12 +128,12 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                 int middle = i;
                 int upper = i == vertices.Count - 1 ? 0 : i + 1;
 
-                float dx0 = vertices[middle].X - vertices[lower].X;
-                float dy0 = vertices[middle].Y - vertices[lower].Y;
-                float dx1 = vertices[upper].X - vertices[middle].X;
-                float dy1 = vertices[upper].Y - vertices[middle].Y;
-                float norm0 = (float)Math.Sqrt(dx0 * dx0 + dy0 * dy0);
-                float norm1 = (float)Math.Sqrt(dx1 * dx1 + dy1 * dy1);
+                float dx0 = vertices[middle].x - vertices[lower].x;
+                float dy0 = vertices[middle].y - vertices[lower].y;
+                float dx1 = vertices[upper].x - vertices[middle].x;
+                float dy1 = vertices[upper].y - vertices[middle].y;
+                float norm0 = (float)Mathf.Sqrt(dx0 * dx0 + dy0 * dy0);
+                float norm1 = (float)Mathf.Sqrt(dx1 * dx1 + dy1 * dy1);
 
                 if (!(norm0 > 0.0f && norm1 > 0.0f) && newNVertices > 3)
                 {
@@ -150,7 +149,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                 float cross = dx0 * dy1 - dx1 * dy0;
                 float dot = dx0 * dx1 + dy0 * dy1;
 
-                if (Math.Abs(cross) < tolerance && dot > 0 && newNVertices > 3)
+                if (Mathf.Abs(cross) < tolerance && dot > 0 && newNVertices > 3)
                 {
                     mergeMe[i] = true;
                     --newNVertices;
@@ -217,7 +216,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                 Vector2 next = vertices.NextVertex(i);
 
                 //If they are closer than the distance, continue
-                if ((next - current).LengthSquared() <= distance2)
+                if ((next - current).sqrMagnitude <= distance2)
                     continue;
 
                 simplified.Add(current);
@@ -289,7 +288,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                 float new1;
                 MathUtils.Cross(ref v1, ref v3, out new1);
 
-                if (Math.Abs(new1 - (old1 + old2)) > areaTolerance)
+                if (Mathf.Abs(new1 - (old1 + old2)) > areaTolerance)
                 {
                     simplified.Add(v2);
                     v1 = v2;

@@ -20,10 +20,10 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Collision.RayCast;
 using VelcroPhysics.Shared;
+using Transform = VelcroPhysics.Shared.Transform;
 
 namespace VelcroPhysics.Collision.Shapes
 {
@@ -55,7 +55,7 @@ namespace VelcroPhysics.Collision.Shapes
             for (int i = 1; i < vertices.Count; ++i)
             {
                 // If the code crashes here, it means your vertices are too close together.
-                Debug.Assert(Vector2.DistanceSquared(vertices[i - 1], vertices[i]) > Settings.LinearSlop * Settings.LinearSlop);
+                Debug.Assert(Mathf.Sqrt(Vector2.Distance(vertices[i - 1], vertices[i])) > Settings.LinearSlop * Settings.LinearSlop);
             }
 
             Vertices = new Vertices(vertices);

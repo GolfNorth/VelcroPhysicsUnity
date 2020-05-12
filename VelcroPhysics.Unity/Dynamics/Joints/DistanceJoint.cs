@@ -20,9 +20,7 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using System;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+using UnityEngine;
 using VelcroPhysics.Dynamics.Solver;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -99,13 +97,13 @@ namespace VelcroPhysics.Dynamics.Joints
             {
                 LocalAnchorA = bodyA.GetLocalPoint(ref anchorA);
                 LocalAnchorB = bodyB.GetLocalPoint(ref anchorB);
-                Length = (anchorB - anchorA).Length();
+                Length = (anchorB - anchorA).magnitude;
             }
             else
             {
                 LocalAnchorA = anchorA;
                 LocalAnchorB = anchorB;
-                Length = (BodyB.GetWorldPoint(ref anchorB) - BodyA.GetWorldPoint(ref anchorA)).Length();
+                Length = (BodyB.GetWorldPoint(ref anchorB) - BodyA.GetWorldPoint(ref anchorA)).magnitude;
             }
         }
 
@@ -198,14 +196,14 @@ namespace VelcroPhysics.Dynamics.Joints
             _u = cB + _rB - cA - _rA;
 
             // Handle singularity.
-            float length = _u.Length();
+            float length = _u.magnitude;
             if (length > Settings.LinearSlop)
             {
                 _u *= 1.0f / length;
             }
             else
             {
-                _u = Vector2.Zero;
+                _u = Vector2.zero;
             }
 
             float crAu = MathUtils.Cross(_rA, _u);
@@ -311,7 +309,7 @@ namespace VelcroPhysics.Dynamics.Joints
             Vector2 rB = MathUtils.Mul(qB, LocalAnchorB - _localCenterB);
             Vector2 u = cB + rB - cA - rA;
 
-            float length = u.Length();
+            float length = u.magnitude;
             u.Normalize();
             float C = length - Length;
             C = MathUtils.Clamp(C, -Settings.MaxLinearCorrection, Settings.MaxLinearCorrection);
@@ -329,7 +327,7 @@ namespace VelcroPhysics.Dynamics.Joints
             data.Positions[_indexB].C = cB;
             data.Positions[_indexB].A = aB;
 
-            return Math.Abs(C) < Settings.LinearSlop;
+            return Mathf.Abs(C) < Settings.LinearSlop;
         }
     }
 }
