@@ -37,20 +37,21 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
 
         public override void Update(float dt)
         {
-            Vector2 f = Vector2.zero;
+            var f = Vector2.zero;
 
-            foreach (Body worldBody in World.BodyList)
+            foreach (var worldBody in World.BodyList)
             {
                 if (!IsActiveOn(worldBody))
                     continue;
 
-                foreach (Body controllerBody in Bodies)
+                foreach (var controllerBody in Bodies)
                 {
-                    if (worldBody == controllerBody || (worldBody.IsStatic && controllerBody.IsStatic) || !controllerBody.Enabled)
+                    if (worldBody == controllerBody || worldBody.IsStatic && controllerBody.IsStatic ||
+                        !controllerBody.Enabled)
                         continue;
 
-                    Vector2 d = controllerBody.Position - worldBody.Position;
-                    float r2 = d.sqrMagnitude;
+                    var d = controllerBody.Position - worldBody.Position;
+                    var r2 = d.sqrMagnitude;
 
                     if (r2 <= Settings.Epsilon || r2 > MaxRadius * MaxRadius || r2 < MinRadius * MinRadius)
                         continue;
@@ -61,17 +62,17 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
                             f = Strength / r2 * worldBody.Mass * controllerBody.Mass * d;
                             break;
                         case GravityType.Linear:
-                            f = Strength / (float)Mathf.Sqrt(r2) * worldBody.Mass * controllerBody.Mass * d;
+                            f = Strength / Mathf.Sqrt(r2) * worldBody.Mass * controllerBody.Mass * d;
                             break;
                     }
 
                     worldBody.ApplyForce(ref f);
                 }
 
-                foreach (Vector2 point in Points)
+                foreach (var point in Points)
                 {
-                    Vector2 d = point - worldBody.Position;
-                    float r2 = d.sqrMagnitude;
+                    var d = point - worldBody.Position;
+                    var r2 = d.sqrMagnitude;
 
                     if (r2 <= Settings.Epsilon || r2 > MaxRadius * MaxRadius || r2 < MinRadius * MinRadius)
                         continue;
@@ -82,7 +83,7 @@ namespace VelcroPhysics.Extensions.Controllers.Gravity
                             f = Strength / r2 * worldBody.Mass * d;
                             break;
                         case GravityType.Linear:
-                            f = Strength / (float)Mathf.Sqrt(r2) * worldBody.Mass * d;
+                            f = Strength / Mathf.Sqrt(r2) * worldBody.Mass * d;
                             break;
                     }
 

@@ -60,6 +60,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
                     //                return;
                 }
             }
+
             Q.AddEdge(this);
         }
     }

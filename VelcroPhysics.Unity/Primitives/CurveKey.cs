@@ -52,31 +52,28 @@ namespace Microsoft.Xna.Framework
 
         public CurveContinuity Continuity
         {
-            get { return continuity; }
-            set { continuity = value; }
+            get => continuity;
+            set => continuity = value;
         }
 
-        public float Position
-        {
-            get { return position; }
-        }
+        public float Position => position;
 
         public float TangentIn
         {
-            get { return tangentIn; }
-            set { tangentIn = value; }
+            get => tangentIn;
+            set => tangentIn = value;
         }
 
         public float TangentOut
         {
-            get { return tangentOut; }
-            set { tangentOut = value; }
+            get => tangentOut;
+            set => tangentOut = value;
         }
 
         public float Value
         {
-            get { return value; }
-            set { this.value = value; }
+            get => value;
+            set => this.value = value;
         }
 
         #endregion
@@ -119,7 +116,7 @@ namespace Microsoft.Xna.Framework
 
         public bool Equals(CurveKey other)
         {
-            return (this == other);
+            return this == other;
         }
 
         #endregion
@@ -137,11 +134,11 @@ namespace Microsoft.Xna.Framework
             if (Equals(b, null))
                 return Equals(a, null);
 
-            return (a.position == b.position)
-                   && (a.value == b.value)
-                   && (a.tangentIn == b.tangentIn)
-                   && (a.tangentOut == b.tangentOut)
-                   && (a.continuity == b.continuity);
+            return a.position == b.position
+                   && a.value == b.value
+                   && a.tangentIn == b.tangentIn
+                   && a.tangentOut == b.tangentOut
+                   && a.continuity == b.continuity;
         }
 
         public CurveKey Clone()
@@ -151,7 +148,7 @@ namespace Microsoft.Xna.Framework
 
         public override bool Equals(object obj)
         {
-            return (obj is CurveKey) ? ((CurveKey)obj) == this : false;
+            return obj is CurveKey ? (CurveKey) obj == this : false;
         }
 
         public override int GetHashCode()

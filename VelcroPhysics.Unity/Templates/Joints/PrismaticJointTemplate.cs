@@ -13,7 +13,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class PrismaticJointTemplate : JointTemplate
     {
-        public PrismaticJointTemplate() : base(JointType.Prismatic) { }
+        public PrismaticJointTemplate() : base(JointType.Prismatic)
+        {
+        }
 
         /// <summary>
         /// Enable/disable the joint limit.

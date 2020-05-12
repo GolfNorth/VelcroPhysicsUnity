@@ -53,7 +53,8 @@ namespace VelcroPhysics.Extensions.DebugView
         /// <param name="red">The red value.</param>
         /// <param name="blue">The blue value.</param>
         /// <param name="green">The green value.</param>
-        public abstract void DrawPolygon(Vector2[] vertices, int count, float red, float blue, float green, bool closed = true);
+        public abstract void DrawPolygon(Vector2[] vertices, int count, float red, float blue, float green,
+            bool closed = true);
 
         /// <summary>
         /// Draw a solid closed polygon provided in CCW order.
@@ -85,7 +86,7 @@ namespace VelcroPhysics.Extensions.DebugView
         /// <param name="blue">The blue value.</param>
         /// <param name="green">The green value.</param>
         public abstract void DrawSolidCircle(Vector2 center, float radius, Vector2 axis, float red, float blue,
-                                             float green);
+            float green);
 
         /// <summary>
         /// Draw a line segment.

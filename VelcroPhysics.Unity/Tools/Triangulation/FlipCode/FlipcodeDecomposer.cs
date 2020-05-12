@@ -31,35 +31,33 @@ namespace VelcroPhysics.Tools.Triangulation.FlipCode
             Debug.Assert(vertices.Count > 3);
             Debug.Assert(vertices.IsCounterClockWise());
 
-            int[] polygon = new int[vertices.Count];
+            var polygon = new int[vertices.Count];
 
-            for (int v = 0; v < vertices.Count; v++)
+            for (var v = 0; v < vertices.Count; v++)
                 polygon[v] = v;
 
-            int nv = vertices.Count;
+            var nv = vertices.Count;
 
             // Remove nv-2 Vertices, creating 1 triangle every time
-            int count = 2 * nv; /* error detection */
+            var count = 2 * nv; /* error detection */
 
-            List<Vertices> result = new List<Vertices>();
+            var result = new List<Vertices>();
 
-            for (int v = nv - 1; nv > 2;)
+            for (var v = nv - 1; nv > 2;)
             {
                 // If we loop, it is probably a non-simple polygon 
-                if (0 >= (count--))
-                {
+                if (0 >= count--)
                     // Triangulate: ERROR - probable bad polygon!
                     return new List<Vertices>();
-                }
 
                 // Three consecutive vertices in current polygon, <u,v,w>
-                int u = v;
+                var u = v;
                 if (nv <= u)
                     u = 0; // Previous 
                 v = u + 1;
                 if (nv <= v)
                     v = 0; // New v   
-                int w = v + 1;
+                var w = v + 1;
                 if (nv <= w)
                     w = 0; // Next 
 
@@ -72,17 +70,14 @@ namespace VelcroPhysics.Tools.Triangulation.FlipCode
                     int s, t;
 
                     // Output Triangle
-                    Vertices triangle = new Vertices(3);
+                    var triangle = new Vertices(3);
                     triangle.Add(_tmpA);
                     triangle.Add(_tmpB);
                     triangle.Add(_tmpC);
                     result.Add(triangle);
 
                     // Remove v from remaining polygon 
-                    for (s = v, t = v + 1; t < nv; s++, t++)
-                    {
-                        polygon[s] = polygon[t];
-                    }
+                    for (s = v, t = v + 1; t < nv; s++, t++) polygon[s] = polygon[t];
                     nv--;
 
                     // Reset error detection counter
@@ -105,15 +100,15 @@ namespace VelcroPhysics.Tools.Triangulation.FlipCode
         private static bool InsideTriangle(ref Vector2 a, ref Vector2 b, ref Vector2 c, ref Vector2 p)
         {
             //A cross bp
-            float abp = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x);
+            var abp = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x);
 
             //A cross ap
-            float aap = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+            var aap = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
 
             //b cross cp
-            float bcp = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x);
+            var bcp = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x);
 
-            return ((abp >= 0.0f) && (bcp >= 0.0f) && (aap >= 0.0f));
+            return abp >= 0.0f && bcp >= 0.0f && aap >= 0.0f;
         }
 
         /// <summary>
@@ -132,12 +127,12 @@ namespace VelcroPhysics.Tools.Triangulation.FlipCode
             if (Settings.Epsilon > MathUtils.Area(ref _tmpA, ref _tmpB, ref _tmpC))
                 return false;
 
-            for (int p = 0; p < n; p++)
+            for (var p = 0; p < n; p++)
             {
-                if ((p == u) || (p == v) || (p == w))
+                if (p == u || p == v || p == w)
                     continue;
 
-                Vector2 point = contour[V[p]];
+                var point = contour[V[p]];
 
                 if (InsideTriangle(ref _tmpA, ref _tmpB, ref _tmpC, ref point))
                     return false;

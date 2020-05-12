@@ -36,7 +36,8 @@ namespace VelcroPhysics.Collision.Shapes
         /// <returns></returns>
         public static bool operator ==(MassData left, MassData right)
         {
-            return left.Area == right.Area && left.Mass == right.Mass && left.Centroid == right.Centroid && left.Inertia == right.Inertia;
+            return left.Area == right.Area && left.Mass == right.Mass && left.Centroid == right.Centroid &&
+                   left.Inertia == right.Inertia;
         }
 
         /// <summary>
@@ -63,14 +64,14 @@ namespace VelcroPhysics.Collision.Shapes
             if (obj.GetType() != typeof(MassData))
                 return false;
 
-            return Equals((MassData)obj);
+            return Equals((MassData) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                int result = Area.GetHashCode();
+                var result = Area.GetHashCode();
                 result = (result * 397) ^ Centroid.GetHashCode();
                 result = (result * 397) ^ Inertia.GetHashCode();
                 result = (result * 397) ^ Mass.GetHashCode();

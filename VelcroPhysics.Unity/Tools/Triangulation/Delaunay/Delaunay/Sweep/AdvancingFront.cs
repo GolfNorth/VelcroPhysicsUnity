@@ -43,7 +43,6 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
     /**
      * @author Thomas Åhlen (thahlen@gmail.com)
      */
-
     internal class AdvancingFront
     {
         public AdvancingFrontNode Head;
@@ -71,13 +70,14 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            AdvancingFrontNode node = Head;
+            var sb = new StringBuilder();
+            var node = Head;
             while (node != Tail)
             {
                 sb.Append(node.Point.X).Append("->");
                 node = node.Next;
             }
+
             sb.Append(Tail.Point.X);
             return sb.ToString();
         }
@@ -102,7 +102,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 
         private AdvancingFrontNode LocateNode(float x)
         {
-            AdvancingFrontNode node = FindSearchNode(x);
+            var node = FindSearchNode(x);
             if (x < node.Value)
             {
                 while ((node = node.Prev) != null)
@@ -121,6 +121,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
                         return node.Prev;
                     }
             }
+
             return null;
         }
 
@@ -129,9 +130,9 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         /// </summary>
         public AdvancingFrontNode LocatePoint(TriangulationPoint point)
         {
-            float px = point.X;
-            AdvancingFrontNode node = FindSearchNode(px);
-            float nx = node.Point.X;
+            var px = point.X;
+            var node = FindSearchNode(px);
+            var nx = node.Point.X;
 
             if (px == nx)
             {
@@ -139,41 +140,28 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
                 {
                     // We might have two nodes with same x value for a short time
                     if (point == node.Prev.Point)
-                    {
                         node = node.Prev;
-                    }
                     else if (point == node.Next.Point)
-                    {
                         node = node.Next;
-                    }
                     else
-                    {
                         throw new Exception("Failed to find Node for given afront point");
 
-                        //node = null;
-                    }
+                    //node = null;
                 }
             }
             else if (px < nx)
             {
                 while ((node = node.Prev) != null)
-                {
                     if (point == node.Point)
-                    {
                         break;
-                    }
-                }
             }
             else
             {
                 while ((node = node.Next) != null)
-                {
                     if (point == node.Point)
-                    {
                         break;
-                    }
-                }
             }
+
             Search = node;
             return node;
         }

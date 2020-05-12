@@ -22,13 +22,13 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             if (vertices.Count <= 3)
                 return vertices;
 
-            Vertices simplified = new Vertices(vertices.Count);
+            var simplified = new Vertices(vertices.Count);
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (var i = 0; i < vertices.Count; i++)
             {
-                Vector2 prev = vertices.PreviousVertex(i);
-                Vector2 current = vertices[i];
-                Vector2 next = vertices.NextVertex(i);
+                var prev = vertices.PreviousVertex(i);
+                var current = vertices[i];
+                var next = vertices.NextVertex(i);
 
                 //If they collinear, continue
                 if (MathUtils.IsCollinear(ref prev, ref current, ref next, collinearityTolerance))
@@ -51,39 +51,37 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             if (vertices.Count <= 3)
                 return vertices;
 
-            bool[] usePoint = new bool[vertices.Count];
+            var usePoint = new bool[vertices.Count];
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (var i = 0; i < vertices.Count; i++)
                 usePoint[i] = true;
 
             SimplifySection(vertices, 0, vertices.Count - 1, usePoint, distanceTolerance);
 
-            Vertices simplified = new Vertices(vertices.Count);
+            var simplified = new Vertices(vertices.Count);
 
-            for (int i = 0; i < vertices.Count; i++)
-            {
+            for (var i = 0; i < vertices.Count; i++)
                 if (usePoint[i])
                     simplified.Add(vertices[i]);
-            }
 
             return simplified;
         }
 
         private static void SimplifySection(Vertices vertices, int i, int j, bool[] usePoint, float distanceTolerance)
         {
-            if ((i + 1) == j)
+            if (i + 1 == j)
                 return;
 
-            Vector2 a = vertices[i];
-            Vector2 b = vertices[j];
+            var a = vertices[i];
+            var b = vertices[j];
 
-            float maxDistance = -1.0f;
-            int maxIndex = i;
-            for (int k = i + 1; k < j; k++)
+            var maxDistance = -1.0f;
+            var maxIndex = i;
+            for (var k = i + 1; k < j; k++)
             {
-                Vector2 point = vertices[k];
+                var point = vertices[k];
 
-                float distance = LineUtils.DistanceBetweenPointAndLineSegment(ref point, ref a, ref b);
+                var distance = LineUtils.DistanceBetweenPointAndLineSegment(ref point, ref a, ref b);
 
                 if (distance > maxDistance)
                 {
@@ -94,10 +92,7 @@ namespace VelcroPhysics.Tools.PolygonManipulation
 
             if (maxDistance <= distanceTolerance)
             {
-                for (int k = i + 1; k < j; k++)
-                {
-                    usePoint[k] = false;
-                }
+                for (var k = i + 1; k < j; k++) usePoint[k] = false;
             }
             else
             {
@@ -118,22 +113,22 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             if (vertices.Count <= 3)
                 return vertices; //Can't do anything useful here to a triangle
 
-            bool[] mergeMe = new bool[vertices.Count];
-            int newNVertices = vertices.Count;
+            var mergeMe = new bool[vertices.Count];
+            var newNVertices = vertices.Count;
 
             //Gather points to process
-            for (int i = 0; i < vertices.Count; ++i)
+            for (var i = 0; i < vertices.Count; ++i)
             {
-                int lower = i == 0 ? vertices.Count - 1 : i - 1;
-                int middle = i;
-                int upper = i == vertices.Count - 1 ? 0 : i + 1;
+                var lower = i == 0 ? vertices.Count - 1 : i - 1;
+                var middle = i;
+                var upper = i == vertices.Count - 1 ? 0 : i + 1;
 
-                float dx0 = vertices[middle].x - vertices[lower].x;
-                float dy0 = vertices[middle].y - vertices[lower].y;
-                float dx1 = vertices[upper].x - vertices[middle].x;
-                float dy1 = vertices[upper].y - vertices[middle].y;
-                float norm0 = (float)Mathf.Sqrt(dx0 * dx0 + dy0 * dy0);
-                float norm1 = (float)Mathf.Sqrt(dx1 * dx1 + dy1 * dy1);
+                var dx0 = vertices[middle].x - vertices[lower].x;
+                var dy0 = vertices[middle].y - vertices[lower].y;
+                var dx1 = vertices[upper].x - vertices[middle].x;
+                var dy1 = vertices[upper].y - vertices[middle].y;
+                var norm0 = Mathf.Sqrt(dx0 * dx0 + dy0 * dy0);
+                var norm1 = Mathf.Sqrt(dx1 * dx1 + dy1 * dy1);
 
                 if (!(norm0 > 0.0f && norm1 > 0.0f) && newNVertices > 3)
                 {
@@ -146,8 +141,8 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                 dy0 /= norm0;
                 dx1 /= norm1;
                 dy1 /= norm1;
-                float cross = dx0 * dy1 - dx1 * dy0;
-                float dot = dx0 * dx1 + dy0 * dy1;
+                var cross = dx0 * dy1 - dx1 * dy0;
+                var dot = dx0 * dx1 + dy0 * dy1;
 
                 if (Mathf.Abs(cross) < tolerance && dot > 0 && newNVertices > 3)
                 {
@@ -155,18 +150,20 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                     --newNVertices;
                 }
                 else
+                {
                     mergeMe[i] = false;
+                }
             }
 
             if (newNVertices == vertices.Count || newNVertices == 0)
                 return vertices;
 
-            int currIndex = 0;
+            var currIndex = 0;
 
             //Copy the vertices to a new list and clear the old
-            Vertices newVertices = new Vertices(newNVertices);
+            var newVertices = new Vertices(newNVertices);
 
-            for (int i = 0; i < vertices.Count; ++i)
+            for (var i = 0; i < vertices.Count; ++i)
             {
                 if (mergeMe[i] || currIndex == newNVertices)
                     continue;
@@ -186,12 +183,9 @@ namespace VelcroPhysics.Tools.PolygonManipulation
         /// <param name="vertices">The vertices.</param>
         public static Vertices MergeIdenticalPoints(Vertices vertices)
         {
-            HashSet<Vector2> unique = new HashSet<Vector2>();
+            var unique = new HashSet<Vector2>();
 
-            foreach (Vector2 vertex in vertices)
-            {
-                unique.Add(vertex);
-            }
+            foreach (var vertex in vertices) unique.Add(vertex);
 
             return new Vertices(unique);
         }
@@ -206,14 +200,14 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             if (vertices.Count <= 3)
                 return vertices;
 
-            float distance2 = distance * distance;
+            var distance2 = distance * distance;
 
-            Vertices simplified = new Vertices(vertices.Count);
+            var simplified = new Vertices(vertices.Count);
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (var i = 0; i < vertices.Count; i++)
             {
-                Vector2 current = vertices[i];
-                Vector2 next = vertices.NextVertex(i);
+                var current = vertices[i];
+                var next = vertices.NextVertex(i);
 
                 //If they are closer than the distance, continue
                 if ((next - current).sqrMagnitude <= distance2)
@@ -239,9 +233,9 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             if (nth == 0)
                 return vertices;
 
-            Vertices simplified = new Vertices(vertices.Count);
+            var simplified = new Vertices(vertices.Count);
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (var i = 0; i < vertices.Count; i++)
             {
                 if (i % nth == 0)
                     continue;
@@ -269,13 +263,13 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             if (areaTolerance < 0)
                 throw new ArgumentOutOfRangeException(nameof(areaTolerance), "must be equal to or greater than zero.");
 
-            Vertices simplified = new Vertices(vertices.Count);
+            var simplified = new Vertices(vertices.Count);
             Vector2 v3;
-            Vector2 v1 = vertices[vertices.Count - 2];
-            Vector2 v2 = vertices[vertices.Count - 1];
+            var v1 = vertices[vertices.Count - 2];
+            var v2 = vertices[vertices.Count - 1];
             areaTolerance *= 2;
 
-            for (int i = 0; i < vertices.Count; ++i, v2 = v3)
+            for (var i = 0; i < vertices.Count; ++i, v2 = v3)
             {
                 v3 = i == vertices.Count - 1 ? simplified[0] : vertices[i];
 

@@ -35,6 +35,8 @@ namespace VelcroPhysics.Templates.Joints
         /// </summary>
         public object UserData { get; set; }
 
-        public virtual void SetDefaults() { }
+        public virtual void SetDefaults()
+        {
+        }
     }
 }

@@ -30,10 +30,10 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
 
         public override void ApplyForce(float dt, float strength)
         {
-            foreach (Body body in World.BodyList)
+            foreach (var body in World.BodyList)
             {
                 //TODO: Consider Force Type
-                float decayMultiplier = GetDecayMultiplier(body);
+                var decayMultiplier = GetDecayMultiplier(body);
 
                 if (decayMultiplier != 0)
                 {
@@ -59,7 +59,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
                     // Calculate random Variation
                     if (Variation != 0)
                     {
-                        float strengthVariation = (float)Random.value * MathUtils.Clamp(Variation, 0, 1);
+                        var strengthVariation = Random.value * MathUtils.Clamp(Variation, 0, 1);
                         forceVector.Normalize();
                         body.ApplyForce(forceVector * strength * decayMultiplier * strengthVariation);
                     }

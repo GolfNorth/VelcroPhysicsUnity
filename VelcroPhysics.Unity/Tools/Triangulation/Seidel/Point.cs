@@ -52,10 +52,10 @@
 
         public float Orient2D(Point pb, Point pc)
         {
-            float acx = X - pc.X;
-            float bcx = pb.X - pc.X;
-            float acy = Y - pc.Y;
-            float bcy = pb.Y - pc.Y;
+            var acx = X - pc.X;
+            var bcx = pb.X - pc.X;
+            var acy = Y - pc.Y;
+            var bcy = pb.Y - pc.Y;
             return acx * bcy - acy * bcx;
         }
     }

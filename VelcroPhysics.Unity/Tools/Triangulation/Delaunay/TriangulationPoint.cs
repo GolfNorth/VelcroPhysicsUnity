@@ -50,20 +50,17 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
 
         public float Xf
         {
-            get { return (float)X; }
-            set { X = value; }
+            get => X;
+            set => X = value;
         }
 
         public float Yf
         {
-            get { return (float)Y; }
-            set { Y = value; }
+            get => Y;
+            set => Y = value;
         }
 
-        public bool HasEdges
-        {
-            get { return Edges != null; }
-        }
+        public bool HasEdges => Edges != null;
 
         public override string ToString()
         {
@@ -72,10 +69,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
 
         public void AddEdge(DTSweepConstraint e)
         {
-            if (Edges == null)
-            {
-                Edges = new List<DTSweepConstraint>();
-            }
+            if (Edges == null) Edges = new List<DTSweepConstraint>();
             Edges.Add(e);
         }
     }

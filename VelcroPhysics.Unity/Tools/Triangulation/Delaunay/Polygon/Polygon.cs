@@ -74,39 +74,31 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
         /// Create a polygon from a list of at least 3 points with no duplicates.
         /// </summary>
         /// <param name="points">A list of unique points.</param>
-        public Polygon(IEnumerable<PolygonPoint> points) : this((points as IList<PolygonPoint>) ?? points.ToArray()) { }
-
-        public Polygon() { }
-
-        public IList<Polygon> Holes
+        public Polygon(IEnumerable<PolygonPoint> points) : this(points as IList<PolygonPoint> ?? points.ToArray())
         {
-            get { return _holes; }
         }
+
+        public Polygon()
+        {
+        }
+
+        public IList<Polygon> Holes => _holes;
 
         public void AddSteinerPoint(TriangulationPoint point)
         {
-            if (_steinerPoints == null)
-            {
-                _steinerPoints = new List<TriangulationPoint>();
-            }
+            if (_steinerPoints == null) _steinerPoints = new List<TriangulationPoint>();
             _steinerPoints.Add(point);
         }
 
         public void AddSteinerPoints(List<TriangulationPoint> points)
         {
-            if (_steinerPoints == null)
-            {
-                _steinerPoints = new List<TriangulationPoint>();
-            }
+            if (_steinerPoints == null) _steinerPoints = new List<TriangulationPoint>();
             _steinerPoints.AddRange(points);
         }
 
         public void ClearSteinerPoints()
         {
-            if (_steinerPoints != null)
-            {
-                _steinerPoints.Clear();
-            }
+            if (_steinerPoints != null) _steinerPoints.Clear();
         }
 
         /// <summary>
@@ -131,7 +123,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
         public void InsertPointAfter(PolygonPoint point, PolygonPoint newPoint)
         {
             // Validate that 
-            int index = _points.IndexOf(point);
+            var index = _points.IndexOf(point);
             if (index == -1)
                 throw new ArgumentException(
                     "Tried to insert a point into a Polygon after a point not belonging to the Polygon", nameof(point));
@@ -149,7 +141,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
         public void AddPoints(IEnumerable<PolygonPoint> list)
         {
             PolygonPoint first;
-            foreach (PolygonPoint p in list)
+            foreach (var p in list)
             {
                 p.Previous = _last;
                 if (_last != null)
@@ -157,10 +149,12 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
                     p.Next = _last.Next;
                     _last.Next = p;
                 }
+
                 _last = p;
                 _points.Add(p);
             }
-            first = (PolygonPoint)_points[0];
+
+            first = (PolygonPoint) _points[0];
             _last.Next = first;
             first.Previous = _last;
         }
@@ -194,20 +188,11 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
 
         #region Triangulatable Members
 
-        public TriangulationMode TriangulationMode
-        {
-            get { return TriangulationMode.Polygon; }
-        }
+        public TriangulationMode TriangulationMode => TriangulationMode.Polygon;
 
-        public IList<TriangulationPoint> Points
-        {
-            get { return _points; }
-        }
+        public IList<TriangulationPoint> Points => _points;
 
-        public IList<DelaunayTriangle> Triangles
-        {
-            get { return _triangles; }
-        }
+        public IList<DelaunayTriangle> Triangles => _triangles;
 
         public void AddTriangle(DelaunayTriangle t)
         {
@@ -232,40 +217,25 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
         public void PrepareTriangulation(TriangulationContext tcx)
         {
             if (_triangles == null)
-            {
                 _triangles = new List<DelaunayTriangle>(_points.Count);
-            }
             else
-            {
                 _triangles.Clear();
-            }
 
             // Outer constraints
-            for (int i = 0; i < _points.Count - 1; i++)
-            {
-                tcx.NewConstraint(_points[i], _points[i + 1]);
-            }
+            for (var i = 0; i < _points.Count - 1; i++) tcx.NewConstraint(_points[i], _points[i + 1]);
             tcx.NewConstraint(_points[0], _points[_points.Count - 1]);
             tcx.Points.AddRange(_points);
 
             // Hole constraints
             if (_holes != null)
-            {
-                foreach (Polygon p in _holes)
+                foreach (var p in _holes)
                 {
-                    for (int i = 0; i < p._points.Count - 1; i++)
-                    {
-                        tcx.NewConstraint(p._points[i], p._points[i + 1]);
-                    }
+                    for (var i = 0; i < p._points.Count - 1; i++) tcx.NewConstraint(p._points[i], p._points[i + 1]);
                     tcx.NewConstraint(p._points[0], p._points[p._points.Count - 1]);
                     tcx.Points.AddRange(p._points);
                 }
-            }
 
-            if (_steinerPoints != null)
-            {
-                tcx.Points.AddRange(_steinerPoints);
-            }
+            if (_steinerPoints != null) tcx.Points.AddRange(_steinerPoints);
         }
 
         #endregion

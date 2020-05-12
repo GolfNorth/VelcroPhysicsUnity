@@ -20,7 +20,9 @@ namespace VelcroPhysics.Shared
         public Vector2 UpperBound;
 
         public AABB(Vector2 min, Vector2 max)
-            : this(ref min, ref max) { }
+            : this(ref min, ref max)
+        {
+        }
 
         public AABB(Vector2 center, float width, float height)
             : this(center - new Vector2(width / 2, height / 2), center + new Vector2(width / 2, height / 2))
@@ -54,8 +56,8 @@ namespace VelcroPhysics.Shared
         {
             get
             {
-                float wx = UpperBound.x - LowerBound.x;
-                float wy = UpperBound.y - LowerBound.y;
+                var wx = UpperBound.x - LowerBound.x;
+                var wy = UpperBound.y - LowerBound.y;
                 return 2.0f * (wx + wy);
             }
         }
@@ -68,7 +70,7 @@ namespace VelcroPhysics.Shared
         {
             get
             {
-                Vertices vertices = new Vertices(4);
+                var vertices = new Vertices(4);
                 vertices.Add(UpperBound);
                 vertices.Add(new Vector2(UpperBound.x, LowerBound.y));
                 vertices.Add(LowerBound);
@@ -105,8 +107,8 @@ namespace VelcroPhysics.Shared
         /// </returns>
         public bool IsValid()
         {
-            Vector2 d = UpperBound - LowerBound;
-            bool valid = d.x >= 0.0f && d.y >= 0.0f;
+            var d = UpperBound - LowerBound;
+            var valid = d.x >= 0.0f && d.y >= 0.0f;
             return valid && LowerBound.IsValid() && UpperBound.IsValid();
         }
 
@@ -140,7 +142,7 @@ namespace VelcroPhysics.Shared
         /// </returns>
         public bool Contains(ref AABB aabb)
         {
-            bool result = LowerBound.x <= aabb.LowerBound.x;
+            var result = LowerBound.x <= aabb.LowerBound.x;
             result = result && LowerBound.y <= aabb.LowerBound.y;
             result = result && aabb.UpperBound.x <= UpperBound.x;
             result = result && aabb.UpperBound.y <= UpperBound.y;
@@ -157,8 +159,8 @@ namespace VelcroPhysics.Shared
         public bool Contains(ref Vector2 point)
         {
             //using epsilon to try and guard against float rounding errors.
-            return (point.x > (LowerBound.x + float.Epsilon) && point.x < (UpperBound.x - float.Epsilon) &&
-                    (point.y > (LowerBound.y + float.Epsilon) && point.y < (UpperBound.y - float.Epsilon)));
+            return point.x > LowerBound.x + float.Epsilon && point.x < UpperBound.x - float.Epsilon &&
+                   point.y > LowerBound.y + float.Epsilon && point.y < UpperBound.y - float.Epsilon;
         }
 
         /// <summary>
@@ -169,10 +171,10 @@ namespace VelcroPhysics.Shared
         /// <returns>True if they are overlapping.</returns>
         public static bool TestOverlap(ref AABB a, ref AABB b)
         {
-            Vector2 d1 = b.LowerBound - a.UpperBound;
-            Vector2 d2 = a.LowerBound - b.UpperBound;
+            var d1 = b.LowerBound - a.UpperBound;
+            var d2 = a.LowerBound - b.UpperBound;
 
-            return (d1.x <= 0) && (d1.y <= 0) && (d2.x <= 0) && (d2.y <= 0);
+            return d1.x <= 0 && d1.y <= 0 && d2.x <= 0 && d2.y <= 0;
         }
 
         /// <summary>
@@ -187,40 +189,37 @@ namespace VelcroPhysics.Shared
 
             output = new RayCastOutput();
 
-            float tmin = -Settings.MaxFloat;
-            float tmax = Settings.MaxFloat;
+            var tmin = -Settings.MaxFloat;
+            var tmax = Settings.MaxFloat;
 
-            Vector2 p = input.Point1;
-            Vector2 d = input.Point2 - input.Point1;
-            Vector2 absD = MathUtils.Abs(d);
+            var p = input.Point1;
+            var d = input.Point2 - input.Point1;
+            var absD = MathUtils.Abs(d);
 
-            Vector2 normal = Vector2.zero;
+            var normal = Vector2.zero;
 
-            for (int i = 0; i < 2; ++i)
+            for (var i = 0; i < 2; ++i)
             {
-                float absD_i = i == 0 ? absD.x : absD.y;
-                float lowerBound_i = i == 0 ? LowerBound.x : LowerBound.y;
-                float upperBound_i = i == 0 ? UpperBound.x : UpperBound.y;
-                float p_i = i == 0 ? p.x : p.y;
+                var absD_i = i == 0 ? absD.x : absD.y;
+                var lowerBound_i = i == 0 ? LowerBound.x : LowerBound.y;
+                var upperBound_i = i == 0 ? UpperBound.x : UpperBound.y;
+                var p_i = i == 0 ? p.x : p.y;
 
                 if (absD_i < Settings.Epsilon)
                 {
                     // Parallel.
-                    if (p_i < lowerBound_i || upperBound_i < p_i)
-                    {
-                        return false;
-                    }
+                    if (p_i < lowerBound_i || upperBound_i < p_i) return false;
                 }
                 else
                 {
-                    float d_i = i == 0 ? d.x : d.y;
+                    var d_i = i == 0 ? d.x : d.y;
 
-                    float inv_d = 1.0f / d_i;
-                    float t1 = (lowerBound_i - p_i) * inv_d;
-                    float t2 = (upperBound_i - p_i) * inv_d;
+                    var inv_d = 1.0f / d_i;
+                    var t1 = (lowerBound_i - p_i) * inv_d;
+                    var t2 = (upperBound_i - p_i) * inv_d;
 
                     // Sign of the normal vector.
-                    float s = -1.0f;
+                    var s = -1.0f;
 
                     if (t1 > t2)
                     {
@@ -232,13 +231,9 @@ namespace VelcroPhysics.Shared
                     if (t1 > tmin)
                     {
                         if (i == 0)
-                        {
                             normal.x = s;
-                        }
                         else
-                        {
                             normal.y = s;
-                        }
 
                         tmin = t1;
                     }
@@ -246,19 +241,13 @@ namespace VelcroPhysics.Shared
                     // Pull the max down
                     tmax = Mathf.Min(tmax, t2);
 
-                    if (tmin > tmax)
-                    {
-                        return false;
-                    }
+                    if (tmin > tmax) return false;
                 }
             }
 
             // Does the ray start inside the box?
             // Does the ray intersect beyond the max fraction?
-            if (doInteriorCheck && (tmin < 0.0f || input.MaxFraction < tmin))
-            {
-                return false;
-            }
+            if (doInteriorCheck && (tmin < 0.0f || input.MaxFraction < tmin)) return false;
 
             // Intersection.
             output.Fraction = tmin;

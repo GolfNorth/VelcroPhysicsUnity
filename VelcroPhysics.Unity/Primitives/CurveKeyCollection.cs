@@ -51,7 +51,7 @@ namespace Microsoft.Xna.Framework
 
         public CurveKey this[int index]
         {
-            get { return innerlist[index]; }
+            get => innerlist[index];
             set
             {
                 if (value == null)
@@ -61,7 +61,9 @@ namespace Microsoft.Xna.Framework
                     throw new IndexOutOfRangeException();
 
                 if (innerlist[index].Position == value.Position)
+                {
                     innerlist[index] = value;
+                }
                 else
                 {
                     innerlist.RemoveAt(index);
@@ -70,15 +72,9 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-        public int Count
-        {
-            get { return innerlist.Count; }
-        }
+        public int Count => innerlist.Count;
 
-        public bool IsReadOnly
-        {
-            get { return isReadOnly; }
-        }
+        public bool IsReadOnly => isReadOnly;
 
         #endregion Properties
 
@@ -96,7 +92,7 @@ namespace Microsoft.Xna.Framework
         public void Add(CurveKey item)
         {
             if (item == null)
-                throw new ArgumentNullException("Value cannot be null.", (Exception)null);
+                throw new ArgumentNullException("Value cannot be null.", (Exception) null);
 
             if (innerlist.Count == 0)
             {
@@ -104,14 +100,12 @@ namespace Microsoft.Xna.Framework
                 return;
             }
 
-            for (int i = 0; i < innerlist.Count; i++)
-            {
+            for (var i = 0; i < innerlist.Count; i++)
                 if (item.Position < innerlist[i].Position)
                 {
                     innerlist.Insert(i, item);
                     return;
                 }
-            }
 
             innerlist.Add(item);
         }
@@ -148,8 +142,8 @@ namespace Microsoft.Xna.Framework
 
         public CurveKeyCollection Clone()
         {
-            CurveKeyCollection ckc = new CurveKeyCollection();
-            foreach (CurveKey key in innerlist)
+            var ckc = new CurveKeyCollection();
+            foreach (var key in innerlist)
                 ckc.Add(key);
             return ckc;
         }
@@ -166,7 +160,7 @@ namespace Microsoft.Xna.Framework
             else
                 throw new ArgumentOutOfRangeException(
                     "Index was out of range. Must be non-negative and less than the size of the collection.\r\nParameter name: index",
-                    (Exception)null);
+                    (Exception) null);
         }
 
         #endregion Public Methods

@@ -10,7 +10,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class WeldJointTemplate : JointTemplate
     {
-        public WeldJointTemplate() : base(JointType.Weld) { }
+        public WeldJointTemplate() : base(JointType.Weld)
+        {
+        }
 
         /// <summary>
         /// The damping ratio. 0 = no damping, 1 = critical damping.

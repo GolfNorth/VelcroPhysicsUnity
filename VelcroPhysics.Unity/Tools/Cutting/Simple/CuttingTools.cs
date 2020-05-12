@@ -20,12 +20,13 @@ namespace VelcroPhysics.Tools.Cutting.Simple
         /// <param name="exitPoint">The exit point - The end point</param>
         /// <param name="first">The first collection of vertexes</param>
         /// <param name="second">The second collection of vertexes</param>
-        public static void SplitShape(Fixture fixture, Vector2 entryPoint, Vector2 exitPoint, out Vertices first, out Vertices second)
+        public static void SplitShape(Fixture fixture, Vector2 entryPoint, Vector2 exitPoint, out Vertices first,
+            out Vertices second)
         {
-            Vector2 localEntryPoint = fixture.Body.GetLocalPoint(ref entryPoint);
-            Vector2 localExitPoint = fixture.Body.GetLocalPoint(ref exitPoint);
+            var localEntryPoint = fixture.Body.GetLocalPoint(ref entryPoint);
+            var localExitPoint = fixture.Body.GetLocalPoint(ref exitPoint);
 
-            PolygonShape shape = fixture.Shape as PolygonShape;
+            var shape = fixture.Shape as PolygonShape;
 
             //We can only cut polygons at the moment
             if (shape == null)
@@ -36,7 +37,7 @@ namespace VelcroPhysics.Tools.Cutting.Simple
             }
 
             //Offset the entry and exit points if they are too close to the vertices
-            foreach (Vector2 vertex in shape.Vertices)
+            foreach (var vertex in shape.Vertices)
             {
                 if (vertex.Equals(localEntryPoint))
                     localEntryPoint -= new Vector2(0, Settings.Epsilon);
@@ -45,22 +46,20 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                     localExitPoint += new Vector2(0, Settings.Epsilon);
             }
 
-            Vertices vertices = new Vertices(shape.Vertices);
-            Vertices[] newPolygon = new Vertices[2];
+            var vertices = new Vertices(shape.Vertices);
+            var newPolygon = new Vertices[2];
 
-            for (int i = 0; i < newPolygon.Length; i++)
-            {
-                newPolygon[i] = new Vertices(vertices.Count);
-            }
+            for (var i = 0; i < newPolygon.Length; i++) newPolygon[i] = new Vertices(vertices.Count);
 
-            int[] cutAdded = { -1, -1 };
-            int last = -1;
-            for (int i = 0; i < vertices.Count; i++)
+            int[] cutAdded = {-1, -1};
+            var last = -1;
+            for (var i = 0; i < vertices.Count; i++)
             {
                 int n;
 
                 //Find out if this vertex is on the old or new shape.
-                if (Vector2.Dot(MathUtils.Cross(localExitPoint - localEntryPoint, 1), vertices[i] - localEntryPoint) > Settings.Epsilon)
+                if (Vector2.Dot(MathUtils.Cross(localExitPoint - localEntryPoint, 1), vertices[i] - localEntryPoint) >
+                    Settings.Epsilon)
                     n = 0;
                 else
                     n = 1;
@@ -75,6 +74,7 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                         newPolygon[last].Add(localExitPoint);
                         newPolygon[last].Add(localEntryPoint);
                     }
+
                     if (last == 1)
                     {
                         Debug.Assert(cutAdded[last] == -1);
@@ -95,6 +95,7 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                 newPolygon[0].Add(localExitPoint);
                 newPolygon[0].Add(localEntryPoint);
             }
+
             if (cutAdded[1] == -1)
             {
                 cutAdded[1] = newPolygon[1].Count;
@@ -102,17 +103,13 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                 newPolygon[1].Add(localExitPoint);
             }
 
-            for (int n = 0; n < 2; n++)
+            for (var n = 0; n < 2; n++)
             {
                 Vector2 offset;
                 if (cutAdded[n] > 0)
-                {
-                    offset = (newPolygon[n][cutAdded[n] - 1] - newPolygon[n][cutAdded[n]]);
-                }
+                    offset = newPolygon[n][cutAdded[n] - 1] - newPolygon[n][cutAdded[n]];
                 else
-                {
-                    offset = (newPolygon[n][newPolygon[n].Count - 1] - newPolygon[n][0]);
-                }
+                    offset = newPolygon[n][newPolygon[n].Count - 1] - newPolygon[n][0];
                 offset.Normalize();
 
                 if (!offset.IsValid())
@@ -121,13 +118,9 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                 newPolygon[n][cutAdded[n]] += Settings.Epsilon * offset;
 
                 if (cutAdded[n] < newPolygon[n].Count - 2)
-                {
-                    offset = (newPolygon[n][cutAdded[n] + 2] - newPolygon[n][cutAdded[n] + 1]);
-                }
+                    offset = newPolygon[n][cutAdded[n] + 2] - newPolygon[n][cutAdded[n] + 1];
                 else
-                {
-                    offset = (newPolygon[n][0] - newPolygon[n][newPolygon[n].Count - 1]);
-                }
+                    offset = newPolygon[n][0] - newPolygon[n][newPolygon[n].Count - 1];
                 offset.Normalize();
 
                 if (!offset.IsValid())
@@ -150,9 +143,9 @@ namespace VelcroPhysics.Tools.Cutting.Simple
         /// <returns>True if the cut was performed.</returns>
         public static bool Cut(World world, Vector2 start, Vector2 end)
         {
-            List<Fixture> fixtures = new List<Fixture>();
-            List<Vector2> entryPoints = new List<Vector2>();
-            List<Vector2> exitPoints = new List<Vector2>();
+            var fixtures = new List<Fixture>();
+            var entryPoints = new List<Vector2>();
+            var exitPoints = new List<Vector2>();
 
             //We don't support cutting when the start or end is inside a shape.
             if (world.TestPoint(start) != null || world.TestPoint(end) != null)
@@ -177,7 +170,7 @@ namespace VelcroPhysics.Tools.Cutting.Simple
             if (entryPoints.Count + exitPoints.Count < 2)
                 return false;
 
-            for (int i = 0; i < fixtures.Count; i++)
+            for (var i = 0; i < fixtures.Count; i++)
             {
                 // can't cut circles or edges yet !
                 if (fixtures[i].Shape.ShapeType != ShapeType.Polygon)
@@ -193,7 +186,8 @@ namespace VelcroPhysics.Tools.Cutting.Simple
                     //Delete the original shape and create two new. Retain the properties of the body.
                     if (first.CheckPolygon() == PolygonError.NoError)
                     {
-                        Body firstFixture = BodyFactory.CreatePolygon(world, first, fixtures[i].Shape.Density, fixtures[i].Body.Position);
+                        var firstFixture = BodyFactory.CreatePolygon(world, first, fixtures[i].Shape.Density,
+                            fixtures[i].Body.Position);
                         firstFixture.Rotation = fixtures[i].Body.Rotation;
                         firstFixture.LinearVelocity = fixtures[i].Body.LinearVelocity;
                         firstFixture.AngularVelocity = fixtures[i].Body.AngularVelocity;
@@ -202,7 +196,8 @@ namespace VelcroPhysics.Tools.Cutting.Simple
 
                     if (second.CheckPolygon() == PolygonError.NoError)
                     {
-                        Body secondFixture = BodyFactory.CreatePolygon(world, second, fixtures[i].Shape.Density, fixtures[i].Body.Position);
+                        var secondFixture = BodyFactory.CreatePolygon(world, second, fixtures[i].Shape.Density,
+                            fixtures[i].Body.Position);
                         secondFixture.Rotation = fixtures[i].Body.Rotation;
                         secondFixture.LinearVelocity = fixtures[i].Body.LinearVelocity;
                         secondFixture.AngularVelocity = fixtures[i].Body.AngularVelocity;

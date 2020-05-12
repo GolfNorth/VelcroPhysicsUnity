@@ -14,19 +14,19 @@ namespace VelcroPhysics.Utilities
             if (start == end)
                 return Vector2.Distance(point, start);
 
-            Vector2 v = end - start;
-            Vector2 w = point - start;
+            var v = end - start;
+            var w = point - start;
 
-            float c1 = Vector2.Dot(w, v);
+            var c1 = Vector2.Dot(w, v);
             if (c1 <= 0)
                 return Vector2.Distance(point, start);
 
-            float c2 = Vector2.Dot(v, v);
+            var c2 = Vector2.Dot(v, v);
             if (c2 <= c1)
                 return Vector2.Distance(point, end);
 
-            float b = c1 / c2;
-            Vector2 pointOnLine = start + v * b;
+            var b = c1 / c2;
+            var pointOnLine = start + v * b;
             return Vector2.Distance(point, pointOnLine);
         }
 
@@ -37,21 +37,22 @@ namespace VelcroPhysics.Utilities
         /// with the point of crossing.
         /// Grazing lines should not return true.
         /// </summary>
-        public static bool LineIntersect2(ref Vector2 a0, ref Vector2 a1, ref Vector2 b0, ref Vector2 b1, out Vector2 intersectionPoint)
+        public static bool LineIntersect2(ref Vector2 a0, ref Vector2 a1, ref Vector2 b0, ref Vector2 b1,
+            out Vector2 intersectionPoint)
         {
             intersectionPoint = Vector2.zero;
 
             if (a0 == b0 || a0 == b1 || a1 == b0 || a1 == b1)
                 return false;
 
-            float x1 = a0.x;
-            float y1 = a0.y;
-            float x2 = a1.x;
-            float y2 = a1.y;
-            float x3 = b0.x;
-            float y3 = b0.y;
-            float x4 = b1.x;
-            float y4 = b1.y;
+            var x1 = a0.x;
+            var y1 = a0.y;
+            var x2 = a1.x;
+            var y2 = a1.y;
+            var x3 = b0.x;
+            var y3 = b0.y;
+            var x4 = b1.x;
+            var y4 = b1.y;
 
             //AABB early exit
             if (Mathf.Max(x1, x2) < Mathf.Min(x3, x4) || Mathf.Max(x3, x4) < Mathf.Min(x1, x2))
@@ -60,21 +61,19 @@ namespace VelcroPhysics.Utilities
             if (Mathf.Max(y1, y2) < Mathf.Min(y3, y4) || Mathf.Max(y3, y4) < Mathf.Min(y1, y2))
                 return false;
 
-            float ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3));
-            float ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3));
-            float denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+            var ua = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+            var ub = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+            var denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
             if (Mathf.Abs(denom) < Settings.Epsilon)
-            {
                 //Lines are too close to parallel to call
                 return false;
-            }
             ua /= denom;
             ub /= denom;
 
-            if ((0 < ua) && (ua < 1) && (0 < ub) && (ub < 1))
+            if (0 < ua && ua < 1 && 0 < ub && ub < 1)
             {
-                intersectionPoint.x = (x1 + ua * (x2 - x1));
-                intersectionPoint.y = (y1 + ua * (y2 - y1));
+                intersectionPoint.x = x1 + ua * (x2 - x1);
+                intersectionPoint.y = y1 + ua * (y2 - y1);
                 return true;
             }
 
@@ -84,14 +83,14 @@ namespace VelcroPhysics.Utilities
         //From Mark Bayazit's convex decomposition algorithm
         public static Vector2 LineIntersect(Vector2 p1, Vector2 p2, Vector2 q1, Vector2 q2)
         {
-            Vector2 i = Vector2.zero;
-            float a1 = p2.y - p1.y;
-            float b1 = p1.x - p2.x;
-            float c1 = a1 * p1.x + b1 * p1.y;
-            float a2 = q2.y - q1.y;
-            float b2 = q1.x - q2.x;
-            float c2 = a2 * q1.x + b2 * q1.x;
-            float det = a1 * b2 - a2 * b1;
+            var i = Vector2.zero;
+            var a1 = p2.y - p1.y;
+            var b1 = p1.x - p2.x;
+            var c1 = a1 * p1.x + b1 * p1.y;
+            var a2 = q2.y - q1.y;
+            var b2 = q1.x - q2.x;
+            var c2 = a2 * q1.x + b2 * q1.x;
+            var det = a1 * b2 - a2 * b1;
 
             if (!MathUtils.FloatEquals(det, 0))
             {
@@ -99,6 +98,7 @@ namespace VelcroPhysics.Utilities
                 i.x = (b2 * c1 - b1 * c2) / det;
                 i.y = (a1 * c2 - a2 * c1) / det;
             }
+
             return i;
         }
 
@@ -132,44 +132,44 @@ namespace VelcroPhysics.Utilities
         /// intersection point be on the second line segment.
         /// </param>
         /// <returns>True if an intersection is detected, false otherwise.</returns>
-        public static bool LineIntersect(ref Vector2 point1, ref Vector2 point2, ref Vector2 point3, ref Vector2 point4, bool firstIsSegment, bool secondIsSegment, out Vector2 point)
+        public static bool LineIntersect(ref Vector2 point1, ref Vector2 point2, ref Vector2 point3, ref Vector2 point4,
+            bool firstIsSegment, bool secondIsSegment, out Vector2 point)
         {
             point = new Vector2();
 
             // these are reused later.
             // each lettered sub-calculation is used twice, except
             // for b and d, which are used 3 times
-            float a = point4.y - point3.y;
-            float b = point2.x - point1.x;
-            float c = point4.x - point3.x;
-            float d = point2.y - point1.y;
+            var a = point4.y - point3.y;
+            var b = point2.x - point1.x;
+            var c = point4.x - point3.x;
+            var d = point2.y - point1.y;
 
             // denominator to solution of linear system
-            float denom = (a * b) - (c * d);
+            var denom = a * b - c * d;
 
             // if denominator is 0, then lines are parallel
             if (!(denom >= -Settings.Epsilon && denom <= Settings.Epsilon))
             {
-                float e = point1.y - point3.y;
-                float f = point1.x - point3.x;
-                float oneOverDenom = 1.0f / denom;
+                var e = point1.y - point3.y;
+                var f = point1.x - point3.x;
+                var oneOverDenom = 1.0f / denom;
 
                 // numerator of first equation
-                float ua = (c * e) - (a * f);
+                var ua = c * e - a * f;
                 ua *= oneOverDenom;
 
                 // check if intersection point of the two lines is on line segment 1
                 if (!firstIsSegment || ua >= 0.0f && ua <= 1.0f)
                 {
                     // numerator of second equation
-                    float ub = (b * e) - (d * f);
+                    var ub = b * e - d * f;
                     ub *= oneOverDenom;
 
                     // check if intersection point of the two lines is on line segment 2
                     // means the line segments intersect, since we know it is on
                     // segment 1 as well.
                     if (!secondIsSegment || ub >= 0.0f && ub <= 1.0f)
-                    {
                         // check if they are coincident (no collision in this case)
                         if (ua != 0f || ub != 0f)
                         {
@@ -178,7 +178,6 @@ namespace VelcroPhysics.Utilities
                             point.y = point1.y + ua * d;
                             return true;
                         }
-                    }
                 }
             }
 
@@ -215,9 +214,11 @@ namespace VelcroPhysics.Utilities
         /// intersection point be on the second line segment.
         /// </param>
         /// <returns>True if an intersection is detected, false otherwise.</returns>
-        public static bool LineIntersect(Vector2 point1, Vector2 point2, Vector2 point3, Vector2 point4, bool firstIsSegment, bool secondIsSegment, out Vector2 intersectionPoint)
+        public static bool LineIntersect(Vector2 point1, Vector2 point2, Vector2 point3, Vector2 point4,
+            bool firstIsSegment, bool secondIsSegment, out Vector2 intersectionPoint)
         {
-            return LineIntersect(ref point1, ref point2, ref point3, ref point4, firstIsSegment, secondIsSegment, out intersectionPoint);
+            return LineIntersect(ref point1, ref point2, ref point3, ref point4, firstIsSegment, secondIsSegment,
+                out intersectionPoint);
         }
 
         /// <summary>
@@ -236,7 +237,8 @@ namespace VelcroPhysics.Utilities
         /// point if an intersection is detected.
         /// </param>
         /// <returns>True if an intersection is detected, false otherwise.</returns>
-        public static bool LineIntersect(ref Vector2 point1, ref Vector2 point2, ref Vector2 point3, ref Vector2 point4, out Vector2 intersectionPoint)
+        public static bool LineIntersect(ref Vector2 point1, ref Vector2 point2, ref Vector2 point3, ref Vector2 point4,
+            out Vector2 intersectionPoint)
         {
             return LineIntersect(ref point1, ref point2, ref point3, ref point4, true, true, out intersectionPoint);
         }
@@ -257,7 +259,8 @@ namespace VelcroPhysics.Utilities
         /// point if an intersection is detected.
         /// </param>
         /// <returns>True if an intersection is detected, false otherwise.</returns>
-        public static bool LineIntersect(Vector2 point1, Vector2 point2, Vector2 point3, Vector2 point4, out Vector2 intersectionPoint)
+        public static bool LineIntersect(Vector2 point1, Vector2 point2, Vector2 point3, Vector2 point4,
+            out Vector2 intersectionPoint)
         {
             return LineIntersect(ref point1, ref point2, ref point3, ref point4, true, true, out intersectionPoint);
         }
@@ -274,15 +277,13 @@ namespace VelcroPhysics.Utilities
         /// <param name="vertices">The vertices, as described above</param>
         public static Vertices LineSegmentVerticesIntersect(ref Vector2 point1, ref Vector2 point2, Vertices vertices)
         {
-            Vertices intersectionPoints = new Vertices();
+            var intersectionPoints = new Vertices();
 
-            for (int i = 0; i < vertices.Count; i++)
+            for (var i = 0; i < vertices.Count; i++)
             {
                 Vector2 point;
                 if (LineIntersect(vertices[i], vertices[vertices.NextIndex(i)], point1, point2, true, true, out point))
-                {
                     intersectionPoints.Add(point);
-                }
             }
 
             return intersectionPoints;

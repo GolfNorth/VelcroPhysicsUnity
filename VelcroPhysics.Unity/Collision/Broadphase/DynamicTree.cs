@@ -60,12 +60,13 @@ namespace VelcroPhysics.Collision.Broadphase
             _nodes = new TreeNode<T>[_nodeCapacity];
 
             // Build a linked list for the free list.
-            for (int i = 0; i < _nodeCapacity - 1; ++i)
+            for (var i = 0; i < _nodeCapacity - 1; ++i)
             {
                 _nodes[i] = new TreeNode<T>();
                 _nodes[i].ParentOrNext = i + 1;
                 _nodes[i].Height = 1;
             }
+
             _nodes[_nodeCapacity - 1] = new TreeNode<T>();
             _nodes[_nodeCapacity - 1].ParentOrNext = NullNode;
             _nodes[_nodeCapacity - 1].Height = 1;
@@ -79,10 +80,7 @@ namespace VelcroPhysics.Collision.Broadphase
         {
             get
             {
-                if (_root == NullNode)
-                {
-                    return 0;
-                }
+                if (_root == NullNode) return 0;
 
                 return _nodes[_root].Height;
             }
@@ -95,23 +93,18 @@ namespace VelcroPhysics.Collision.Broadphase
         {
             get
             {
-                if (_root == NullNode)
-                {
-                    return 0.0f;
-                }
+                if (_root == NullNode) return 0.0f;
 
-                TreeNode<T> root = _nodes[_root];
-                float rootArea = root.AABB.Perimeter;
+                var root = _nodes[_root];
+                var rootArea = root.AABB.Perimeter;
 
-                float totalArea = 0.0f;
-                for (int i = 0; i < _nodeCapacity; ++i)
+                var totalArea = 0.0f;
+                for (var i = 0; i < _nodeCapacity; ++i)
                 {
-                    TreeNode<T> node = _nodes[i];
+                    var node = _nodes[i];
                     if (node.Height < 0)
-                    {
                         // Free node in pool
                         continue;
-                    }
 
                     totalArea += node.AABB.Perimeter;
                 }
@@ -128,20 +121,17 @@ namespace VelcroPhysics.Collision.Broadphase
         {
             get
             {
-                int maxBalance = 0;
-                for (int i = 0; i < _nodeCapacity; ++i)
+                var maxBalance = 0;
+                for (var i = 0; i < _nodeCapacity; ++i)
                 {
-                    TreeNode<T> node = _nodes[i];
-                    if (node.Height <= 1)
-                    {
-                        continue;
-                    }
+                    var node = _nodes[i];
+                    if (node.Height <= 1) continue;
 
                     Debug.Assert(node.IsLeaf() == false);
 
-                    int child1 = node.Child1;
-                    int child2 = node.Child2;
-                    int balance = Mathf.Abs(_nodes[child2].Height - _nodes[child1].Height);
+                    var child1 = node.Child1;
+                    var child2 = node.Child2;
+                    var balance = Mathf.Abs(_nodes[child2].Height - _nodes[child1].Height);
                     maxBalance = Mathf.Max(maxBalance, balance);
                 }
 
@@ -159,10 +149,10 @@ namespace VelcroPhysics.Collision.Broadphase
         /// <returns>Index of the created proxy</returns>
         public int AddProxy(ref AABB aabb, T userData)
         {
-            int proxyId = AllocateNode();
+            var proxyId = AllocateNode();
 
             // Fatten the AABB.
-            Vector2 r = new Vector2(Settings.AABBExtension, Settings.AABBExtension);
+            var r = new Vector2(Settings.AABBExtension, Settings.AABBExtension);
             _nodes[proxyId].AABB.LowerBound = aabb.LowerBound - r;
             _nodes[proxyId].AABB.UpperBound = aabb.UpperBound + r;
             _nodes[proxyId].UserData = userData;
@@ -201,39 +191,28 @@ namespace VelcroPhysics.Collision.Broadphase
 
             Debug.Assert(_nodes[proxyId].IsLeaf());
 
-            if (_nodes[proxyId].AABB.Contains(ref aabb))
-            {
-                return false;
-            }
+            if (_nodes[proxyId].AABB.Contains(ref aabb)) return false;
 
             RemoveLeaf(proxyId);
 
             // Extend AABB.
-            AABB b = aabb;
-            Vector2 r = new Vector2(Settings.AABBExtension, Settings.AABBExtension);
+            var b = aabb;
+            var r = new Vector2(Settings.AABBExtension, Settings.AABBExtension);
             b.LowerBound = b.LowerBound - r;
             b.UpperBound = b.UpperBound + r;
 
             // Predict AABB displacement.
-            Vector2 d = Settings.AABBMultiplier * displacement;
+            var d = Settings.AABBMultiplier * displacement;
 
             if (d.x < 0.0f)
-            {
                 b.LowerBound.x += d.x;
-            }
             else
-            {
                 b.UpperBound.x += d.x;
-            }
 
             if (d.y < 0.0f)
-            {
                 b.LowerBound.y += d.y;
-            }
             else
-            {
                 b.UpperBound.y += d.y;
-            }
 
             _nodes[proxyId].AABB = b;
 
@@ -277,23 +256,17 @@ namespace VelcroPhysics.Collision.Broadphase
 
             while (_queryStack.Count > 0)
             {
-                int nodeId = _queryStack.Pop();
-                if (nodeId == NullNode)
-                {
-                    continue;
-                }
+                var nodeId = _queryStack.Pop();
+                if (nodeId == NullNode) continue;
 
-                TreeNode<T> node = _nodes[nodeId];
+                var node = _nodes[nodeId];
 
                 if (AABB.TestOverlap(ref node.AABB, ref aabb))
                 {
                     if (node.IsLeaf())
                     {
-                        bool proceed = callback(nodeId);
-                        if (proceed == false)
-                        {
-                            return;
-                        }
+                        var proceed = callback(nodeId);
+                        if (proceed == false) return;
                     }
                     else
                     {
@@ -315,24 +288,24 @@ namespace VelcroPhysics.Collision.Broadphase
         /// <param name="input">The ray-cast input data. The ray extends from p1 to p1 + maxFraction * (p2 - p1).</param>
         public void RayCast(Func<RayCastInput, int, float> callback, ref RayCastInput input)
         {
-            Vector2 p1 = input.Point1;
-            Vector2 p2 = input.Point2;
-            Vector2 r = p2 - p1;
+            var p1 = input.Point1;
+            var p2 = input.Point2;
+            var r = p2 - p1;
             Debug.Assert(r.sqrMagnitude > 0.0f);
             r.Normalize();
 
             // v is perpendicular to the segment.
-            Vector2 absV = MathUtils.Abs(new Vector2(-r.y, r.x)); //Velcro: Inlined the 'v' variable
+            var absV = MathUtils.Abs(new Vector2(-r.y, r.x)); //Velcro: Inlined the 'v' variable
 
             // Separating axis for segment (Gino, p80).
             // |dot(v, p1 - c)| > dot(|v|, h)
 
-            float maxFraction = input.MaxFraction;
+            var maxFraction = input.MaxFraction;
 
             // Build a bounding box for the segment.
-            AABB segmentAABB = new AABB();
+            var segmentAABB = new AABB();
             {
-                Vector2 t = p1 + maxFraction * (p2 - p1);
+                var t = p1 + maxFraction * (p2 - p1);
                 segmentAABB.LowerBound = Vector2.Min(p1, t);
                 segmentAABB.UpperBound = Vector2.Max(p1, t);
             }
@@ -342,28 +315,19 @@ namespace VelcroPhysics.Collision.Broadphase
 
             while (_raycastStack.Count > 0)
             {
-                int nodeId = _raycastStack.Pop();
-                if (nodeId == NullNode)
-                {
-                    continue;
-                }
+                var nodeId = _raycastStack.Pop();
+                if (nodeId == NullNode) continue;
 
-                TreeNode<T> node = _nodes[nodeId];
+                var node = _nodes[nodeId];
 
-                if (AABB.TestOverlap(ref node.AABB, ref segmentAABB) == false)
-                {
-                    continue;
-                }
+                if (AABB.TestOverlap(ref node.AABB, ref segmentAABB) == false) continue;
 
                 // Separating axis for segment (Gino, p80).
                 // |dot(v, p1 - c)| > dot(|v|, h)
-                Vector2 c = node.AABB.Center;
-                Vector2 h = node.AABB.Extents;
-                float separation = Mathf.Abs(Vector2.Dot(new Vector2(-r.y, r.x), p1 - c)) - Vector2.Dot(absV, h);
-                if (separation > 0.0f)
-                {
-                    continue;
-                }
+                var c = node.AABB.Center;
+                var h = node.AABB.Extents;
+                var separation = Mathf.Abs(Vector2.Dot(new Vector2(-r.y, r.x), p1 - c)) - Vector2.Dot(absV, h);
+                if (separation > 0.0f) continue;
 
                 if (node.IsLeaf())
                 {
@@ -372,19 +336,17 @@ namespace VelcroPhysics.Collision.Broadphase
                     subInput.Point2 = input.Point2;
                     subInput.MaxFraction = maxFraction;
 
-                    float value = callback(subInput, nodeId);
+                    var value = callback(subInput, nodeId);
 
                     if (value == 0.0f)
-                    {
                         // the client has terminated the raycast.
                         return;
-                    }
 
                     if (value > 0.0f)
                     {
                         // Update segment bounding box.
                         maxFraction = value;
-                        Vector2 t = p1 + maxFraction * (p2 - p1);
+                        var t = p1 + maxFraction * (p2 - p1);
                         segmentAABB.LowerBound = Vector2.Min(p1, t);
                         segmentAABB.UpperBound = Vector2.Max(p1, t);
                     }
@@ -405,19 +367,20 @@ namespace VelcroPhysics.Collision.Broadphase
                 Debug.Assert(_nodeCount == _nodeCapacity);
 
                 // The free list is empty. Rebuild a bigger pool.
-                TreeNode<T>[] oldNodes = _nodes;
+                var oldNodes = _nodes;
                 _nodeCapacity *= 2;
                 _nodes = new TreeNode<T>[_nodeCapacity];
                 Array.Copy(oldNodes, _nodes, _nodeCount);
 
                 // Build a linked list for the free list. The parent
                 // pointer becomes the "next" pointer.
-                for (int i = _nodeCount; i < _nodeCapacity - 1; ++i)
+                for (var i = _nodeCount; i < _nodeCapacity - 1; ++i)
                 {
                     _nodes[i] = new TreeNode<T>();
                     _nodes[i].ParentOrNext = i + 1;
                     _nodes[i].Height = -1;
                 }
+
                 _nodes[_nodeCapacity - 1] = new TreeNode<T>();
                 _nodes[_nodeCapacity - 1].ParentOrNext = NullNode;
                 _nodes[_nodeCapacity - 1].Height = -1;
@@ -425,7 +388,7 @@ namespace VelcroPhysics.Collision.Broadphase
             }
 
             // Peel a node off the free list.
-            int nodeId = _freeList;
+            var nodeId = _freeList;
             _freeList = _nodes[nodeId].ParentOrNext;
             _nodes[nodeId].ParentOrNext = NullNode;
             _nodes[nodeId].Child1 = NullNode;
@@ -456,81 +419,74 @@ namespace VelcroPhysics.Collision.Broadphase
             }
 
             // Find the best sibling for this node
-            AABB leafAABB = _nodes[leaf].AABB;
-            int index = _root;
+            var leafAABB = _nodes[leaf].AABB;
+            var index = _root;
             while (_nodes[index].IsLeaf() == false)
             {
-                int child1 = _nodes[index].Child1;
-                int child2 = _nodes[index].Child2;
+                var child1 = _nodes[index].Child1;
+                var child2 = _nodes[index].Child2;
 
-                float area = _nodes[index].AABB.Perimeter;
+                var area = _nodes[index].AABB.Perimeter;
 
-                AABB combinedAABB = new AABB();
+                var combinedAABB = new AABB();
                 combinedAABB.Combine(ref _nodes[index].AABB, ref leafAABB);
-                float combinedArea = combinedAABB.Perimeter;
+                var combinedArea = combinedAABB.Perimeter;
 
                 // Cost of creating a new parent for this node and the new leaf
-                float cost = 2.0f * combinedArea;
+                var cost = 2.0f * combinedArea;
 
                 // Minimum cost of pushing the leaf further down the tree
-                float inheritanceCost = 2.0f * (combinedArea - area);
+                var inheritanceCost = 2.0f * (combinedArea - area);
 
                 // Cost of descending into child1
                 float cost1;
                 if (_nodes[child1].IsLeaf())
                 {
-                    AABB aabb = new AABB();
+                    var aabb = new AABB();
                     aabb.Combine(ref leafAABB, ref _nodes[child1].AABB);
                     cost1 = aabb.Perimeter + inheritanceCost;
                 }
                 else
                 {
-                    AABB aabb = new AABB();
+                    var aabb = new AABB();
                     aabb.Combine(ref leafAABB, ref _nodes[child1].AABB);
-                    float oldArea = _nodes[child1].AABB.Perimeter;
-                    float newArea = aabb.Perimeter;
-                    cost1 = (newArea - oldArea) + inheritanceCost;
+                    var oldArea = _nodes[child1].AABB.Perimeter;
+                    var newArea = aabb.Perimeter;
+                    cost1 = newArea - oldArea + inheritanceCost;
                 }
 
                 // Cost of descending into child2
                 float cost2;
                 if (_nodes[child2].IsLeaf())
                 {
-                    AABB aabb = new AABB();
+                    var aabb = new AABB();
                     aabb.Combine(ref leafAABB, ref _nodes[child2].AABB);
                     cost2 = aabb.Perimeter + inheritanceCost;
                 }
                 else
                 {
-                    AABB aabb = new AABB();
+                    var aabb = new AABB();
                     aabb.Combine(ref leafAABB, ref _nodes[child2].AABB);
-                    float oldArea = _nodes[child2].AABB.Perimeter;
-                    float newArea = aabb.Perimeter;
+                    var oldArea = _nodes[child2].AABB.Perimeter;
+                    var newArea = aabb.Perimeter;
                     cost2 = newArea - oldArea + inheritanceCost;
                 }
 
                 // Descend according to the minimum cost.
-                if (cost < cost1 && cost1 < cost2)
-                {
-                    break;
-                }
+                if (cost < cost1 && cost1 < cost2) break;
 
                 // Descend
                 if (cost1 < cost2)
-                {
                     index = child1;
-                }
                 else
-                {
                     index = child2;
-                }
             }
 
-            int sibling = index;
+            var sibling = index;
 
             // Create a new parent.
-            int oldParent = _nodes[sibling].ParentOrNext;
-            int newParent = AllocateNode();
+            var oldParent = _nodes[sibling].ParentOrNext;
+            var newParent = AllocateNode();
             _nodes[newParent].ParentOrNext = oldParent;
             _nodes[newParent].UserData = default(T);
             _nodes[newParent].AABB.Combine(ref leafAABB, ref _nodes[sibling].AABB);
@@ -540,13 +496,9 @@ namespace VelcroPhysics.Collision.Broadphase
             {
                 // The sibling was not the root.
                 if (_nodes[oldParent].Child1 == sibling)
-                {
                     _nodes[oldParent].Child1 = newParent;
-                }
                 else
-                {
                     _nodes[oldParent].Child2 = newParent;
-                }
 
                 _nodes[newParent].Child1 = sibling;
                 _nodes[newParent].Child2 = leaf;
@@ -569,8 +521,8 @@ namespace VelcroPhysics.Collision.Broadphase
             {
                 index = Balance(index);
 
-                int child1 = _nodes[index].Child1;
-                int child2 = _nodes[index].Child2;
+                var child1 = _nodes[index].Child1;
+                var child2 = _nodes[index].Child2;
 
                 Debug.Assert(child1 != NullNode);
                 Debug.Assert(child2 != NullNode);
@@ -592,40 +544,32 @@ namespace VelcroPhysics.Collision.Broadphase
                 return;
             }
 
-            int parent = _nodes[leaf].ParentOrNext;
-            int grandParent = _nodes[parent].ParentOrNext;
+            var parent = _nodes[leaf].ParentOrNext;
+            var grandParent = _nodes[parent].ParentOrNext;
             int sibling;
             if (_nodes[parent].Child1 == leaf)
-            {
                 sibling = _nodes[parent].Child2;
-            }
             else
-            {
                 sibling = _nodes[parent].Child1;
-            }
 
             if (grandParent != NullNode)
             {
                 // Destroy parent and connect sibling to grandParent.
                 if (_nodes[grandParent].Child1 == parent)
-                {
                     _nodes[grandParent].Child1 = sibling;
-                }
                 else
-                {
                     _nodes[grandParent].Child2 = sibling;
-                }
                 _nodes[sibling].ParentOrNext = grandParent;
                 FreeNode(parent);
 
                 // Adjust ancestor bounds.
-                int index = grandParent;
+                var index = grandParent;
                 while (index != NullNode)
                 {
                     index = Balance(index);
 
-                    int child1 = _nodes[index].Child1;
-                    int child2 = _nodes[index].Child2;
+                    var child1 = _nodes[index].Child1;
+                    var child2 = _nodes[index].Child2;
 
                     _nodes[index].AABB.Combine(ref _nodes[child1].AABB, ref _nodes[child2].AABB);
                     _nodes[index].Height = 1 + Mathf.Max(_nodes[child1].Height, _nodes[child2].Height);
@@ -652,29 +596,26 @@ namespace VelcroPhysics.Collision.Broadphase
         {
             Debug.Assert(iA != NullNode);
 
-            TreeNode<T> A = _nodes[iA];
-            if (A.IsLeaf() || A.Height < 2)
-            {
-                return iA;
-            }
+            var A = _nodes[iA];
+            if (A.IsLeaf() || A.Height < 2) return iA;
 
-            int iB = A.Child1;
-            int iC = A.Child2;
+            var iB = A.Child1;
+            var iC = A.Child2;
             Debug.Assert(0 <= iB && iB < _nodeCapacity);
             Debug.Assert(0 <= iC && iC < _nodeCapacity);
 
-            TreeNode<T> B = _nodes[iB];
-            TreeNode<T> C = _nodes[iC];
+            var B = _nodes[iB];
+            var C = _nodes[iC];
 
-            int balance = C.Height - B.Height;
+            var balance = C.Height - B.Height;
 
             // Rotate C up
             if (balance > 1)
             {
-                int iF = C.Child1;
-                int iG = C.Child2;
-                TreeNode<T> F = _nodes[iF];
-                TreeNode<T> G = _nodes[iG];
+                var iF = C.Child1;
+                var iG = C.Child2;
+                var F = _nodes[iF];
+                var G = _nodes[iG];
                 Debug.Assert(0 <= iF && iF < _nodeCapacity);
                 Debug.Assert(0 <= iG && iG < _nodeCapacity);
 
@@ -731,10 +672,10 @@ namespace VelcroPhysics.Collision.Broadphase
             // Rotate B up
             if (balance < -1)
             {
-                int iD = B.Child1;
-                int iE = B.Child2;
-                TreeNode<T> D = _nodes[iD];
-                TreeNode<T> E = _nodes[iE];
+                var iD = B.Child1;
+                var iE = B.Child2;
+                var D = _nodes[iD];
+                var E = _nodes[iE];
                 Debug.Assert(0 <= iD && iD < _nodeCapacity);
                 Debug.Assert(0 <= iE && iE < _nodeCapacity);
 
@@ -799,15 +740,12 @@ namespace VelcroPhysics.Collision.Broadphase
         public int ComputeHeight(int nodeId)
         {
             Debug.Assert(0 <= nodeId && nodeId < _nodeCapacity);
-            TreeNode<T> node = _nodes[nodeId];
+            var node = _nodes[nodeId];
 
-            if (node.IsLeaf())
-            {
-                return 0;
-            }
+            if (node.IsLeaf()) return 0;
 
-            int height1 = ComputeHeight(node.Child1);
-            int height2 = ComputeHeight(node.Child2);
+            var height1 = ComputeHeight(node.Child1);
+            var height2 = ComputeHeight(node.Child2);
             return 1 + Mathf.Max(height1, height2);
         }
 
@@ -817,26 +755,20 @@ namespace VelcroPhysics.Collision.Broadphase
         /// <returns>The height of the tree.</returns>
         public int ComputeHeight()
         {
-            int height = ComputeHeight(_root);
+            var height = ComputeHeight(_root);
             return height;
         }
 
         public void ValidateStructure(int index)
         {
-            if (index == NullNode)
-            {
-                return;
-            }
+            if (index == NullNode) return;
 
-            if (index == _root)
-            {
-                Debug.Assert(_nodes[index].ParentOrNext == NullNode);
-            }
+            if (index == _root) Debug.Assert(_nodes[index].ParentOrNext == NullNode);
 
-            TreeNode<T> node = _nodes[index];
+            var node = _nodes[index];
 
-            int child1 = node.Child1;
-            int child2 = node.Child2;
+            var child1 = node.Child1;
+            var child2 = node.Child2;
 
             if (node.IsLeaf())
             {
@@ -858,15 +790,12 @@ namespace VelcroPhysics.Collision.Broadphase
 
         public void ValidateMetrics(int index)
         {
-            if (index == NullNode)
-            {
-                return;
-            }
+            if (index == NullNode) return;
 
-            TreeNode<T> node = _nodes[index];
+            var node = _nodes[index];
 
-            int child1 = node.Child1;
-            int child2 = node.Child2;
+            var child1 = node.Child1;
+            var child2 = node.Child2;
 
             if (node.IsLeaf())
             {
@@ -879,12 +808,12 @@ namespace VelcroPhysics.Collision.Broadphase
             Debug.Assert(0 <= child1 && child1 < _nodeCapacity);
             Debug.Assert(0 <= child2 && child2 < _nodeCapacity);
 
-            int height1 = _nodes[child1].Height;
-            int height2 = _nodes[child2].Height;
-            int height = 1 + Mathf.Max(height1, height2);
+            var height1 = _nodes[child1].Height;
+            var height2 = _nodes[child2].Height;
+            var height = 1 + Mathf.Max(height1, height2);
             Debug.Assert(node.Height == height);
 
-            AABB AABB = new AABB();
+            var AABB = new AABB();
             AABB.Combine(ref _nodes[child1].AABB, ref _nodes[child2].AABB);
 
             Debug.Assert(AABB.LowerBound == node.AABB.LowerBound);
@@ -902,8 +831,8 @@ namespace VelcroPhysics.Collision.Broadphase
             ValidateStructure(_root);
             ValidateMetrics(_root);
 
-            int freeCount = 0;
-            int freeIndex = _freeList;
+            var freeCount = 0;
+            var freeIndex = _freeList;
             while (freeIndex != NullNode)
             {
                 Debug.Assert(0 <= freeIndex && freeIndex < _nodeCapacity);
@@ -921,17 +850,15 @@ namespace VelcroPhysics.Collision.Broadphase
         /// </summary>
         public void RebuildBottomUp()
         {
-            int[] nodes = new int[_nodeCount];
-            int count = 0;
+            var nodes = new int[_nodeCount];
+            var count = 0;
 
             // Build array of leaves. Free the rest.
-            for (int i = 0; i < _nodeCapacity; ++i)
+            for (var i = 0; i < _nodeCapacity; ++i)
             {
                 if (_nodes[i].Height < 0)
-                {
                     // free node in pool
                     continue;
-                }
 
                 if (_nodes[i].IsLeaf())
                 {
@@ -947,18 +874,18 @@ namespace VelcroPhysics.Collision.Broadphase
 
             while (count > 1)
             {
-                float minCost = Settings.MaxFloat;
+                var minCost = Settings.MaxFloat;
                 int iMin = -1, jMin = -1;
-                for (int i = 0; i < count; ++i)
+                for (var i = 0; i < count; ++i)
                 {
-                    AABB AABBi = _nodes[nodes[i]].AABB;
+                    var AABBi = _nodes[nodes[i]].AABB;
 
-                    for (int j = i + 1; j < count; ++j)
+                    for (var j = i + 1; j < count; ++j)
                     {
-                        AABB AABBj = _nodes[nodes[j]].AABB;
-                        AABB b = new AABB();
+                        var AABBj = _nodes[nodes[j]].AABB;
+                        var b = new AABB();
                         b.Combine(ref AABBi, ref AABBj);
-                        float cost = b.Perimeter;
+                        var cost = b.Perimeter;
                         if (cost < minCost)
                         {
                             iMin = i;
@@ -968,13 +895,13 @@ namespace VelcroPhysics.Collision.Broadphase
                     }
                 }
 
-                int index1 = nodes[iMin];
-                int index2 = nodes[jMin];
-                TreeNode<T> child1 = _nodes[index1];
-                TreeNode<T> child2 = _nodes[index2];
+                var index1 = nodes[iMin];
+                var index2 = nodes[jMin];
+                var child1 = _nodes[index1];
+                var child2 = _nodes[index2];
 
-                int parentIndex = AllocateNode();
-                TreeNode<T> parent = _nodes[parentIndex];
+                var parentIndex = AllocateNode();
+                var parent = _nodes[parentIndex];
                 parent.Child1 = index1;
                 parent.Child2 = index2;
                 parent.Height = 1 + Mathf.Max(child1.Height, child2.Height);
@@ -1001,7 +928,7 @@ namespace VelcroPhysics.Collision.Broadphase
         public void ShiftOrigin(Vector2 newOrigin)
         {
             // Build array of leaves. Free the rest.
-            for (int i = 0; i < _nodeCapacity; ++i)
+            for (var i = 0; i < _nodeCapacity; ++i)
             {
                 _nodes[i].AABB.LowerBound -= newOrigin;
                 _nodes[i].AABB.UpperBound -= newOrigin;

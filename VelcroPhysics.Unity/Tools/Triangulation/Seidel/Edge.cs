@@ -29,7 +29,7 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
             else
                 Slope = 0;
 
-            B = p.Y - (p.X * Slope);
+            B = p.Y - p.X * Slope;
             Above = null;
             Below = null;
             MPoints = new HashSet<Point>();
@@ -49,11 +49,9 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
 
         public void AddMpoint(Point point)
         {
-            foreach (Point mp in MPoints)
-            {
+            foreach (var mp in MPoints)
                 if (!mp.Neq(point))
                     return;
-            }
 
             MPoints.Add(point);
         }

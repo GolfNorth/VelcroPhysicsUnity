@@ -48,26 +48,20 @@ namespace Microsoft.Xna.Framework
 
         #region Public Properties
 
-        public bool IsConstant
-        {
-            get { return keys.Count <= 1; }
-        }
+        public bool IsConstant => keys.Count <= 1;
 
-        public CurveKeyCollection Keys
-        {
-            get { return keys; }
-        }
+        public CurveKeyCollection Keys => keys;
 
         public CurveLoopType PostLoop
         {
-            get { return postLoop; }
-            set { postLoop = value; }
+            get => postLoop;
+            set => postLoop = value;
         }
 
         public CurveLoopType PreLoop
         {
-            get { return preLoop; }
-            set { preLoop = value; }
+            get => preLoop;
+            set => preLoop = value;
         }
 
         #endregion Public Properties
@@ -105,7 +99,7 @@ namespace Microsoft.Xna.Framework
 
         public Curve Clone()
         {
-            Curve curve = new Curve();
+            var curve = new Curve();
 
             curve.keys = keys.Clone();
             curve.preLoop = preLoop;
@@ -116,8 +110,8 @@ namespace Microsoft.Xna.Framework
 
         public float Evaluate(float position)
         {
-            CurveKey first = keys[0];
-            CurveKey last = keys[keys.Count - 1];
+            var first = keys[0];
+            var last = keys[keys.Count - 1];
 
             if (position < first.Position)
             {
@@ -133,25 +127,25 @@ namespace Microsoft.Xna.Framework
 
                     case CurveLoopType.Cycle:
                         //start -> end / start -> end
-                        int cycle = GetNumberOfCycle(position);
-                        float virtualPos = position - (cycle * (last.Position - first.Position));
+                        var cycle = GetNumberOfCycle(position);
+                        var virtualPos = position - cycle * (last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
 
                     case CurveLoopType.CycleOffset:
                         //make the curve continue (with no step) so must up the curve each cycle of delta(value)
                         cycle = GetNumberOfCycle(position);
-                        virtualPos = position - (cycle * (last.Position - first.Position));
-                        return (GetCurvePosition(virtualPos) + cycle * (last.Value - first.Value));
+                        virtualPos = position - cycle * (last.Position - first.Position);
+                        return GetCurvePosition(virtualPos) + cycle * (last.Value - first.Value);
 
                     case CurveLoopType.Oscillate:
                         //go back on curve from end and target start 
                         // start-> end / end -> start
                         cycle = GetNumberOfCycle(position);
                         if (0 == cycle % 2f) //if pair
-                            virtualPos = position - (cycle * (last.Position - first.Position));
+                            virtualPos = position - cycle * (last.Position - first.Position);
                         else
                             virtualPos = last.Position - position + first.Position +
-                                         (cycle * (last.Position - first.Position));
+                                         cycle * (last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
                 }
             }
@@ -171,25 +165,25 @@ namespace Microsoft.Xna.Framework
                     case CurveLoopType.Cycle:
                         //start -> end / start -> end
                         cycle = GetNumberOfCycle(position);
-                        float virtualPos = position - (cycle * (last.Position - first.Position));
+                        var virtualPos = position - cycle * (last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
 
                     case CurveLoopType.CycleOffset:
                         //make the curve continue (with no step) so must up the curve each cycle of delta(value)
                         cycle = GetNumberOfCycle(position);
-                        virtualPos = position - (cycle * (last.Position - first.Position));
-                        return (GetCurvePosition(virtualPos) + cycle * (last.Value - first.Value));
+                        virtualPos = position - cycle * (last.Position - first.Position);
+                        return GetCurvePosition(virtualPos) + cycle * (last.Value - first.Value);
 
                     case CurveLoopType.Oscillate:
                         //go back on curve from end and target start 
                         // start-> end / end -> start
                         cycle = GetNumberOfCycle(position);
-                        virtualPos = position - (cycle * (last.Position - first.Position));
+                        virtualPos = position - cycle * (last.Position - first.Position);
                         if (0 == cycle % 2f) //if pair
-                            virtualPos = position - (cycle * (last.Position - first.Position));
+                            virtualPos = position - cycle * (last.Position - first.Position);
                         else
                             virtualPos = last.Position - position + first.Position +
-                                         (cycle * (last.Position - first.Position));
+                                         cycle * (last.Position - first.Position);
                         return GetCurvePosition(virtualPos);
                 }
             }
@@ -204,43 +198,44 @@ namespace Microsoft.Xna.Framework
 
         private int GetNumberOfCycle(float position)
         {
-            float cycle = (position - keys[0].Position) / (keys[keys.Count - 1].Position - keys[0].Position);
+            var cycle = (position - keys[0].Position) / (keys[keys.Count - 1].Position - keys[0].Position);
             if (cycle < 0f)
                 cycle--;
-            return (int)cycle;
+            return (int) cycle;
         }
 
         private float GetCurvePosition(float position)
         {
             //only for position in curve
-            CurveKey prev = keys[0];
+            var prev = keys[0];
             CurveKey next;
-            for (int i = 1; i < keys.Count; i++)
+            for (var i = 1; i < keys.Count; i++)
             {
                 next = Keys[i];
                 if (next.Position >= position)
                 {
                     if (prev.Continuity == CurveContinuity.Step)
                     {
-                        if (position >= 1f)
-                        {
-                            return next.Value;
-                        }
+                        if (position >= 1f) return next.Value;
                         return prev.Value;
                     }
-                    float t = (position - prev.Position) / (next.Position - prev.Position); //to have t in [0,1]
-                    float ts = t * t;
-                    float tss = ts * t;
+
+                    var t = (position - prev.Position) / (next.Position - prev.Position); //to have t in [0,1]
+                    var ts = t * t;
+                    var tss = ts * t;
                     //After a lot of search on internet I have found all about spline function
                     // and bezier (phi'sss ancien) but finaly use hermite curve 
                     //http://en.wikipedia.org/wiki/Cubic_Hermite_spline
                     //P(t) = (2*t^3 - 3t^2 + 1)*P0 + (t^3 - 2t^2 + t)m0 + (-2t^3 + 3t^2)P1 + (t^3-t^2)m1
                     //with P0.value = prev.value , m0 = prev.tangentOut, P1= next.value, m1 = next.TangentIn
-                    return (2 * tss - 3 * ts + 1f) * prev.Value + (tss - 2 * ts + t) * prev.TangentOut + (3 * ts - 2 * tss) * next.Value +
+                    return (2 * tss - 3 * ts + 1f) * prev.Value + (tss - 2 * ts + t) * prev.TangentOut +
+                           (3 * ts - 2 * tss) * next.Value +
                            (tss - ts) * next.TangentIn;
                 }
+
                 prev = next;
             }
+
             return 0f;
         }
 

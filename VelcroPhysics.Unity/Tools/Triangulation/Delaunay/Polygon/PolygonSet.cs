@@ -43,17 +43,16 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
     {
         protected List<Polygon> _polygons = new List<Polygon>();
 
-        public PolygonSet() { }
+        public PolygonSet()
+        {
+        }
 
         public PolygonSet(Polygon poly)
         {
             _polygons.Add(poly);
         }
 
-        public IEnumerable<Polygon> Polygons
-        {
-            get { return _polygons; }
-        }
+        public IEnumerable<Polygon> Polygons => _polygons;
 
         public void Add(Polygon p)
         {

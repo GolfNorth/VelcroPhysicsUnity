@@ -38,14 +38,14 @@ namespace VelcroPhysics.Dynamics.Joints
 
         public override Vector2 WorldAnchorA
         {
-            get { return BodyA.Position; }
-            set { Debug.Assert(false, "You can't set the world anchor on this joint type."); }
+            get => BodyA.Position;
+            set => Debug.Assert(false, "You can't set the world anchor on this joint type.");
         }
 
         public override Vector2 WorldAnchorB
         {
-            get { return BodyB.Position; }
-            set { Debug.Assert(false, "You can't set the world anchor on this joint type."); }
+            get => BodyB.Position;
+            set => Debug.Assert(false, "You can't set the world anchor on this joint type.");
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace VelcroPhysics.Dynamics.Joints
         /// </summary>
         public float TargetAngle
         {
-            get { return _targetAngle; }
+            get => _targetAngle;
             set
             {
                 if (value != _targetAngle)
@@ -96,23 +96,23 @@ namespace VelcroPhysics.Dynamics.Joints
 
         internal override void InitVelocityConstraints(ref SolverData data)
         {
-            int indexA = BodyA.IslandIndex;
-            int indexB = BodyB.IslandIndex;
+            var indexA = BodyA.IslandIndex;
+            var indexB = BodyB.IslandIndex;
 
-            float aW = data.Positions[indexA].A;
-            float bW = data.Positions[indexB].A;
+            var aW = data.Positions[indexA].A;
+            var bW = data.Positions[indexB].A;
 
-            _jointError = (bW - aW - TargetAngle);
+            _jointError = bW - aW - TargetAngle;
             _bias = -BiasFactor * data.Step.inv_dt * _jointError;
             _massFactor = (1 - Softness) / (BodyA._invI + BodyB._invI);
         }
 
         internal override void SolveVelocityConstraints(ref SolverData data)
         {
-            int indexA = BodyA.IslandIndex;
-            int indexB = BodyB.IslandIndex;
+            var indexA = BodyA.IslandIndex;
+            var indexB = BodyB.IslandIndex;
 
-            float p = (_bias - data.Velocities[indexB].W + data.Velocities[indexA].W) * _massFactor;
+            var p = (_bias - data.Velocities[indexB].W + data.Velocities[indexA].W) * _massFactor;
 
             data.Velocities[indexA].W -= BodyA._invI * Mathf.Sign(p) * Mathf.Min(Mathf.Abs(p), MaxImpulse);
             data.Velocities[indexB].W += BodyB._invI * Mathf.Sign(p) * Mathf.Min(Mathf.Abs(p), MaxImpulse);

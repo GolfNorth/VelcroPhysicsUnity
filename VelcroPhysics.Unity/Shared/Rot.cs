@@ -9,7 +9,7 @@ namespace VelcroPhysics.Shared
     {
         /// Sine and cosine
         public float s,
-                     c;
+            c;
 
         /// <summary>
         /// Initialize from an angle in radians
@@ -18,8 +18,8 @@ namespace VelcroPhysics.Shared
         public Rot(float angle)
         {
             // TODO_ERIN optimize
-            s = (float)Mathf.Sin(angle);
-            c = (float)Mathf.Cos(angle);
+            s = Mathf.Sin(angle);
+            c = Mathf.Cos(angle);
         }
 
         /// <summary>
@@ -37,8 +37,8 @@ namespace VelcroPhysics.Shared
             else
             {
                 // TODO_ERIN optimize
-                s = (float)Mathf.Sin(angle);
-                c = (float)Mathf.Cos(angle);
+                s = Mathf.Sin(angle);
+                c = Mathf.Cos(angle);
             }
         }
 
@@ -56,7 +56,7 @@ namespace VelcroPhysics.Shared
         /// </summary>
         public float GetAngle()
         {
-            return (float)Mathf.Atan2(s, c);
+            return Mathf.Atan2(s, c);
         }
 
         /// <summary>

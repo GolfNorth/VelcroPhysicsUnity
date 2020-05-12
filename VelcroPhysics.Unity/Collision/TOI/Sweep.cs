@@ -47,7 +47,7 @@ namespace VelcroPhysics.Collision.TOI
             xfb = new Transform();
             xfb.p.x = (1.0f - beta) * C0.x + beta * C.x;
             xfb.p.y = (1.0f - beta) * C0.y + beta * C.y;
-            float angle = (1.0f - beta) * A0 + beta * A;
+            var angle = (1.0f - beta) * A0 + beta * A;
             xfb.q.Set(angle);
 
             // Shift to origin
@@ -61,7 +61,7 @@ namespace VelcroPhysics.Collision.TOI
         public void Advance(float alpha)
         {
             Debug.Assert(Alpha0 < 1.0f);
-            float beta = (alpha - Alpha0) / (1.0f - Alpha0);
+            var beta = (alpha - Alpha0) / (1.0f - Alpha0);
             C0 += beta * (C - C0);
             A0 += beta * (A - A0);
             Alpha0 = alpha;
@@ -72,7 +72,7 @@ namespace VelcroPhysics.Collision.TOI
         /// </summary>
         public void Normalize()
         {
-            float d = Mathf.PI * 2f * (float)Mathf.Floor(A0 / (Mathf.PI * 2f));
+            var d = Mathf.PI * 2f * Mathf.Floor(A0 / (Mathf.PI * 2f));
             A0 -= d;
             A -= d;
         }

@@ -5,7 +5,9 @@ namespace VelcroPhysics.Templates.Joints
 {
     public class MotorJointTemplate : JointTemplate
     {
-        public MotorJointTemplate() : base(JointType.Motor) { }
+        public MotorJointTemplate() : base(JointType.Motor)
+        {
+        }
 
         /// <summary>
         /// The bodyB angle minus bodyA angle in radians.

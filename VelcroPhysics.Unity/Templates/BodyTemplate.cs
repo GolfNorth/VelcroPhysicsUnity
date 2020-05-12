@@ -9,7 +9,7 @@ namespace VelcroPhysics.Templates
         {
             SetDefaults();
         }
-        
+
         /// <summary>
         /// Is this body initially awake or sleeping?
         /// </summary>

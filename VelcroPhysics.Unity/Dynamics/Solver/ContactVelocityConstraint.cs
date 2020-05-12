@@ -21,10 +21,7 @@ namespace VelcroPhysics.Dynamics.Solver
 
         public ContactVelocityConstraint()
         {
-            for (int i = 0; i < Settings.MaxManifoldPoints; i++)
-            {
-                Points[i] = new VelocityConstraintPoint();
-            }
+            for (var i = 0; i < Settings.MaxManifoldPoints; i++) Points[i] = new VelocityConstraintPoint();
         }
     }
 }

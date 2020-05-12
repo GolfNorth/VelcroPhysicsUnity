@@ -18,9 +18,9 @@ namespace VelcroPhysics.Shared
             if (!preCreateInstances)
                 return;
 
-            for (int i = 0; i < capacity; i++)
+            for (var i = 0; i < capacity; i++)
             {
-                T obj = objectCreator();
+                var obj = objectCreator();
                 obj.Pool = this;
                 _queue.Enqueue(obj);
             }
@@ -40,10 +40,7 @@ namespace VelcroPhysics.Shared
         {
             Debug.Assert(count != 0);
 
-            for (int i = 0; i < count; i++)
-            {
-                yield return GetFromPool();
-            }
+            for (var i = 0; i < count; i++) yield return GetFromPool();
         }
 
         public void ReturnToPool(T obj)
@@ -54,7 +51,7 @@ namespace VelcroPhysics.Shared
 
         public void ReturnToPool(IEnumerable<T> objs)
         {
-            foreach (T obj in objs)
+            foreach (var obj in objs)
             {
                 obj.Reset();
                 _queue.Enqueue(obj);

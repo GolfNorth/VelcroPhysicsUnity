@@ -50,13 +50,15 @@ namespace VelcroPhysics.Collision.Shapes
         public ChainShape(Vertices vertices, bool createLoop = false) : base(ShapeType.Chain, Settings.PolygonRadius)
         {
             Debug.Assert(vertices != null && vertices.Count >= 3);
-            Debug.Assert(vertices[0] != vertices[vertices.Count - 1]); //Velcro. See http://www.box2d.org/forum/viewtopic.php?f=4&t=7973&p=35363
+            Debug.Assert(vertices[0] !=
+                         vertices[
+                             vertices.Count -
+                             1]); //Velcro. See http://www.box2d.org/forum/viewtopic.php?f=4&t=7973&p=35363
 
-            for (int i = 1; i < vertices.Count; ++i)
-            {
+            for (var i = 1; i < vertices.Count; ++i)
                 // If the code crashes here, it means your vertices are too close together.
-                Debug.Assert(Mathf.Sqrt(Vector2.Distance(vertices[i - 1], vertices[i])) > Settings.LinearSlop * Settings.LinearSlop);
-            }
+                Debug.Assert(Mathf.Sqrt(Vector2.Distance(vertices[i - 1], vertices[i])) >
+                             Settings.LinearSlop * Settings.LinearSlop);
 
             Vertices = new Vertices(vertices);
 
@@ -64,14 +66,20 @@ namespace VelcroPhysics.Collision.Shapes
             if (createLoop)
             {
                 Vertices.Add(vertices[0]);
-                PrevVertex = Vertices[Vertices.Count - 2]; //Velcro: We use the properties instead of the private fields here to set _hasPrevVertex
-                NextVertex = Vertices[1]; //Velcro: We use the properties instead of the private fields here to set _hasNextVertex
+                PrevVertex =
+                    Vertices
+                        [Vertices.Count - 2]; //Velcro: We use the properties instead of the private fields here to set _hasPrevVertex
+                NextVertex =
+                    Vertices
+                        [1]; //Velcro: We use the properties instead of the private fields here to set _hasNextVertex
             }
 
             ComputeProperties();
         }
 
-        internal ChainShape() : base(ShapeType.Chain, Settings.PolygonRadius) { }
+        internal ChainShape() : base(ShapeType.Chain, Settings.PolygonRadius)
+        {
+        }
 
         /// <summary>
         /// The vertices. These are not owned/freed by the chain Shape.
@@ -89,7 +97,7 @@ namespace VelcroPhysics.Collision.Shapes
         /// </summary>
         public Vector2 PrevVertex
         {
-            get { return _prevVertex; }
+            get => _prevVertex;
             set
             {
                 _prevVertex = value;
@@ -103,7 +111,7 @@ namespace VelcroPhysics.Collision.Shapes
         /// </summary>
         public Vector2 NextVertex
         {
-            get { return _nextVertex; }
+            get => _nextVertex;
             set
             {
                 _nextVertex = value;
@@ -147,7 +155,7 @@ namespace VelcroPhysics.Collision.Shapes
 
         public EdgeShape GetChildEdge(int index)
         {
-            EdgeShape edgeShape = new EdgeShape();
+            var edgeShape = new EdgeShape();
             GetChildEdge(edgeShape, index);
             return edgeShape;
         }
@@ -157,18 +165,19 @@ namespace VelcroPhysics.Collision.Shapes
             return false;
         }
 
-        public override bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output)
+        public override bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex,
+            out RayCastOutput output)
         {
             Debug.Assert(childIndex < Vertices.Count);
 
-            int i1 = childIndex;
-            int i2 = childIndex + 1;
+            var i1 = childIndex;
+            var i2 = childIndex + 1;
 
             if (i2 == Vertices.Count)
                 i2 = 0;
 
-            Vector2 v1 = Vertices[i1];
-            Vector2 v2 = Vertices[i2];
+            var v1 = Vertices[i1];
+            var v2 = Vertices[i2];
 
             return RayCastHelper.RayCastEdge(ref v1, ref v2, ref input, ref transform, out output);
         }
@@ -177,14 +186,14 @@ namespace VelcroPhysics.Collision.Shapes
         {
             Debug.Assert(childIndex < Vertices.Count);
 
-            int i1 = childIndex;
-            int i2 = childIndex + 1;
+            var i1 = childIndex;
+            var i2 = childIndex + 1;
 
             if (i2 == Vertices.Count)
                 i2 = 0;
 
-            Vector2 v1 = Vertices[i1];
-            Vector2 v2 = Vertices[i2];
+            var v1 = Vertices[i1];
+            var v2 = Vertices[i2];
 
             AABBHelper.ComputeEdgeAABB(ref v1, ref v2, ref transform, out aabb);
         }
@@ -204,18 +213,16 @@ namespace VelcroPhysics.Collision.Shapes
             if (Vertices.Count != shape.Vertices.Count)
                 return false;
 
-            for (int i = 0; i < Vertices.Count; i++)
-            {
+            for (var i = 0; i < Vertices.Count; i++)
                 if (Vertices[i] != shape.Vertices[i])
                     return false;
-            }
 
             return PrevVertex == shape.PrevVertex && NextVertex == shape.NextVertex;
         }
 
         public override Shape Clone()
         {
-            ChainShape clone = new ChainShape();
+            var clone = new ChainShape();
             clone.ShapeType = ShapeType;
             clone._density = _density;
             clone._radius = _radius;

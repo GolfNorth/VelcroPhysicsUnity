@@ -41,13 +41,11 @@ namespace VelcroPhysics.Shared
         /// <returns></returns>
         public Vector3 Solve33(Vector3 b)
         {
-            float det = Vector3.Dot(ex, Vector3.Cross(ey, ez));
-            if (det != 0.0f)
-            {
-                det = 1.0f / det;
-            }
+            var det = Vector3.Dot(ex, Vector3.Cross(ey, ez));
+            if (det != 0.0f) det = 1.0f / det;
 
-            return new Vector3(det * Vector3.Dot(b, Vector3.Cross(ey, ez)), det * Vector3.Dot(ex, Vector3.Cross(b, ez)), det * Vector3.Dot(ex, Vector3.Cross(ey, b)));
+            return new Vector3(det * Vector3.Dot(b, Vector3.Cross(ey, ez)), det * Vector3.Dot(ex, Vector3.Cross(b, ez)),
+                det * Vector3.Dot(ex, Vector3.Cross(ey, b)));
         }
 
         /// <summary>
@@ -60,12 +58,9 @@ namespace VelcroPhysics.Shared
         public Vector2 Solve22(Vector2 b)
         {
             float a11 = ex.x, a12 = ey.x, a21 = ex.y, a22 = ey.y;
-            float det = a11 * a22 - a12 * a21;
+            var det = a11 * a22 - a12 * a21;
 
-            if (det != 0.0f)
-            {
-                det = 1.0f / det;
-            }
+            if (det != 0.0f) det = 1.0f / det;
 
             return new Vector2(det * (a22 * b.x - a12 * b.y), det * (a11 * b.y - a21 * b.x));
         }
@@ -75,11 +70,8 @@ namespace VelcroPhysics.Shared
         public void GetInverse22(ref Mat33 M)
         {
             float a = ex.x, b = ey.x, c = ex.y, d = ey.y;
-            float det = a * d - b * c;
-            if (det != 0.0f)
-            {
-                det = 1.0f / det;
-            }
+            var det = a * d - b * c;
+            if (det != 0.0f) det = 1.0f / det;
 
             M.ex.x = det * d;
             M.ey.x = -det * b;
@@ -96,15 +88,12 @@ namespace VelcroPhysics.Shared
         /// Returns the zero matrix if singular.
         public void GetSymInverse33(ref Mat33 M)
         {
-            float det = MathUtils.Dot(ex, MathUtils.Cross((Vector3)ey, ez));
-            if (det != 0.0f)
-            {
-                det = 1.0f / det;
-            }
+            var det = MathUtils.Dot(ex, MathUtils.Cross((Vector3) ey, ez));
+            if (det != 0.0f) det = 1.0f / det;
 
             float a11 = ex.x, a12 = ey.x, a13 = ez.x;
             float a22 = ey.y, a23 = ez.y;
-            float a33 = ez.z;
+            var a33 = ez.z;
 
             M.ex.x = det * (a22 * a33 - a23 * a23);
             M.ex.y = det * (a13 * a23 - a12 * a33);

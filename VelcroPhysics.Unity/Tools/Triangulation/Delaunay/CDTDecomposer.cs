@@ -33,37 +33,32 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
         {
             Debug.Assert(vertices.Count > 3);
 
-            Polygon.Polygon poly = new Polygon.Polygon();
+            var poly = new Polygon.Polygon();
 
-            foreach (Vector2 vertex in vertices)
+            foreach (var vertex in vertices)
                 poly.Points.Add(new TriangulationPoint(vertex.x, vertex.y));
 
             if (vertices.Holes != null)
-            {
-                foreach (Vertices holeVertices in vertices.Holes)
+                foreach (var holeVertices in vertices.Holes)
                 {
-                    Polygon.Polygon hole = new Polygon.Polygon();
+                    var hole = new Polygon.Polygon();
 
-                    foreach (Vector2 vertex in holeVertices)
+                    foreach (var vertex in holeVertices)
                         hole.Points.Add(new TriangulationPoint(vertex.x, vertex.y));
 
                     poly.AddHole(hole);
                 }
-            }
 
-            DTSweepContext tcx = new DTSweepContext();
+            var tcx = new DTSweepContext();
             tcx.PrepareTriangulation(poly);
             DTSweep.Triangulate(tcx);
 
-            List<Vertices> results = new List<Vertices>();
+            var results = new List<Vertices>();
 
-            foreach (DelaunayTriangle triangle in poly.Triangles)
+            foreach (var triangle in poly.Triangles)
             {
-                Vertices v = new Vertices();
-                foreach (TriangulationPoint p in triangle.Points)
-                {
-                    v.Add(new Vector2((float)p.X, (float)p.Y));
-                }
+                var v = new Vertices();
+                foreach (var p in triangle.Points) v.Add(new Vector2(p.X, p.Y));
                 results.Add(v);
             }
 

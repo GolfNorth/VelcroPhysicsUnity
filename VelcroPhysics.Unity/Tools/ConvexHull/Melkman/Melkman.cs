@@ -29,12 +29,12 @@ namespace VelcroPhysics.Tools.ConvexHull.Melkman
 
             //We'll never need a queue larger than the current number of Vertices +1
             //Create float-ended queue
-            Vector2[] deque = new Vector2[vertices.Count + 1];
+            var deque = new Vector2[vertices.Count + 1];
             int qf = 3, qb = 0; //Queue front index, queue back index
 
             //Start by placing first 3 vertices in convex CCW order
-            int startIndex = 3;
-            float k = MathUtils.Area(vertices[0], vertices[1], vertices[2]);
+            var startIndex = 3;
+            var k = MathUtils.Area(vertices[0], vertices[1], vertices[2]);
             if (k == 0)
             {
                 //Vertices are collinear.
@@ -46,7 +46,7 @@ namespace VelcroPhysics.Tools.ConvexHull.Melkman
                 //Go until the end of the collinear sequence of vertices
                 for (startIndex = 3; startIndex < vertices.Count; startIndex++)
                 {
-                    Vector2 tmp = vertices[startIndex];
+                    var tmp = vertices[startIndex];
                     if (MathUtils.Area(ref deque[0], ref deque[1], ref tmp) == 0) //This point is also collinear
                         deque[1] = vertices[startIndex];
                     else
@@ -70,16 +70,17 @@ namespace VelcroPhysics.Tools.ConvexHull.Melkman
                 }
             }
 
-            int qfm1 = qf == 0 ? deque.Length - 1 : qf - 1;
-            int qbm1 = qb == deque.Length - 1 ? 0 : qb + 1;
+            var qfm1 = qf == 0 ? deque.Length - 1 : qf - 1;
+            var qbm1 = qb == deque.Length - 1 ? 0 : qb + 1;
 
             //Add vertices one at a time and adjust convex hull as needed
-            for (int i = startIndex; i < vertices.Count; i++)
+            for (var i = startIndex; i < vertices.Count; i++)
             {
-                Vector2 nextPt = vertices[i];
+                var nextPt = vertices[i];
 
                 //Ignore if it is already within the convex hull we have constructed
-                if (MathUtils.Area(ref deque[qfm1], ref deque[qf], ref nextPt) > 0 && MathUtils.Area(ref deque[qb], ref deque[qbm1], ref nextPt) > 0)
+                if (MathUtils.Area(ref deque[qfm1], ref deque[qf], ref nextPt) > 0 &&
+                    MathUtils.Area(ref deque[qb], ref deque[qbm1], ref nextPt) > 0)
                     continue;
 
                 //Pop front until convex
@@ -112,21 +113,21 @@ namespace VelcroPhysics.Tools.ConvexHull.Melkman
             //Create the convex hull from what is left in the deque
             if (qb < qf)
             {
-                Vertices convexHull = new Vertices(qf);
+                var convexHull = new Vertices(qf);
 
-                for (int i = qb; i < qf; i++)
+                for (var i = qb; i < qf; i++)
                     convexHull.Add(deque[i]);
 
                 return convexHull;
             }
             else
             {
-                Vertices convexHull = new Vertices(qf + deque.Length);
+                var convexHull = new Vertices(qf + deque.Length);
 
-                for (int i = 0; i < qf; i++)
+                for (var i = 0; i < qf; i++)
                     convexHull.Add(deque[i]);
 
-                for (int i = qb; i < deque.Length; i++)
+                for (var i = qb; i < deque.Length; i++)
                     convexHull.Add(deque[i]);
 
                 return convexHull;

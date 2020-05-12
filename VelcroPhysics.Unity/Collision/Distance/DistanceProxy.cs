@@ -18,50 +18,46 @@ namespace VelcroPhysics.Collision.Distance
             switch (shape.ShapeType)
             {
                 case ShapeType.Circle:
-                    {
-                        CircleShape circle = (CircleShape)shape;
-                        Vertices = new Vector2[1];
-                        Vertices[0] = circle.Position;
-                        Radius = circle.Radius;
-                    }
+                {
+                    var circle = (CircleShape) shape;
+                    Vertices = new Vector2[1];
+                    Vertices[0] = circle.Position;
+                    Radius = circle.Radius;
+                }
                     break;
 
                 case ShapeType.Polygon:
-                    {
-                        PolygonShape polygon = (PolygonShape)shape;
-                        Vertices = new Vector2[polygon.Vertices.Count];
+                {
+                    var polygon = (PolygonShape) shape;
+                    Vertices = new Vector2[polygon.Vertices.Count];
 
-                        for (int i = 0; i < polygon.Vertices.Count; i++)
-                        {
-                            Vertices[i] = polygon.Vertices[i];
-                        }
+                    for (var i = 0; i < polygon.Vertices.Count; i++) Vertices[i] = polygon.Vertices[i];
 
-                        Radius = polygon.Radius;
-                    }
+                    Radius = polygon.Radius;
+                }
                     break;
 
                 case ShapeType.Chain:
-                    {
+                {
+                    var chain = (ChainShape) shape;
+                    Debug.Assert(0 <= index && index < chain.Vertices.Count);
 
-                        ChainShape chain = (ChainShape)shape;
-                        Debug.Assert(0 <= index && index < chain.Vertices.Count);
+                    Vertices = new Vector2[2];
+                    Vertices[0] = chain.Vertices[index];
+                    Vertices[1] = index + 1 < chain.Vertices.Count ? chain.Vertices[index + 1] : chain.Vertices[0];
 
-                        Vertices = new Vector2[2];
-                        Vertices[0] = chain.Vertices[index];
-                        Vertices[1] = index + 1 < chain.Vertices.Count ? chain.Vertices[index + 1] : chain.Vertices[0];
-
-                        Radius = chain.Radius;
-                    }
+                    Radius = chain.Radius;
+                }
                     break;
 
                 case ShapeType.Edge:
-                    {
-                        EdgeShape edge = (EdgeShape)shape;
-                        Vertices = new Vector2[2];
-                        Vertices[0] = edge.Vertex1;
-                        Vertices[1] = edge.Vertex2;
-                        Radius = edge.Radius;
-                    }
+                {
+                    var edge = (EdgeShape) shape;
+                    Vertices = new Vector2[2];
+                    Vertices[0] = edge.Vertex1;
+                    Vertices[1] = edge.Vertex2;
+                    Radius = edge.Radius;
+                }
                     break;
 
                 default:
@@ -75,11 +71,11 @@ namespace VelcroPhysics.Collision.Distance
         /// <param name="direction">The direction.</param>
         public int GetSupport(Vector2 direction)
         {
-            int bestIndex = 0;
-            float bestValue = Vector2.Dot(Vertices[0], direction);
-            for (int i = 1; i < Vertices.Length; ++i)
+            var bestIndex = 0;
+            var bestValue = Vector2.Dot(Vertices[0], direction);
+            for (var i = 1; i < Vertices.Length; ++i)
             {
-                float value = Vector2.Dot(Vertices[i], direction);
+                var value = Vector2.Dot(Vertices[i], direction);
                 if (value > bestValue)
                 {
                     bestIndex = i;

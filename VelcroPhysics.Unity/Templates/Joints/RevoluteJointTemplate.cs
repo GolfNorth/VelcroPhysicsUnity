@@ -18,7 +18,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class RevoluteJointTemplate : JointTemplate
     {
-        public RevoluteJointTemplate() : base(JointType.Revolute) { }
+        public RevoluteJointTemplate() : base(JointType.Revolute)
+        {
+        }
 
         /// <summary>
         /// A flag to enable joint limits.

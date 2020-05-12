@@ -13,7 +13,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class WheelJointTemplate : JointTemplate
     {
-        public WheelJointTemplate() : base(JointType.Wheel) { }
+        public WheelJointTemplate() : base(JointType.Wheel)
+        {
+        }
 
         /// <summary>
         /// Suspension damping ratio, one indicates critical damping

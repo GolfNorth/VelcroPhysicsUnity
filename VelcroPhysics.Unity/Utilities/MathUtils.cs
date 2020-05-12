@@ -77,8 +77,8 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 Mul(ref Transform T, ref Vector2 v)
         {
-            float x = (T.q.c * v.x - T.q.s * v.y) + T.p.x;
-            float y = (T.q.s * v.x + T.q.c * v.y) + T.p.y;
+            var x = T.q.c * v.x - T.q.s * v.y + T.p.x;
+            var y = T.q.s * v.x + T.q.c * v.y + T.p.y;
 
             return new Vector2(x, y);
         }
@@ -100,10 +100,10 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 MulT(ref Transform T, ref Vector2 v)
         {
-            float px = v.x - T.p.x;
-            float py = v.y - T.p.y;
-            float x = (T.q.c * px + T.q.s * py);
-            float y = (-T.q.s * px + T.q.c * py);
+            var px = v.x - T.p.x;
+            var py = v.y - T.p.y;
+            var x = T.q.c * px + T.q.s * py;
+            var y = -T.q.s * px + T.q.c * py;
 
             return new Vector2(x, y);
         }
@@ -128,7 +128,7 @@ namespace VelcroPhysics.Utilities
         //    = (A.q * B.q).Rot(v1) + A.q.Rot(B.p) + A.p
         public static Transform Mul(Transform A, Transform B)
         {
-            Transform C = new Transform();
+            var C = new Transform();
             C.q = Mul(A.q, B.q);
             C.p = Mul(A.q, B.p) + A.p;
             return C;
@@ -145,7 +145,7 @@ namespace VelcroPhysics.Utilities
 
         public static void Swap<T>(ref T a, ref T b)
         {
-            T tmp = a;
+            var tmp = a;
             a = b;
             b = tmp;
         }
@@ -171,10 +171,10 @@ namespace VelcroPhysics.Utilities
 
         public static Vector2 MulT(Transform T, Vector2 v)
         {
-            float px = v.x - T.p.x;
-            float py = v.y - T.p.y;
-            float x = (T.q.c * px + T.q.s * py);
-            float y = (-T.q.s * px + T.q.c * py);
+            var px = v.x - T.p.x;
+            var py = v.y - T.p.y;
+            var x = T.q.c * px + T.q.s * py;
+            var y = -T.q.s * px + T.q.c * py;
 
             return new Vector2(x, y);
         }
@@ -196,7 +196,7 @@ namespace VelcroPhysics.Utilities
         //    = A.q' * B.q * v1 + A.q' * (B.p - A.p)
         public static Transform MulT(Transform A, Transform B)
         {
-            Transform C = new Transform();
+            var C = new Transform();
             C.q = MulT(A.q, B.q);
             C.p = MulT(A.q, B.p - A.p);
             return C;
@@ -231,10 +231,8 @@ namespace VelcroPhysics.Utilities
         public static bool IsValid(float x)
         {
             if (float.IsNaN(x))
-            {
                 // NaN.
                 return false;
-            }
 
             return !float.IsInfinity(x);
         }
@@ -251,15 +249,15 @@ namespace VelcroPhysics.Utilities
         /// <returns></returns>
         public static float InvSqrt(float x)
         {
-            FloatConverter convert = new FloatConverter();
+            var convert = new FloatConverter();
             convert.x = x;
-            float xhalf = 0.5f * x;
+            var xhalf = 0.5f * x;
             convert.i = 0x5f3759df - (convert.i >> 1);
             x = convert.x;
             x = x * (1.5f - xhalf * x * x);
             return x;
         }
-        
+
         public static int Clamp(int a, int low, int high)
         {
             return Mathf.Max(low, Mathf.Min(a, high));
@@ -360,7 +358,7 @@ namespace VelcroPhysics.Utilities
         /// </returns>
         public static bool FloatInRange(float value, float min, float max)
         {
-            return (value >= min && value <= max);
+            return value >= min && value <= max;
         }
 
         public static Vector2 Mul(ref Rot rot, Vector2 axis)
@@ -378,11 +376,9 @@ namespace VelcroPhysics.Utilities
         [StructLayout(LayoutKind.Explicit)]
         private struct FloatConverter
         {
-            [FieldOffset(0)]
-            public float x;
+            [FieldOffset(0)] public float x;
 
-            [FieldOffset(0)]
-            public int i;
+            [FieldOffset(0)] public int i;
         }
 
         #endregion

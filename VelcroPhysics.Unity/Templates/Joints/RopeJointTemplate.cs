@@ -10,7 +10,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class RopeJointTemplate : JointTemplate
     {
-        public RopeJointTemplate() : base(JointType.Rope) { }
+        public RopeJointTemplate() : base(JointType.Rope)
+        {
+        }
 
         /// <summary>
         /// The local anchor point relative to bodyA's origin.

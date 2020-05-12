@@ -36,7 +36,6 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
      * @author Thomas Åhlén, thahlen@gmail.com
      *
      */
-
     internal class DTSweepContext : TriangulationContext
     {
         // Inital triangle factor, seed triangle will extend 30% of 
@@ -83,13 +82,9 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             {
                 triangle.IsInterior = true;
                 Triangulatable.AddTriangle(triangle);
-                for (int i = 0; i < 3; i++)
-                {
+                for (var i = 0; i < 3; i++)
                     if (!triangle.EdgeIsConstrained[i])
-                    {
                         MeshCleanReq(triangle.Neighbors[i]);
-                    }
-                }
             }
         }
 
@@ -123,7 +118,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             AdvancingFrontNode head, tail, middle;
 
             // Initial triangle
-            DelaunayTriangle iTriangle = new DelaunayTriangle(Points[0], Tail, Head);
+            var iTriangle = new DelaunayTriangle(Points[0], Tail, Head);
             Triangles.Add(iTriangle);
 
             head = new AdvancingFrontNode(iTriangle.Points[1]);
@@ -150,17 +145,12 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         public void MapTriangleToNodes(DelaunayTriangle t)
         {
             AdvancingFrontNode n;
-            for (int i = 0; i < 3; i++)
-            {
+            for (var i = 0; i < 3; i++)
                 if (t.Neighbors[i] == null)
                 {
                     n = aFront.LocatePoint(t.PointCW(t.Points[i]));
-                    if (n != null)
-                    {
-                        n.Triangle = t;
-                    }
+                    if (n != null) n.Triangle = t;
                 }
-            }
         }
 
         public override void PrepareTriangulation(Triangulatable t)
@@ -174,7 +164,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             ymax = ymin = Points[0].Y;
 
             // Calculate bounds. Should be combined with the sorting
-            foreach (TriangulationPoint p in Points)
+            foreach (var p in Points)
             {
                 if (p.X > xmax)
                     xmax = p.X;
@@ -186,10 +176,10 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
                     ymin = p.Y;
             }
 
-            float deltaX = ALPHA * (xmax - xmin);
-            float deltaY = ALPHA * (ymax - ymin);
-            TriangulationPoint p1 = new TriangulationPoint(xmax + deltaX, ymin - deltaY);
-            TriangulationPoint p2 = new TriangulationPoint(xmin - deltaX, ymin - deltaY);
+            var deltaX = ALPHA * (xmax - xmin);
+            var deltaY = ALPHA * (ymax - ymin);
+            var p1 = new TriangulationPoint(xmax + deltaX, ymin - deltaY);
+            var p2 = new TriangulationPoint(xmin - deltaX, ymin - deltaY);
 
             Head = p1;
             Tail = p2;

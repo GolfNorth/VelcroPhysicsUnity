@@ -50,9 +50,11 @@ namespace VelcroPhysics.Tools.Cutting
         /// A list of closed polygons, which make up the result of the clipping operation.
         /// Outer contours are ordered counter clockwise, holes are ordered clockwise.
         /// </returns>
-        private static List<Vertices> Execute(Vertices subject, Vertices clip, PolyClipType clipType, out PolyClipError error)
+        private static List<Vertices> Execute(Vertices subject, Vertices clip, PolyClipType clipType,
+            out PolyClipError error)
         {
-            Debug.Assert(subject.IsSimple() && clip.IsSimple(), "Non simple input!", "Input polygons must be simple (cannot intersect themselves).");
+            Debug.Assert(subject.IsSimple() && clip.IsSimple(), "Non simple input!",
+                "Input polygons must be simple (cannot intersect themselves).");
 
             // Copy polygons
             Vertices slicedSubject;
@@ -64,8 +66,8 @@ namespace VelcroPhysics.Tools.Cutting
 
             // Translate polygons into upper right quadrant
             // as the algorithm depends on it
-            Vector2 lbSubject = subject.GetAABB().LowerBound;
-            Vector2 lbClip = clip.GetAABB().LowerBound;
+            var lbSubject = subject.GetAABB().LowerBound;
+            var lbClip = clip.GetAABB().LowerBound;
             Vector2 translate;
             translate = Vector2.Min(lbSubject, lbClip);
             translate = Vector2.one - translate;
@@ -105,11 +107,12 @@ namespace VelcroPhysics.Tools.Cutting
             // Reverse the polygon translation from the beginning
             // and remove collinear points from output
             translate *= -1f;
-            for (int i = 0; i < result.Count; ++i)
+            for (var i = 0; i < result.Count; ++i)
             {
                 result[i].Translate(ref translate);
                 SimplifyTools.CollinearSimplify(result[i]);
             }
+
             return result;
         }
 
@@ -121,23 +124,23 @@ namespace VelcroPhysics.Tools.Cutting
         /// <param name="slicedPoly1">Returns the first polygon with added intersection points.</param>
         /// <param name="slicedPoly2">Returns the second polygon with added intersection points.</param>
         private static void CalculateIntersections(Vertices polygon1, Vertices polygon2,
-                                                   out Vertices slicedPoly1, out Vertices slicedPoly2)
+            out Vertices slicedPoly1, out Vertices slicedPoly2)
         {
             slicedPoly1 = new Vertices(polygon1);
             slicedPoly2 = new Vertices(polygon2);
 
             // Iterate through polygon1's edges
-            for (int i = 0; i < polygon1.Count; i++)
+            for (var i = 0; i < polygon1.Count; i++)
             {
                 // Get edge vertices
-                Vector2 a = polygon1[i];
-                Vector2 b = polygon1[polygon1.NextIndex(i)];
+                var a = polygon1[i];
+                var b = polygon1[polygon1.NextIndex(i)];
 
                 // Get intersections between this edge and polygon2
-                for (int j = 0; j < polygon2.Count; j++)
+                for (var j = 0; j < polygon2.Count; j++)
                 {
-                    Vector2 c = polygon2[j];
-                    Vector2 d = polygon2[polygon2.NextIndex(j)];
+                    var c = polygon2[j];
+                    var d = polygon2[polygon2.NextIndex(j)];
 
                     Vector2 intersectionPoint;
 
@@ -151,12 +154,10 @@ namespace VelcroPhysics.Tools.Cutting
                         alpha = GetAlpha(a, b, intersectionPoint);
                         if (alpha > 0f && alpha < 1f)
                         {
-                            int index = slicedPoly1.IndexOf(a) + 1;
+                            var index = slicedPoly1.IndexOf(a) + 1;
                             while (index < slicedPoly1.Count &&
                                    GetAlpha(a, b, slicedPoly1[index]) <= alpha)
-                            {
                                 ++index;
-                            }
                             slicedPoly1.Insert(index, intersectionPoint);
                         }
 
@@ -164,12 +165,10 @@ namespace VelcroPhysics.Tools.Cutting
                         alpha = GetAlpha(c, d, intersectionPoint);
                         if (alpha > 0f && alpha < 1f)
                         {
-                            int index = slicedPoly2.IndexOf(c) + 1;
+                            var index = slicedPoly2.IndexOf(c) + 1;
                             while (index < slicedPoly2.Count &&
                                    GetAlpha(c, d, slicedPoly2[index]) <= alpha)
-                            {
                                 ++index;
-                            }
                             slicedPoly2.Insert(index, intersectionPoint);
                         }
                     }
@@ -177,9 +176,9 @@ namespace VelcroPhysics.Tools.Cutting
             }
 
             // Check for very small edges
-            for (int i = 0; i < slicedPoly1.Count; ++i)
+            for (var i = 0; i < slicedPoly1.Count; ++i)
             {
-                int iNext = slicedPoly1.NextIndex(i);
+                var iNext = slicedPoly1.NextIndex(i);
 
                 //If they are closer than the distance remove vertex
                 if ((slicedPoly1[iNext] - slicedPoly1[i]).sqrMagnitude <= ClipperEpsilonSquared)
@@ -188,9 +187,10 @@ namespace VelcroPhysics.Tools.Cutting
                     --i;
                 }
             }
-            for (int i = 0; i < slicedPoly2.Count; ++i)
+
+            for (var i = 0; i < slicedPoly2.Count; ++i)
             {
-                int iNext = slicedPoly2.NextIndex(i);
+                var iNext = slicedPoly2.NextIndex(i);
 
                 //If they are closer than the distance remove vertex
                 if ((slicedPoly2[iNext] - slicedPoly2[i]).sqrMagnitude <= ClipperEpsilonSquared)
@@ -206,11 +206,11 @@ namespace VelcroPhysics.Tools.Cutting
         /// </summary>
         /// <remarks>Used by method <c>Execute()</c>.</remarks>
         private static void CalculateSimplicalChain(Vertices poly, out List<float> coeff,
-                                                    out List<Edge> simplicies)
+            out List<Edge> simplicies)
         {
             simplicies = new List<Edge>();
             coeff = new List<float>();
-            for (int i = 0; i < poly.Count; ++i)
+            for (var i = 0; i < poly.Count; ++i)
             {
                 simplicies.Add(new Edge(poly[i], poly[poly.NextIndex(i)]));
                 coeff.Add(CalculateSimplexCoefficient(Vector2.zero, poly[i], poly[poly.NextIndex(i)]));
@@ -223,51 +223,36 @@ namespace VelcroPhysics.Tools.Cutting
         /// </summary>
         /// <remarks>Used by method <c>Execute()</c>.</remarks>
         private static void CalculateResultChain(List<float> poly1Coeff, List<Edge> poly1Simplicies,
-                                                 List<float> poly2Coeff, List<Edge> poly2Simplicies,
-                                                 PolyClipType clipType, out List<Edge> resultSimplices)
+            List<float> poly2Coeff, List<Edge> poly2Simplicies,
+            PolyClipType clipType, out List<Edge> resultSimplices)
         {
             resultSimplices = new List<Edge>();
 
-            for (int i = 0; i < poly1Simplicies.Count; ++i)
+            for (var i = 0; i < poly1Simplicies.Count; ++i)
             {
                 float edgeCharacter = 0;
                 if (poly2Simplicies.Contains(poly1Simplicies[i]))
-                {
                     edgeCharacter = 1f;
-                }
                 else if (poly2Simplicies.Contains(-poly1Simplicies[i]) && clipType == PolyClipType.Union)
-                {
                     edgeCharacter = 1f;
-                }
                 else
-                {
-                    for (int j = 0; j < poly2Simplicies.Count; ++j)
-                    {
+                    for (var j = 0; j < poly2Simplicies.Count; ++j)
                         if (!poly2Simplicies.Contains(-poly1Simplicies[i]))
-                        {
                             edgeCharacter += CalculateBeta(poly1Simplicies[i].GetCenter(),
                                 poly2Simplicies[j], poly2Coeff[j]);
-                        }
-                    }
-                }
                 if (clipType == PolyClipType.Intersect)
                 {
-                    if (edgeCharacter == 1f)
-                    {
-                        resultSimplices.Add(poly1Simplicies[i]);
-                    }
+                    if (edgeCharacter == 1f) resultSimplices.Add(poly1Simplicies[i]);
                 }
                 else
                 {
-                    if (edgeCharacter == 0f)
-                    {
-                        resultSimplices.Add(poly1Simplicies[i]);
-                    }
+                    if (edgeCharacter == 0f) resultSimplices.Add(poly1Simplicies[i]);
                 }
             }
-            for (int i = 0; i < poly2Simplicies.Count; ++i)
+
+            for (var i = 0; i < poly2Simplicies.Count; ++i)
             {
-                float edgeCharacter = 0f;
+                var edgeCharacter = 0f;
                 if (!resultSimplices.Contains(poly2Simplicies[i]) &&
                     !resultSimplices.Contains(-poly2Simplicies[i]))
                 {
@@ -278,27 +263,18 @@ namespace VelcroPhysics.Tools.Cutting
                     else
                     {
                         edgeCharacter = 0f;
-                        for (int j = 0; j < poly1Simplicies.Count; ++j)
-                        {
-                            if (!poly1Simplicies.Contains(poly2Simplicies[i]) && !poly1Simplicies.Contains(-poly2Simplicies[i]))
-                            {
+                        for (var j = 0; j < poly1Simplicies.Count; ++j)
+                            if (!poly1Simplicies.Contains(poly2Simplicies[i]) &&
+                                !poly1Simplicies.Contains(-poly2Simplicies[i]))
                                 edgeCharacter += CalculateBeta(poly2Simplicies[i].GetCenter(),
                                     poly1Simplicies[j], poly1Coeff[j]);
-                            }
-                        }
                         if (clipType == PolyClipType.Intersect || clipType == PolyClipType.Difference)
                         {
-                            if (edgeCharacter == 1f)
-                            {
-                                resultSimplices.Add(-poly2Simplicies[i]);
-                            }
+                            if (edgeCharacter == 1f) resultSimplices.Add(-poly2Simplicies[i]);
                         }
                         else
                         {
-                            if (edgeCharacter == 0f)
-                            {
-                                resultSimplices.Add(poly2Simplicies[i]);
-                            }
+                            if (edgeCharacter == 0f) resultSimplices.Add(poly2Simplicies[i]);
                         }
                     }
                 }
@@ -312,47 +288,39 @@ namespace VelcroPhysics.Tools.Cutting
         private static PolyClipError BuildPolygonsFromChain(List<Edge> simplicies, out List<Vertices> result)
         {
             result = new List<Vertices>();
-            PolyClipError errVal = PolyClipError.None;
+            var errVal = PolyClipError.None;
 
             while (simplicies.Count > 0)
             {
-                Vertices output = new Vertices();
+                var output = new Vertices();
                 output.Add(simplicies[0].EdgeStart);
                 output.Add(simplicies[0].EdgeEnd);
                 simplicies.RemoveAt(0);
-                bool closed = false;
-                int index = 0;
-                int count = simplicies.Count; // Needed to catch infinite loops
+                var closed = false;
+                var index = 0;
+                var count = simplicies.Count; // Needed to catch infinite loops
                 while (!closed && simplicies.Count > 0)
                 {
                     if (VectorEqual(output[output.Count - 1], simplicies[index].EdgeStart))
                     {
                         if (VectorEqual(simplicies[index].EdgeEnd, output[0]))
-                        {
                             closed = true;
-                        }
                         else
-                        {
                             output.Add(simplicies[index].EdgeEnd);
-                        }
                         simplicies.RemoveAt(index);
                         --index;
                     }
                     else if (VectorEqual(output[output.Count - 1], simplicies[index].EdgeEnd))
                     {
                         if (VectorEqual(simplicies[index].EdgeStart, output[0]))
-                        {
                             closed = true;
-                        }
                         else
-                        {
                             output.Add(simplicies[index].EdgeStart);
-                        }
                         simplicies.RemoveAt(index);
                         --index;
                     }
+
                     if (!closed)
-                    {
                         if (++index == simplicies.Count)
                         {
                             if (count == simplicies.Count)
@@ -361,18 +329,21 @@ namespace VelcroPhysics.Tools.Cutting
                                 Debug.WriteLine("Undefined error while building result polygon(s).");
                                 return PolyClipError.BrokenResult;
                             }
+
                             index = 0;
                             count = simplicies.Count;
                         }
-                    }
                 }
+
                 if (output.Count < 3)
                 {
                     errVal = PolyClipError.DegeneratedOutput;
                     Debug.WriteLine("Degenerated output polygon produced (vertices < 3).");
                 }
+
                 result.Add(output);
             }
+
             return errVal;
         }
 
@@ -382,16 +353,11 @@ namespace VelcroPhysics.Tools.Cutting
         /// <remarks>Used by method <c>CalculateEdgeCharacter()</c>.</remarks>
         private static float CalculateBeta(Vector2 point, Edge e, float coefficient)
         {
-            float result = 0f;
-            if (PointInSimplex(point, e))
-            {
-                result = coefficient;
-            }
+            var result = 0f;
+            if (PointInSimplex(point, e)) result = coefficient;
             if (PointOnLineSegment(Vector2.zero, e.EdgeStart, point) ||
                 PointOnLineSegment(Vector2.zero, e.EdgeEnd, point))
-            {
                 result = .5f * coefficient;
-            }
             return result;
         }
 
@@ -410,16 +376,10 @@ namespace VelcroPhysics.Tools.Cutting
         /// <remarks>Used by method <c>CalculateSimplicalChain()</c>.</remarks>
         private static float CalculateSimplexCoefficient(Vector2 a, Vector2 b, Vector2 c)
         {
-            float isLeft = MathUtils.Area(ref a, ref b, ref c);
-            if (isLeft < 0f)
-            {
-                return -1f;
-            }
+            var isLeft = MathUtils.Area(ref a, ref b, ref c);
+            if (isLeft < 0f) return -1f;
 
-            if (isLeft > 0f)
-            {
-                return 1f;
-            }
+            if (isLeft > 0f) return 1f;
 
             return 0f;
         }
@@ -435,11 +395,11 @@ namespace VelcroPhysics.Tools.Cutting
         /// </returns>
         private static bool PointInSimplex(Vector2 point, Edge edge)
         {
-            Vertices polygon = new Vertices();
+            var polygon = new Vertices();
             polygon.Add(Vector2.zero);
             polygon.Add(edge.EdgeStart);
             polygon.Add(edge.EdgeEnd);
-            return (polygon.PointInPolygon(ref point) == 1);
+            return polygon.PointInPolygon(ref point) == 1;
         }
 
         /// <summary>
@@ -448,7 +408,7 @@ namespace VelcroPhysics.Tools.Cutting
         /// <remarks>Used by method <c>CalculateBeta()</c>.</remarks>
         private static bool PointOnLineSegment(Vector2 start, Vector2 end, Vector2 point)
         {
-            Vector2 segment = end - start;
+            var segment = end - start;
             return MathUtils.Area(ref start, ref end, ref point) == 0f &&
                    Vector2.Dot(point - start, segment) >= 0f &&
                    Vector2.Dot(point - end, segment) <= 0f;
@@ -486,10 +446,7 @@ namespace VelcroPhysics.Tools.Cutting
             public override bool Equals(object obj)
             {
                 // If parameter is null return false.
-                if (obj == null)
-                {
-                    return false;
-                }
+                if (obj == null) return false;
 
                 // If parameter cannot be cast to Point return false.
                 return Equals(obj as Edge);
@@ -498,10 +455,7 @@ namespace VelcroPhysics.Tools.Cutting
             public bool Equals(Edge e)
             {
                 // If parameter is null return false:
-                if (e == null)
-                {
-                    return false;
-                }
+                if (e == null) return false;
 
                 // Return true if the fields match
                 return VectorEqual(EdgeStart, e.EdgeStart) && VectorEqual(EdgeEnd, e.EdgeEnd);

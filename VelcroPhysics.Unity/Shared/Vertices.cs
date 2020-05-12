@@ -10,9 +10,13 @@ namespace VelcroPhysics.Shared
     [DebuggerDisplay("Count = {Count} Vertices = {ToString()}")]
     public class Vertices : List<Vector2>
     {
-        public Vertices() { }
+        public Vertices()
+        {
+        }
 
-        public Vertices(int capacity) : base(capacity) { }
+        public Vertices(int capacity) : base(capacity)
+        {
+        }
 
         public Vertices(IEnumerable<Vector2> vertices)
         {
@@ -33,7 +37,7 @@ namespace VelcroPhysics.Shared
         /// <param name="index">The current index</param>
         public int NextIndex(int index)
         {
-            return (index + 1 > Count - 1) ? 0 : index + 1;
+            return index + 1 > Count - 1 ? 0 : index + 1;
         }
 
         /// <summary>
@@ -79,14 +83,15 @@ namespace VelcroPhysics.Shared
 
             for (i = 0; i < Count; i++)
             {
-                int j = (i + 1) % Count;
+                var j = (i + 1) % Count;
 
-                Vector2 vi = this[i];
-                Vector2 vj = this[j];
+                var vi = this[i];
+                var vj = this[j];
 
                 area += vi.x * vj.y;
                 area -= vi.y * vj.x;
             }
+
             area /= 2.0f;
             return area;
         }
@@ -97,8 +102,8 @@ namespace VelcroPhysics.Shared
         /// <returns></returns>
         public float GetArea()
         {
-            float area = GetSignedArea();
-            return (area < 0 ? -area : area);
+            var area = GetSignedArea();
+            return area < 0 ? -area : area;
         }
 
         /// <summary>
@@ -112,17 +117,17 @@ namespace VelcroPhysics.Shared
                 return new Vector2(float.NaN, float.NaN);
 
             // Same algorithm is used by Box2D
-            Vector2 c = Vector2.zero;
-            float area = 0.0f;
+            var c = Vector2.zero;
+            var area = 0.0f;
             const float inv3 = 1.0f / 3.0f;
 
-            for (int i = 0; i < Count; ++i)
+            for (var i = 0; i < Count; ++i)
             {
                 // Triangle vertices.
-                Vector2 current = this[i];
-                Vector2 next = (i + 1 < Count ? this[i + 1] : this[0]);
+                var current = this[i];
+                var next = i + 1 < Count ? this[i + 1] : this[0];
 
-                float triangleArea = 0.5f * (current.x * next.y - current.y * next.x);
+                var triangleArea = 0.5f * (current.x * next.y - current.y * next.x);
                 area += triangleArea;
 
                 // Area weighted centroid
@@ -140,28 +145,16 @@ namespace VelcroPhysics.Shared
         public AABB GetAABB()
         {
             AABB aabb;
-            Vector2 lowerBound = new Vector2(float.MaxValue, float.MaxValue);
-            Vector2 upperBound = new Vector2(float.MinValue, float.MinValue);
+            var lowerBound = new Vector2(float.MaxValue, float.MaxValue);
+            var upperBound = new Vector2(float.MinValue, float.MinValue);
 
-            for (int i = 0; i < Count; ++i)
+            for (var i = 0; i < Count; ++i)
             {
-                if (this[i].x < lowerBound.x)
-                {
-                    lowerBound.x = this[i].x;
-                }
-                if (this[i].x > upperBound.x)
-                {
-                    upperBound.x = this[i].x;
-                }
+                if (this[i].x < lowerBound.x) lowerBound.x = this[i].x;
+                if (this[i].x > upperBound.x) upperBound.x = this[i].x;
 
-                if (this[i].y < lowerBound.y)
-                {
-                    lowerBound.y = this[i].y;
-                }
-                if (this[i].y > upperBound.y)
-                {
-                    upperBound.y = this[i].y;
-                }
+                if (this[i].y < lowerBound.y) lowerBound.y = this[i].y;
+                if (this[i].y > upperBound.y) upperBound.y = this[i].y;
             }
 
             aabb.LowerBound = lowerBound;
@@ -185,18 +178,15 @@ namespace VelcroPhysics.Shared
         /// <param name="value">The vector.</param>
         public void Translate(ref Vector2 value)
         {
-            Debug.Assert(!AttachedToBody, "Translating vertices that are used by a Body can result in unstable behavior. Use Body.Position instead.");
+            Debug.Assert(!AttachedToBody,
+                "Translating vertices that are used by a Body can result in unstable behavior. Use Body.Position instead.");
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 this[i] += value;
 
             if (Holes != null && Holes.Count > 0)
-            {
-                foreach (Vertices hole in Holes)
-                {
+                foreach (var hole in Holes)
                     hole.Translate(ref value);
-                }
-            }
         }
 
         /// <summary>
@@ -216,16 +206,12 @@ namespace VelcroPhysics.Shared
         {
             Debug.Assert(!AttachedToBody, "Scaling vertices that are used by a Body can result in unstable behavior.");
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 this[i] *= value;
 
             if (Holes != null && Holes.Count > 0)
-            {
-                foreach (Vertices hole in Holes)
-                {
+                foreach (var hole in Holes)
                     hole.Scale(ref value);
-                }
-            }
         }
 
         /// <summary>
@@ -238,22 +224,18 @@ namespace VelcroPhysics.Shared
         {
             Debug.Assert(!AttachedToBody, "Rotating vertices that are used by a Body can result in unstable behavior.");
 
-            float num1 = (float)Mathf.Cos(value);
-            float num2 = (float)Mathf.Sin(value);
+            var num1 = Mathf.Cos(value);
+            var num2 = Mathf.Sin(value);
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                Vector2 position = this[i];
-                this[i] = new Vector2((position.x * num1 + position.y * -num2), (position.x * num2 + position.y * num1));
+                var position = this[i];
+                this[i] = new Vector2(position.x * num1 + position.y * -num2, position.x * num2 + position.y * num1);
             }
 
             if (Holes != null && Holes.Count > 0)
-            {
-                foreach (Vertices hole in Holes)
-                {
+                foreach (var hole in Holes)
                     hole.Rotate(value);
-                }
-            }
         }
 
         /// <summary>
@@ -277,25 +259,26 @@ namespace VelcroPhysics.Shared
                 return true;
 
             // Checks the polygon is convex and the interior is to the left of each edge.
-            for (int i = 0; i < Count; ++i)
+            for (var i = 0; i < Count; ++i)
             {
-                int next = i + 1 < Count ? i + 1 : 0;
-                Vector2 edge = this[next] - this[i];
+                var next = i + 1 < Count ? i + 1 : 0;
+                var edge = this[next] - this[i];
 
-                for (int j = 0; j < Count; ++j)
+                for (var j = 0; j < Count; ++j)
                 {
                     // Don't check vertices on the current edge.
                     if (j == i || j == next)
                         continue;
 
-                    Vector2 r = this[j] - this[i];
+                    var r = this[j] - this[i];
 
-                    float s = edge.x * r.y - edge.y * r.x;
+                    var s = edge.x * r.y - edge.y * r.x;
 
                     if (s <= 0.0f)
                         return false;
                 }
             }
+
             return true;
         }
 
@@ -309,7 +292,7 @@ namespace VelcroPhysics.Shared
             if (Count < 3)
                 return false;
 
-            return (GetSignedArea() > 0.0f);
+            return GetSignedArea() > 0.0f;
         }
 
         /// <summary>
@@ -334,14 +317,14 @@ namespace VelcroPhysics.Shared
             if (Count < 3)
                 return false;
 
-            for (int i = 0; i < Count; ++i)
+            for (var i = 0; i < Count; ++i)
             {
-                Vector2 a1 = this[i];
-                Vector2 a2 = NextVertex(i);
-                for (int j = i + 1; j < Count; ++j)
+                var a1 = this[i];
+                var a2 = NextVertex(i);
+                for (var j = i + 1; j < Count; ++j)
                 {
-                    Vector2 b1 = this[j];
-                    Vector2 b2 = NextVertex(j);
+                    var b1 = this[j];
+                    var b2 = NextVertex(j);
 
                     Vector2 temp;
 
@@ -349,6 +332,7 @@ namespace VelcroPhysics.Shared
                         return false;
                 }
             }
+
             return true;
         }
 
@@ -375,14 +359,11 @@ namespace VelcroPhysics.Shared
                 return PolygonError.NotConvex;
 
             //Check if the sides are of adequate length.
-            for (int i = 0; i < Count; ++i)
+            for (var i = 0; i < Count; ++i)
             {
-                int next = i + 1 < Count ? i + 1 : 0;
-                Vector2 edge = this[next] - this[i];
-                if (edge.sqrMagnitude <= float.Epsilon * float.Epsilon)
-                {
-                    return PolygonError.SideTooSmall;
-                }
+                var next = i + 1 < Count ? i + 1 : 0;
+                var edge = this[next] - this[i];
+                if (edge.sqrMagnitude <= float.Epsilon * float.Epsilon) return PolygonError.SideTooSmall;
             }
 
             if (!IsCounterClockWise())
@@ -400,11 +381,11 @@ namespace VelcroPhysics.Shared
         public void ProjectToAxis(ref Vector2 axis, out float min, out float max)
         {
             // To project a point on an axis use the dot product
-            float dotProduct = Vector2.Dot(axis, this[0]);
+            var dotProduct = Vector2.Dot(axis, this[0]);
             min = dotProduct;
             max = dotProduct;
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
                 dotProduct = Vector2.Dot(this[i], axis);
                 if (dotProduct < min)
@@ -413,10 +394,7 @@ namespace VelcroPhysics.Shared
                 }
                 else
                 {
-                    if (dotProduct > max)
-                    {
-                        max = dotProduct;
-                    }
+                    if (dotProduct > max) max = dotProduct;
                 }
             }
         }
@@ -434,40 +412,32 @@ namespace VelcroPhysics.Shared
         public int PointInPolygon(ref Vector2 point)
         {
             // Winding number
-            int wn = 0;
+            var wn = 0;
 
             // Iterate through polygon's edges
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
                 // Get points
-                Vector2 p1 = this[i];
-                Vector2 p2 = this[NextIndex(i)];
+                var p1 = this[i];
+                var p2 = this[NextIndex(i)];
 
                 // Test if a point is directly on the edge
-                Vector2 edge = p2 - p1;
-                float area = MathUtils.Area(ref p1, ref p2, ref point);
-                if (area == 0f && Vector2.Dot(point - p1, edge) >= 0f && Vector2.Dot(point - p2, edge) <= 0f)
-                {
-                    return 0;
-                }
+                var edge = p2 - p1;
+                var area = MathUtils.Area(ref p1, ref p2, ref point);
+                if (area == 0f && Vector2.Dot(point - p1, edge) >= 0f && Vector2.Dot(point - p2, edge) <= 0f) return 0;
 
                 // Test edge for intersection with ray from point
                 if (p1.y <= point.y)
                 {
-                    if (p2.y > point.y && area > 0f)
-                    {
-                        ++wn;
-                    }
+                    if (p2.y > point.y && area > 0f) ++wn;
                 }
                 else
                 {
-                    if (p2.y <= point.y && area < 0f)
-                    {
-                        --wn;
-                    }
+                    if (p2.y <= point.y && area < 0f) --wn;
                 }
             }
-            return (wn == 0 ? -1 : 1);
+
+            return wn == 0 ? -1 : 1;
         }
 
         /// <summary>
@@ -480,19 +450,16 @@ namespace VelcroPhysics.Shared
             float angle = 0;
 
             // Iterate through polygon's edges
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
                 // Get points
-                Vector2 p1 = this[i] - point;
-                Vector2 p2 = this[NextIndex(i)] - point;
+                var p1 = this[i] - point;
+                var p2 = this[NextIndex(i)] - point;
 
                 angle += Vector2.Angle(p1, p2);
             }
 
-            if (Mathf.Abs(angle) < Mathf.PI)
-            {
-                return false;
-            }
+            if (Mathf.Abs(angle) < Mathf.PI) return false;
 
             return true;
         }
@@ -504,33 +471,29 @@ namespace VelcroPhysics.Shared
         public void Transform(ref Matrix4x4 transform)
         {
             // Transform main polygon
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 this[i].Transform(transform);
 
             // Transform holes
             if (Holes != null && Holes.Count > 0)
-            {
-                for (int i = 0; i < Holes.Count; i++)
+                for (var i = 0; i < Holes.Count; i++)
                 {
-                    Vector2[] temp = Holes[i].ToArray();
+                    var temp = Holes[i].ToArray();
                     temp.Transform(ref transform, temp);
 
                     Holes[i] = new Vertices(temp);
                 }
-            }
         }
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < Count; i++)
+            var builder = new StringBuilder();
+            for (var i = 0; i < Count; i++)
             {
                 builder.Append(this[i]);
-                if (i < Count - 1)
-                {
-                    builder.Append(" ");
-                }
+                if (i < Count - 1) builder.Append(" ");
             }
+
             return builder.ToString();
         }
     }

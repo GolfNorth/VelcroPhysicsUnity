@@ -50,7 +50,7 @@ namespace VelcroPhysics.Shared.Optimization
 
         public int IndexOf(T value)
         {
-            for (int i = 0; i < 2; ++i)
+            for (var i = 0; i < 2; ++i)
                 if (this[i].Equals(value))
                     return i;
             return -1;
@@ -63,7 +63,7 @@ namespace VelcroPhysics.Shared.Optimization
 
         private IEnumerable<T> Enumerate()
         {
-            for (int i = 0; i < 2; ++i)
+            for (var i = 0; i < 2; ++i)
                 yield return this[i];
         }
     }

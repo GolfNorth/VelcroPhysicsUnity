@@ -13,7 +13,8 @@ namespace VelcroPhysics.Collision.Narrowphase
         /// <summary>
         /// Compute the collision manifold between two polygons.
         /// </summary>
-        public static void CollidePolygons(ref Manifold manifold, PolygonShape polyA, ref Transform xfA, PolygonShape polyB, ref Transform xfB)
+        public static void CollidePolygons(ref Manifold manifold, PolygonShape polyA, ref Transform xfA,
+            PolygonShape polyB, ref Transform xfB)
         {
             // Find edge normal of max separation on A - return if separating axis is found
             // Find edge normal of max separation on B - return if separation axis is found
@@ -22,15 +23,15 @@ namespace VelcroPhysics.Collision.Narrowphase
             // Clip
 
             manifold.PointCount = 0;
-            float totalRadius = polyA.Radius + polyB.Radius;
+            var totalRadius = polyA.Radius + polyB.Radius;
 
             int edgeA;
-            float separationA = FindMaxSeparation(out edgeA, polyA, ref xfA, polyB, ref xfB);
+            var separationA = FindMaxSeparation(out edgeA, polyA, ref xfA, polyB, ref xfB);
             if (separationA > totalRadius)
                 return;
 
             int edgeB;
-            float separationB = FindMaxSeparation(out edgeB, polyB, ref xfB, polyA, ref xfA);
+            var separationB = FindMaxSeparation(out edgeB, polyB, ref xfB, polyA, ref xfA);
             if (separationB > totalRadius)
                 return;
 
@@ -65,40 +66,40 @@ namespace VelcroPhysics.Collision.Narrowphase
             FixedArray2<ClipVertex> incidentEdge;
             FindIncidentEdge(out incidentEdge, poly1, ref xf1, edge1, poly2, ref xf2);
 
-            int count1 = poly1.Vertices.Count;
-            Vertices vertices1 = poly1.Vertices;
+            var count1 = poly1.Vertices.Count;
+            var vertices1 = poly1.Vertices;
 
-            int iv1 = edge1;
-            int iv2 = edge1 + 1 < count1 ? edge1 + 1 : 0;
+            var iv1 = edge1;
+            var iv2 = edge1 + 1 < count1 ? edge1 + 1 : 0;
 
-            Vector2 v11 = vertices1[iv1];
-            Vector2 v12 = vertices1[iv2];
+            var v11 = vertices1[iv1];
+            var v12 = vertices1[iv2];
 
-            Vector2 localTangent = v12 - v11;
+            var localTangent = v12 - v11;
             localTangent.Normalize();
 
-            Vector2 localNormal = MathUtils.Cross(localTangent, 1.0f);
-            Vector2 planePoint = 0.5f * (v11 + v12);
+            var localNormal = MathUtils.Cross(localTangent, 1.0f);
+            var planePoint = 0.5f * (v11 + v12);
 
-            Vector2 tangent = MathUtils.Mul(ref xf1.q, localTangent);
-            Vector2 normal = MathUtils.Cross(tangent, 1.0f);
+            var tangent = MathUtils.Mul(ref xf1.q, localTangent);
+            var normal = MathUtils.Cross(tangent, 1.0f);
 
             v11 = MathUtils.Mul(ref xf1, v11);
             v12 = MathUtils.Mul(ref xf1, v12);
 
             // Face offset.
-            float frontOffset = Vector2.Dot(normal, v11);
+            var frontOffset = Vector2.Dot(normal, v11);
 
             // Side offsets, extended by polytope skin thickness.
-            float sideOffset1 = -Vector2.Dot(tangent, v11) + totalRadius;
-            float sideOffset2 = Vector2.Dot(tangent, v12) + totalRadius;
+            var sideOffset1 = -Vector2.Dot(tangent, v11) + totalRadius;
+            var sideOffset2 = Vector2.Dot(tangent, v12) + totalRadius;
 
             // Clip incident edge against extruded edge1 side edges.
             FixedArray2<ClipVertex> clipPoints1;
             FixedArray2<ClipVertex> clipPoints2;
 
             // Clip to box side 1
-            int np = Collision.ClipSegmentToLine(out clipPoints1, ref incidentEdge, -tangent, sideOffset1, iv1);
+            var np = Collision.ClipSegmentToLine(out clipPoints1, ref incidentEdge, -tangent, sideOffset1, iv1);
 
             if (np < 2)
                 return;
@@ -106,30 +107,27 @@ namespace VelcroPhysics.Collision.Narrowphase
             // Clip to negative box side 1
             np = Collision.ClipSegmentToLine(out clipPoints2, ref clipPoints1, tangent, sideOffset2, iv2);
 
-            if (np < 2)
-            {
-                return;
-            }
+            if (np < 2) return;
 
             // Now clipPoints2 contains the clipped points.
             manifold.LocalNormal = localNormal;
             manifold.LocalPoint = planePoint;
 
-            int pointCount = 0;
-            for (int i = 0; i < Settings.MaxManifoldPoints; ++i)
+            var pointCount = 0;
+            for (var i = 0; i < Settings.MaxManifoldPoints; ++i)
             {
-                float separation = Vector2.Dot(normal, clipPoints2[i].V) - frontOffset;
+                var separation = Vector2.Dot(normal, clipPoints2[i].V) - frontOffset;
 
                 if (separation <= totalRadius)
                 {
-                    ManifoldPoint cp = manifold.Points[pointCount];
+                    var cp = manifold.Points[pointCount];
                     cp.LocalPoint = MathUtils.MulT(ref xf2, clipPoints2[i].V);
                     cp.Id = clipPoints2[i].ID;
 
                     if (flip)
                     {
                         // Swap features
-                        ContactFeature cf = cp.Id.ContactFeature;
+                        var cf = cp.Id.ContactFeature;
                         cp.Id.ContactFeature.IndexA = cf.IndexB;
                         cp.Id.ContactFeature.IndexB = cf.IndexA;
                         cp.Id.ContactFeature.TypeA = cf.TypeB;
@@ -148,32 +146,30 @@ namespace VelcroPhysics.Collision.Narrowphase
         /// <summary>
         /// Find the max separation between poly1 and poly2 using edge normals from poly1.
         /// </summary>
-        private static float FindMaxSeparation(out int edgeIndex, PolygonShape poly1, ref Transform xf1, PolygonShape poly2, ref Transform xf2)
+        private static float FindMaxSeparation(out int edgeIndex, PolygonShape poly1, ref Transform xf1,
+            PolygonShape poly2, ref Transform xf2)
         {
-            int count1 = poly1.Vertices.Count;
-            int count2 = poly2.Vertices.Count;
-            Vertices n1s = poly1.Normals;
-            Vertices v1s = poly1.Vertices;
-            Vertices v2s = poly2.Vertices;
-            Transform xf = MathUtils.MulT(xf2, xf1);
+            var count1 = poly1.Vertices.Count;
+            var count2 = poly2.Vertices.Count;
+            var n1s = poly1.Normals;
+            var v1s = poly1.Vertices;
+            var v2s = poly2.Vertices;
+            var xf = MathUtils.MulT(xf2, xf1);
 
-            int bestIndex = 0;
-            float maxSeparation = -Settings.MaxFloat;
-            for (int i = 0; i < count1; ++i)
+            var bestIndex = 0;
+            var maxSeparation = -Settings.MaxFloat;
+            for (var i = 0; i < count1; ++i)
             {
                 // Get poly1 normal in frame2.
-                Vector2 n = MathUtils.Mul(ref xf.q, n1s[i]);
-                Vector2 v1 = MathUtils.Mul(ref xf, v1s[i]);
+                var n = MathUtils.Mul(ref xf.q, n1s[i]);
+                var v1 = MathUtils.Mul(ref xf, v1s[i]);
 
                 // Find deepest point for normal i.
-                float si = Settings.MaxFloat;
-                for (int j = 0; j < count2; ++j)
+                var si = Settings.MaxFloat;
+                for (var j = 0; j < count2; ++j)
                 {
-                    float sij = Vector2.Dot(n, v2s[j] - v1);
-                    if (sij < si)
-                    {
-                        si = sij;
-                    }
+                    var sij = Vector2.Dot(n, v2s[j] - v1);
+                    if (sij < si) si = sij;
                 }
 
                 if (si > maxSeparation)
@@ -187,25 +183,26 @@ namespace VelcroPhysics.Collision.Narrowphase
             return maxSeparation;
         }
 
-        private static void FindIncidentEdge(out FixedArray2<ClipVertex> c, PolygonShape poly1, ref Transform xf1, int edge1, PolygonShape poly2, ref Transform xf2)
+        private static void FindIncidentEdge(out FixedArray2<ClipVertex> c, PolygonShape poly1, ref Transform xf1,
+            int edge1, PolygonShape poly2, ref Transform xf2)
         {
-            Vertices normals1 = poly1.Normals;
+            var normals1 = poly1.Normals;
 
-            int count2 = poly2.Vertices.Count;
-            Vertices vertices2 = poly2.Vertices;
-            Vertices normals2 = poly2.Normals;
+            var count2 = poly2.Vertices.Count;
+            var vertices2 = poly2.Vertices;
+            var normals2 = poly2.Normals;
 
             Debug.Assert(0 <= edge1 && edge1 < poly1.Vertices.Count);
 
             // Get the normal of the reference edge in poly2's frame.
-            Vector2 normal1 = MathUtils.MulT(ref xf2.q, MathUtils.Mul(ref xf1.q, normals1[edge1]));
+            var normal1 = MathUtils.MulT(ref xf2.q, MathUtils.Mul(ref xf1.q, normals1[edge1]));
 
             // Find the incident edge on poly2.
-            int index = 0;
-            float minDot = Settings.MaxFloat;
-            for (int i = 0; i < count2; ++i)
+            var index = 0;
+            var minDot = Settings.MaxFloat;
+            for (var i = 0; i < count2; ++i)
             {
-                float dot = Vector2.Dot(normal1, normals2[i]);
+                var dot = Vector2.Dot(normal1, normals2[i]);
                 if (dot < minDot)
                 {
                     minDot = dot;
@@ -214,19 +211,19 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // Build the clip vertices for the incident edge.
-            int i1 = index;
-            int i2 = i1 + 1 < count2 ? i1 + 1 : 0;
+            var i1 = index;
+            var i2 = i1 + 1 < count2 ? i1 + 1 : 0;
 
             c = new FixedArray2<ClipVertex>();
             c.Value0.V = MathUtils.Mul(ref xf2, vertices2[i1]);
-            c.Value0.ID.ContactFeature.IndexA = (byte)edge1;
-            c.Value0.ID.ContactFeature.IndexB = (byte)i1;
+            c.Value0.ID.ContactFeature.IndexA = (byte) edge1;
+            c.Value0.ID.ContactFeature.IndexB = (byte) i1;
             c.Value0.ID.ContactFeature.TypeA = ContactFeatureType.Face;
             c.Value0.ID.ContactFeature.TypeB = ContactFeatureType.Vertex;
 
             c.Value1.V = MathUtils.Mul(ref xf2, vertices2[i2]);
-            c.Value1.ID.ContactFeature.IndexA = (byte)edge1;
-            c.Value1.ID.ContactFeature.IndexB = (byte)i2;
+            c.Value1.ID.ContactFeature.IndexA = (byte) edge1;
+            c.Value1.ID.ContactFeature.IndexB = (byte) i2;
             c.Value1.ID.ContactFeature.TypeA = ContactFeatureType.Face;
             c.Value1.ID.ContactFeature.TypeB = ContactFeatureType.Vertex;
         }

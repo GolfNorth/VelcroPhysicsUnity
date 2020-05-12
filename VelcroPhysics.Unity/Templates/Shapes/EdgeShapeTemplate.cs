@@ -9,7 +9,9 @@ namespace VelcroPhysics.Templates.Shapes
     /// </summary>
     public class EdgeShapeTemplate : ShapeTemplate
     {
-        public EdgeShapeTemplate() : base(ShapeType.Edge) { }
+        public EdgeShapeTemplate() : base(ShapeType.Edge)
+        {
+        }
 
         /// <summary>
         /// Is true if the edge is connected to an adjacent vertex before vertex 1.

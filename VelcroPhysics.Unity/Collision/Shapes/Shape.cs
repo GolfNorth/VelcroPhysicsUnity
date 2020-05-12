@@ -77,7 +77,7 @@ namespace VelcroPhysics.Collision.Shapes
         /// <value>The density.</value>
         public float Density
         {
-            get { return _density; }
+            get => _density;
             set
             {
                 Debug.Assert(value >= 0);
@@ -93,7 +93,7 @@ namespace VelcroPhysics.Collision.Shapes
         /// </summary>
         public float Radius
         {
-            get { return _radius; }
+            get => _radius;
             set
             {
                 Debug.Assert(value >= 0);
@@ -128,7 +128,8 @@ namespace VelcroPhysics.Collision.Shapes
         /// <param name="childIndex">The child shape index.</param>
         /// <param name="output">The ray-cast results.</param>
         /// <returns>True if the ray-cast hits the shape</returns>
-        public abstract bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output);
+        public abstract bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex,
+            out RayCastOutput output);
 
         /// <summary>
         /// Given a transform, compute the associated axis aligned bounding box for a child shape.

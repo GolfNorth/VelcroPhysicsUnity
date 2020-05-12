@@ -42,32 +42,28 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
         {
             PolygonPoint point;
             PolygonPoint[] points;
-            float radius = scale / 4;
+            var radius = scale / 4;
 
             points = new PolygonPoint[vertexCount];
-            for (int i = 0; i < vertexCount; i++)
+            for (var i = 0; i < vertexCount; i++)
             {
                 do
                 {
                     if (i % 250 == 0)
-                    {
                         radius += scale / 2 * (0.5f - Random.value);
-                    }
                     else if (i % 50 == 0)
-                    {
                         radius += scale / 5 * (0.5f - Random.value);
-                    }
                     else
-                    {
                         radius += 25 * scale / vertexCount * (0.5f - Random.value);
-                    }
                     radius = radius > scale / 2 ? scale / 2 : radius;
                     radius = radius < scale / 10 ? scale / 10 : radius;
                 } while (radius < scale / 10 || radius > scale / 2);
-                point = new PolygonPoint(radius * Mathf.Cos( (PI_2 * i) / vertexCount),
-                    radius * Mathf.Sin((PI_2 * i) / vertexCount));
+
+                point = new PolygonPoint(radius * Mathf.Cos(PI_2 * i / vertexCount),
+                    radius * Mathf.Sin(PI_2 * i / vertexCount));
                 points[i] = point;
             }
+
             return new Polygon.Polygon(points);
         }
 
@@ -75,10 +71,10 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
         {
             PolygonPoint point;
             PolygonPoint[] points;
-            float radius = scale / 4;
+            var radius = scale / 4;
 
             points = new PolygonPoint[vertexCount];
-            for (int i = 0; i < vertexCount; i++)
+            for (var i = 0; i < vertexCount; i++)
             {
                 do
                 {
@@ -86,10 +82,12 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
                     radius = radius > scale / 2 ? scale / 2 : radius;
                     radius = radius < scale / 10 ? scale / 10 : radius;
                 } while (radius < scale / 10 || radius > scale / 2);
-                point = new PolygonPoint(radius * Mathf.Cos((PI_2 * i) / vertexCount),
-                    radius * Mathf.Sin((PI_2 * i) / vertexCount));
+
+                point = new PolygonPoint(radius * Mathf.Cos(PI_2 * i / vertexCount),
+                    radius * Mathf.Sin(PI_2 * i / vertexCount));
                 points[i] = point;
             }
+
             return new Polygon.Polygon(points);
         }
     }

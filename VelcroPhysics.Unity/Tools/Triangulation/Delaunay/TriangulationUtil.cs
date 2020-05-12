@@ -34,7 +34,6 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
     /**
      * @author Thomas Åhlén, thahlen@gmail.com
      */
-
     internal class TriangulationUtil
     {
         public static float EPSILON = 1e-12f;
@@ -64,42 +63,42 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
         /// <param name="pd">point opposite a</param>
         /// <returns>true if d is inside circle, false if on circle edge</returns>
         public static bool SmartIncircle(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc,
-                                         TriangulationPoint pd)
+            TriangulationPoint pd)
         {
-            float pdx = pd.X;
-            float pdy = pd.Y;
-            float adx = pa.X - pdx;
-            float ady = pa.Y - pdy;
-            float bdx = pb.X - pdx;
-            float bdy = pb.Y - pdy;
+            var pdx = pd.X;
+            var pdy = pd.Y;
+            var adx = pa.X - pdx;
+            var ady = pa.Y - pdy;
+            var bdx = pb.X - pdx;
+            var bdy = pb.Y - pdy;
 
-            float adxbdy = adx * bdy;
-            float bdxady = bdx * ady;
-            float oabd = adxbdy - bdxady;
+            var adxbdy = adx * bdy;
+            var bdxady = bdx * ady;
+            var oabd = adxbdy - bdxady;
 
             //        oabd = orient2d(pa,pb,pd);
             if (oabd <= 0)
                 return false;
 
-            float cdx = pc.X - pdx;
-            float cdy = pc.Y - pdy;
+            var cdx = pc.X - pdx;
+            var cdy = pc.Y - pdy;
 
-            float cdxady = cdx * ady;
-            float adxcdy = adx * cdy;
-            float ocad = cdxady - adxcdy;
+            var cdxady = cdx * ady;
+            var adxcdy = adx * cdy;
+            var ocad = cdxady - adxcdy;
 
             //      ocad = orient2d(pc,pa,pd);
             if (ocad <= 0)
                 return false;
 
-            float bdxcdy = bdx * cdy;
-            float cdxbdy = cdx * bdy;
+            var bdxcdy = bdx * cdy;
+            var cdxbdy = cdx * bdy;
 
-            float alift = adx * adx + ady * ady;
-            float blift = bdx * bdx + bdy * bdy;
-            float clift = cdx * cdx + cdy * cdy;
+            var alift = adx * adx + ady * ady;
+            var blift = bdx * bdx + bdy * bdy;
+            var clift = cdx * cdx + cdy * cdy;
 
-            float det = alift * (bdxcdy - cdxbdy) + blift * ocad + clift * oabd;
+            var det = alift * (bdxcdy - cdxbdy) + blift * ocad + clift * oabd;
 
             return det > 0;
         }
@@ -138,19 +137,14 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
         }
         */
 
-        public static bool InScanArea(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc, TriangulationPoint pd)
+        public static bool InScanArea(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc,
+            TriangulationPoint pd)
         {
-            float oadb = (pa.X - pb.X) * (pd.Y - pb.Y) - (pd.X - pb.X) * (pa.Y - pb.Y);
-            if (oadb >= -EPSILON)
-            {
-                return false;
-            }
+            var oadb = (pa.X - pb.X) * (pd.Y - pb.Y) - (pd.X - pb.X) * (pa.Y - pb.Y);
+            if (oadb >= -EPSILON) return false;
 
-            float oadc = (pa.X - pc.X) * (pd.Y - pc.Y) - (pd.X - pc.X) * (pa.Y - pc.Y);
-            if (oadc <= EPSILON)
-            {
-                return false;
-            }
+            var oadc = (pa.X - pc.X) * (pd.Y - pc.Y) - (pd.X - pc.X) * (pa.Y - pc.Y);
+            if (oadc <= EPSILON) return false;
             return true;
         }
 
@@ -162,17 +156,11 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
         /// =  (x1-x3)*(y2-y3) - (y1-y3)*(x2-x3)
         public static Orientation Orient2d(TriangulationPoint pa, TriangulationPoint pb, TriangulationPoint pc)
         {
-            float detleft = (pa.X - pc.X) * (pb.Y - pc.Y);
-            float detright = (pa.Y - pc.Y) * (pb.X - pc.X);
-            float val = detleft - detright;
-            if (val > -EPSILON && val < EPSILON)
-            {
-                return Orientation.Collinear;
-            }
-            if (val > 0)
-            {
-                return Orientation.CCW;
-            }
+            var detleft = (pa.X - pc.X) * (pb.Y - pc.Y);
+            var detright = (pa.Y - pc.Y) * (pb.X - pc.X);
+            var val = detleft - detright;
+            if (val > -EPSILON && val < EPSILON) return Orientation.Collinear;
+            if (val > 0) return Orientation.CCW;
             return Orientation.CW;
         }
     }

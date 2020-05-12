@@ -47,7 +47,9 @@ namespace VelcroPhysics.Collision.Shapes
             ComputeProperties();
         }
 
-        internal EdgeShape() : base(ShapeType.Edge, Settings.PolygonRadius) { }
+        internal EdgeShape() : base(ShapeType.Edge, Settings.PolygonRadius)
+        {
+        }
 
         public override int ChildCount => 1;
 
@@ -76,7 +78,7 @@ namespace VelcroPhysics.Collision.Shapes
         /// </summary>
         public Vector2 Vertex1
         {
-            get { return _vertex1; }
+            get => _vertex1;
             set
             {
                 _vertex1 = value;
@@ -89,7 +91,7 @@ namespace VelcroPhysics.Collision.Shapes
         /// </summary>
         public Vector2 Vertex2
         {
-            get { return _vertex2; }
+            get => _vertex2;
             set
             {
                 _vertex2 = value;
@@ -117,7 +119,8 @@ namespace VelcroPhysics.Collision.Shapes
             return false;
         }
 
-        public override bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output)
+        public override bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex,
+            out RayCastOutput output)
         {
             return RayCastHelper.RayCastEdge(ref _vertex1, ref _vertex2, ref input, ref transform, out output);
         }
@@ -144,7 +147,7 @@ namespace VelcroPhysics.Collision.Shapes
 
         public override Shape Clone()
         {
-            EdgeShape clone = new EdgeShape();
+            var clone = new EdgeShape();
             clone.ShapeType = ShapeType;
             clone._radius = _radius;
             clone._density = _density;

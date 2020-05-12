@@ -120,7 +120,7 @@ namespace VelcroPhysics.Dynamics
                 _collisionGroup = value;
                 Refilter();
             }
-            get { return _collisionGroup; }
+            get => _collisionGroup;
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace VelcroPhysics.Dynamics
         /// </summary>
         public Category CollidesWith
         {
-            get { return _collidesWith; }
+            get => _collidesWith;
 
             set
             {
@@ -152,7 +152,7 @@ namespace VelcroPhysics.Dynamics
         /// </summary>
         public Category CollisionCategories
         {
-            get { return _collisionCategories; }
+            get => _collisionCategories;
 
             set
             {
@@ -177,7 +177,7 @@ namespace VelcroPhysics.Dynamics
         /// <value><c>true</c> if this instance is a sensor; otherwise, <c>false</c>.</value>
         public bool IsSensor
         {
-            get { return _isSensor; }
+            get => _isSensor;
             set
             {
                 if (Body != null)
@@ -206,7 +206,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The friction.</value>
         public float Friction
         {
-            get { return _friction; }
+            get => _friction;
             set
             {
                 Debug.Assert(!float.IsNaN(value));
@@ -222,7 +222,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The restitution.</value>
         public float Restitution
         {
-            get { return _restitution; }
+            get => _restitution;
             set
             {
                 Debug.Assert(!float.IsNaN(value));
@@ -245,33 +245,24 @@ namespace VelcroPhysics.Dynamics
         private void Refilter()
         {
             // Flag associated contacts for filtering.
-            ContactEdge edge = Body.ContactList;
+            var edge = Body.ContactList;
             while (edge != null)
             {
-                Contact contact = edge.Contact;
-                Fixture fixtureA = contact.FixtureA;
-                Fixture fixtureB = contact.FixtureB;
-                if (fixtureA == this || fixtureB == this)
-                {
-                    contact._flags |= ContactFlags.FilterFlag;
-                }
+                var contact = edge.Contact;
+                var fixtureA = contact.FixtureA;
+                var fixtureB = contact.FixtureB;
+                if (fixtureA == this || fixtureB == this) contact._flags |= ContactFlags.FilterFlag;
 
                 edge = edge.Next;
             }
 
-            World world = Body._world;
+            var world = Body._world;
 
-            if (world == null)
-            {
-                return;
-            }
+            if (world == null) return;
 
             // Touch each proxy so that new pairs may be created
-            IBroadPhase broadPhase = world.ContactManager.BroadPhase;
-            for (int i = 0; i < ProxyCount; ++i)
-            {
-                broadPhase.TouchProxy(Proxies[i].ProxyId);
-            }
+            var broadPhase = world.ContactManager.BroadPhase;
+            for (var i = 0; i < ProxyCount; ++i) broadPhase.TouchProxy(Proxies[i].ProxyId);
         }
 
         private void RegisterFixture()
@@ -282,17 +273,14 @@ namespace VelcroPhysics.Dynamics
 
             if (Body.Enabled)
             {
-                IBroadPhase broadPhase = Body._world.ContactManager.BroadPhase;
+                var broadPhase = Body._world.ContactManager.BroadPhase;
                 CreateProxies(broadPhase, ref Body._xf);
             }
 
             Body.FixtureList.Add(this);
 
             // Adjust mass properties if needed.
-            if (Shape._density > 0.0f)
-            {
-                Body.ResetMassData();
-            }
+            if (Shape._density > 0.0f) Body.ResetMassData();
 
             // Let the world know we have a new fixture. This will cause new contacts
             // to be created at the beginning of the next time step.
@@ -370,9 +358,9 @@ namespace VelcroPhysics.Dynamics
             // Create proxies in the broad-phase.
             ProxyCount = Shape.ChildCount;
 
-            for (int i = 0; i < ProxyCount; ++i)
+            for (var i = 0; i < ProxyCount; ++i)
             {
-                FixtureProxy proxy = new FixtureProxy();
+                var proxy = new FixtureProxy();
                 Shape.ComputeAABB(ref xf, i, out proxy.AABB);
                 proxy.Fixture = this;
                 proxy.ChildIndex = i;
@@ -387,7 +375,7 @@ namespace VelcroPhysics.Dynamics
         internal void DestroyProxies(IBroadPhase broadPhase)
         {
             // Destroy proxies in the broad-phase.
-            for (int i = 0; i < ProxyCount; ++i)
+            for (var i = 0; i < ProxyCount; ++i)
             {
                 broadPhase.RemoveProxy(Proxies[i].ProxyId);
                 Proxies[i].ProxyId = -1;
@@ -398,14 +386,11 @@ namespace VelcroPhysics.Dynamics
 
         internal void Synchronize(IBroadPhase broadPhase, ref Transform transform1, ref Transform transform2)
         {
-            if (ProxyCount == 0)
-            {
-                return;
-            }
+            if (ProxyCount == 0) return;
 
-            for (int i = 0; i < ProxyCount; ++i)
+            for (var i = 0; i < ProxyCount; ++i)
             {
-                FixtureProxy proxy = Proxies[i];
+                var proxy = Proxies[i];
 
                 // Compute an AABB that covers the swept Shape (may miss some rotation effect).
                 AABB aabb1, aabb2;
@@ -414,7 +399,7 @@ namespace VelcroPhysics.Dynamics
 
                 proxy.AABB.Combine(ref aabb1, ref aabb2);
 
-                Vector2 displacement = transform2.p - transform1.p;
+                var displacement = transform2.p - transform1.p;
 
                 broadPhase.MoveProxy(proxy.ProxyId, ref proxy.AABB, displacement);
             }

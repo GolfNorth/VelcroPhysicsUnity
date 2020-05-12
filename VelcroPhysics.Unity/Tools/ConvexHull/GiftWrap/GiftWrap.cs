@@ -23,28 +23,28 @@ namespace VelcroPhysics.Tools.ConvexHull.GiftWrap
                 return vertices;
 
             // Find the right most point on the hull
-            int i0 = 0;
-            float x0 = vertices[0].x;
-            for (int i = 1; i < vertices.Count; ++i)
+            var i0 = 0;
+            var x0 = vertices[0].x;
+            for (var i = 1; i < vertices.Count; ++i)
             {
-                float x = vertices[i].x;
-                if (x > x0 || (x == x0 && vertices[i].y < vertices[i0].y))
+                var x = vertices[i].x;
+                if (x > x0 || x == x0 && vertices[i].y < vertices[i0].y)
                 {
                     i0 = i;
                     x0 = x;
                 }
             }
 
-            int[] hull = new int[vertices.Count];
-            int m = 0;
-            int ih = i0;
+            var hull = new int[vertices.Count];
+            var m = 0;
+            var ih = i0;
 
             for (;;)
             {
                 hull[m] = ih;
 
-                int ie = 0;
-                for (int j = 1; j < vertices.Count; ++j)
+                var ie = 0;
+                for (var j = 1; j < vertices.Count; ++j)
                 {
                     if (ie == ih)
                     {
@@ -52,37 +52,25 @@ namespace VelcroPhysics.Tools.ConvexHull.GiftWrap
                         continue;
                     }
 
-                    Vector2 r = vertices[ie] - vertices[hull[m]];
-                    Vector2 v = vertices[j] - vertices[hull[m]];
-                    float c = MathUtils.Cross(ref r, ref v);
-                    if (c < 0.0f)
-                    {
-                        ie = j;
-                    }
+                    var r = vertices[ie] - vertices[hull[m]];
+                    var v = vertices[j] - vertices[hull[m]];
+                    var c = MathUtils.Cross(ref r, ref v);
+                    if (c < 0.0f) ie = j;
 
                     // Collinearity check
-                    if (c == 0.0f && v.sqrMagnitude > r.sqrMagnitude)
-                    {
-                        ie = j;
-                    }
+                    if (c == 0.0f && v.sqrMagnitude > r.sqrMagnitude) ie = j;
                 }
 
                 ++m;
                 ih = ie;
 
-                if (ie == i0)
-                {
-                    break;
-                }
+                if (ie == i0) break;
             }
 
-            Vertices result = new Vertices(m);
+            var result = new Vertices(m);
 
             // Copy vertices.
-            for (int i = 0; i < m; ++i)
-            {
-                result.Add(vertices[hull[i]]);
-            }
+            for (var i = 0; i < m; ++i) result.Add(vertices[hull[i]]);
             return result;
         }
     }

@@ -11,28 +11,26 @@ namespace VelcroPhysics.Collision.Narrowphase
         /// <summary>
         /// Compute the collision manifold between two circles.
         /// </summary>
-        public static void CollideCircles(ref Manifold manifold, CircleShape circleA, ref Transform xfA, CircleShape circleB, ref Transform xfB)
+        public static void CollideCircles(ref Manifold manifold, CircleShape circleA, ref Transform xfA,
+            CircleShape circleB, ref Transform xfB)
         {
             manifold.PointCount = 0;
 
-            Vector2 pA = MathUtils.Mul(ref xfA, circleA.Position);
-            Vector2 pB = MathUtils.Mul(ref xfB, circleB.Position);
+            var pA = MathUtils.Mul(ref xfA, circleA.Position);
+            var pB = MathUtils.Mul(ref xfB, circleB.Position);
 
-            Vector2 d = pB - pA;
-            float distSqr = Vector2.Dot(d, d);
+            var d = pB - pA;
+            var distSqr = Vector2.Dot(d, d);
             float rA = circleA.Radius, rB = circleB.Radius;
-            float radius = rA + rB;
-            if (distSqr > radius * radius)
-            {
-                return;
-            }
+            var radius = rA + rB;
+            if (distSqr > radius * radius) return;
 
             manifold.Type = ManifoldType.Circles;
             manifold.LocalPoint = circleA.Position;
             manifold.LocalNormal = Vector2.zero;
             manifold.PointCount = 1;
 
-            ManifoldPoint p0 = manifold.Points[0];
+            var p0 = manifold.Points[0];
             p0.LocalPoint = circleB.Position;
             p0.Id.Key = 0;
             manifold.Points[0] = p0;
@@ -46,31 +44,30 @@ namespace VelcroPhysics.Collision.Narrowphase
         /// <param name="xfA">The transform of A.</param>
         /// <param name="circleB">The circle B.</param>
         /// <param name="xfB">The transform of B.</param>
-        public static void CollidePolygonAndCircle(ref Manifold manifold, PolygonShape polygonA, ref Transform xfA, CircleShape circleB, ref Transform xfB)
+        public static void CollidePolygonAndCircle(ref Manifold manifold, PolygonShape polygonA, ref Transform xfA,
+            CircleShape circleB, ref Transform xfB)
         {
             manifold.PointCount = 0;
 
             // Compute circle position in the frame of the polygon.
-            Vector2 c = MathUtils.Mul(ref xfB, circleB.Position);
-            Vector2 cLocal = MathUtils.MulT(ref xfA, c);
+            var c = MathUtils.Mul(ref xfB, circleB.Position);
+            var cLocal = MathUtils.MulT(ref xfA, c);
 
             // Find the min separating edge.
-            int normalIndex = 0;
-            float separation = -Settings.MaxFloat;
-            float radius = polygonA.Radius + circleB.Radius;
-            int vertexCount = polygonA.Vertices.Count;
-            Vertices vertices = polygonA.Vertices;
-            Vertices normals = polygonA.Normals;
+            var normalIndex = 0;
+            var separation = -Settings.MaxFloat;
+            var radius = polygonA.Radius + circleB.Radius;
+            var vertexCount = polygonA.Vertices.Count;
+            var vertices = polygonA.Vertices;
+            var normals = polygonA.Normals;
 
-            for (int i = 0; i < vertexCount; ++i)
+            for (var i = 0; i < vertexCount; ++i)
             {
-                float s = Vector2.Dot(normals[i], cLocal - vertices[i]);
+                var s = Vector2.Dot(normals[i], cLocal - vertices[i]);
 
                 if (s > radius)
-                {
                     // Early out.
                     return;
-                }
 
                 if (s > separation)
                 {
@@ -80,10 +77,10 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // Vertices that subtend the incident face.
-            int vertIndex1 = normalIndex;
-            int vertIndex2 = vertIndex1 + 1 < vertexCount ? vertIndex1 + 1 : 0;
-            Vector2 v1 = vertices[vertIndex1];
-            Vector2 v2 = vertices[vertIndex2];
+            var vertIndex1 = normalIndex;
+            var vertIndex2 = vertIndex1 + 1 < vertexCount ? vertIndex1 + 1 : 0;
+            var v1 = vertices[vertIndex1];
+            var v2 = vertices[vertIndex2];
 
             // If the center is inside the polygon ...
             if (separation < Settings.Epsilon)
@@ -98,15 +95,12 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // Compute barycentric coordinates
-            float u1 = Vector2.Dot(cLocal - v1, v2 - v1);
-            float u2 = Vector2.Dot(cLocal - v2, v1 - v2);
+            var u1 = Vector2.Dot(cLocal - v1, v2 - v1);
+            var u2 = Vector2.Dot(cLocal - v2, v1 - v2);
 
             if (u1 <= 0.0f)
             {
-                if (Mathf.Sqrt(Vector2.Distance(cLocal, v1)) > radius * radius)
-                {
-                    return;
-                }
+                if (Mathf.Sqrt(Vector2.Distance(cLocal, v1)) > radius * radius) return;
 
                 manifold.PointCount = 1;
                 manifold.Type = ManifoldType.FaceA;
@@ -118,10 +112,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
             else if (u2 <= 0.0f)
             {
-                if (Mathf.Sqrt(Vector2.Distance(cLocal, v2)) > radius * radius)
-                {
-                    return;
-                }
+                if (Mathf.Sqrt(Vector2.Distance(cLocal, v2)) > radius * radius) return;
 
                 manifold.PointCount = 1;
                 manifold.Type = ManifoldType.FaceA;
@@ -133,12 +124,9 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
             else
             {
-                Vector2 faceCenter = 0.5f * (v1 + v2);
-                float s = Vector2.Dot(cLocal - faceCenter, normals[vertIndex1]);
-                if (s > radius)
-                {
-                    return;
-                }
+                var faceCenter = 0.5f * (v1 + v2);
+                var s = Vector2.Dot(cLocal - faceCenter, normals[vertIndex1]);
+                if (s > radius) return;
 
                 manifold.PointCount = 1;
                 manifold.Type = ManifoldType.FaceA;

@@ -56,36 +56,32 @@ namespace VelcroPhysics.Dynamics.Solver
                 VelocityConstraints = new ContactVelocityConstraint[count * 2];
                 _positionConstraints = new ContactPositionConstraint[count * 2];
 
-                for (int i = 0; i < VelocityConstraints.Length; i++)
-                {
+                for (var i = 0; i < VelocityConstraints.Length; i++)
                     VelocityConstraints[i] = new ContactVelocityConstraint();
-                }
 
-                for (int i = 0; i < _positionConstraints.Length; i++)
-                {
+                for (var i = 0; i < _positionConstraints.Length; i++)
                     _positionConstraints[i] = new ContactPositionConstraint();
-                }
             }
 
             // Initialize position independent portions of the constraints.
-            for (int i = 0; i < _count; ++i)
+            for (var i = 0; i < _count; ++i)
             {
-                Contact contact = contacts[i];
+                var contact = contacts[i];
 
-                Fixture fixtureA = contact.FixtureA;
-                Fixture fixtureB = contact.FixtureB;
-                Shape shapeA = fixtureA.Shape;
-                Shape shapeB = fixtureB.Shape;
-                float radiusA = shapeA.Radius;
-                float radiusB = shapeB.Radius;
-                Body bodyA = fixtureA.Body;
-                Body bodyB = fixtureB.Body;
-                Manifold manifold = contact.Manifold;
+                var fixtureA = contact.FixtureA;
+                var fixtureB = contact.FixtureB;
+                var shapeA = fixtureA.Shape;
+                var shapeB = fixtureB.Shape;
+                var radiusA = shapeA.Radius;
+                var radiusB = shapeB.Radius;
+                var bodyA = fixtureA.Body;
+                var bodyB = fixtureB.Body;
+                var manifold = contact.Manifold;
 
-                int pointCount = manifold.PointCount;
+                var pointCount = manifold.PointCount;
                 Debug.Assert(pointCount > 0);
 
-                ContactVelocityConstraint vc = VelocityConstraints[i];
+                var vc = VelocityConstraints[i];
                 vc.Friction = contact.Friction;
                 vc.Restitution = contact.Restitution;
                 vc.TangentSpeed = contact.TangentSpeed;
@@ -100,7 +96,7 @@ namespace VelcroPhysics.Dynamics.Solver
                 vc.K.SetZero();
                 vc.NormalMass.SetZero();
 
-                ContactPositionConstraint pc = _positionConstraints[i];
+                var pc = _positionConstraints[i];
                 pc.IndexA = bodyA.IslandIndex;
                 pc.IndexB = bodyB.IslandIndex;
                 pc.InvMassA = bodyA._invMass;
@@ -116,10 +112,10 @@ namespace VelcroPhysics.Dynamics.Solver
                 pc.RadiusB = radiusB;
                 pc.Type = manifold.Type;
 
-                for (int j = 0; j < pointCount; ++j)
+                for (var j = 0; j < pointCount; ++j)
                 {
-                    ManifoldPoint cp = manifold.Points[j];
-                    VelocityConstraintPoint vcp = vc.Points[j];
+                    var cp = manifold.Points[j];
+                    var vcp = vc.Points[j];
 
                     if (Settings.EnableWarmstarting)
                     {
@@ -148,95 +144,94 @@ namespace VelcroPhysics.Dynamics.Solver
         /// </summary>
         public void InitializeVelocityConstraints()
         {
-            for (int i = 0; i < _count; ++i)
+            for (var i = 0; i < _count; ++i)
             {
-                ContactVelocityConstraint vc = VelocityConstraints[i];
-                ContactPositionConstraint pc = _positionConstraints[i];
+                var vc = VelocityConstraints[i];
+                var pc = _positionConstraints[i];
 
-                float radiusA = pc.RadiusA;
-                float radiusB = pc.RadiusB;
-                Manifold manifold = _contacts[vc.ContactIndex].Manifold;
+                var radiusA = pc.RadiusA;
+                var radiusB = pc.RadiusB;
+                var manifold = _contacts[vc.ContactIndex].Manifold;
 
-                int indexA = vc.IndexA;
-                int indexB = vc.IndexB;
+                var indexA = vc.IndexA;
+                var indexB = vc.IndexB;
 
-                float mA = vc.InvMassA;
-                float mB = vc.InvMassB;
-                float iA = vc.InvIA;
-                float iB = vc.InvIB;
-                Vector2 localCenterA = pc.LocalCenterA;
-                Vector2 localCenterB = pc.LocalCenterB;
+                var mA = vc.InvMassA;
+                var mB = vc.InvMassB;
+                var iA = vc.InvIA;
+                var iB = vc.InvIB;
+                var localCenterA = pc.LocalCenterA;
+                var localCenterB = pc.LocalCenterB;
 
-                Vector2 cA = _positions[indexA].C;
-                float aA = _positions[indexA].A;
-                Vector2 vA = _velocities[indexA].V;
-                float wA = _velocities[indexA].W;
+                var cA = _positions[indexA].C;
+                var aA = _positions[indexA].A;
+                var vA = _velocities[indexA].V;
+                var wA = _velocities[indexA].W;
 
-                Vector2 cB = _positions[indexB].C;
-                float aB = _positions[indexB].A;
-                Vector2 vB = _velocities[indexB].V;
-                float wB = _velocities[indexB].W;
+                var cB = _positions[indexB].C;
+                var aB = _positions[indexB].A;
+                var vB = _velocities[indexB].V;
+                var wB = _velocities[indexB].W;
 
                 Debug.Assert(manifold.PointCount > 0);
 
-                Transform xfA = new Transform();
-                Transform xfB = new Transform();
+                var xfA = new Transform();
+                var xfB = new Transform();
                 xfA.q.Set(aA);
                 xfB.q.Set(aB);
                 xfA.p = cA - MathUtils.Mul(xfA.q, localCenterA);
                 xfB.p = cB - MathUtils.Mul(xfB.q, localCenterB);
 
-                WorldManifold.Initialize(ref manifold, ref xfA, radiusA, ref xfB, radiusB, out Vector2 normal, out FixedArray2<Vector2> points, out _);
+                WorldManifold.Initialize(ref manifold, ref xfA, radiusA, ref xfB, radiusB, out var normal,
+                    out var points, out _);
 
                 vc.Normal = normal;
 
-                int pointCount = vc.PointCount;
-                for (int j = 0; j < pointCount; ++j)
+                var pointCount = vc.PointCount;
+                for (var j = 0; j < pointCount; ++j)
                 {
-                    VelocityConstraintPoint vcp = vc.Points[j];
+                    var vcp = vc.Points[j];
 
                     vcp.rA = points[j] - cA;
                     vcp.rB = points[j] - cB;
 
-                    float rnA = MathUtils.Cross(vcp.rA, vc.Normal);
-                    float rnB = MathUtils.Cross(vcp.rB, vc.Normal);
+                    var rnA = MathUtils.Cross(vcp.rA, vc.Normal);
+                    var rnB = MathUtils.Cross(vcp.rB, vc.Normal);
 
-                    float kNormal = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
+                    var kNormal = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
 
                     vcp.NormalMass = kNormal > 0.0f ? 1.0f / kNormal : 0.0f;
 
-                    Vector2 tangent = MathUtils.Cross(vc.Normal, 1.0f);
+                    var tangent = MathUtils.Cross(vc.Normal, 1.0f);
 
-                    float rtA = MathUtils.Cross(vcp.rA, tangent);
-                    float rtB = MathUtils.Cross(vcp.rB, tangent);
+                    var rtA = MathUtils.Cross(vcp.rA, tangent);
+                    var rtB = MathUtils.Cross(vcp.rB, tangent);
 
-                    float kTangent = mA + mB + iA * rtA * rtA + iB * rtB * rtB;
+                    var kTangent = mA + mB + iA * rtA * rtA + iB * rtB * rtB;
 
                     vcp.TangentMass = kTangent > 0.0f ? 1.0f / kTangent : 0.0f;
 
                     // Setup a velocity bias for restitution.
                     vcp.VelocityBias = 0.0f;
-                    float vRel = Vector2.Dot(vc.Normal, vB + MathUtils.Cross(wB, vcp.rB) - vA - MathUtils.Cross(wA, vcp.rA));
-                    if (vRel < -Settings.VelocityThreshold)
-                    {
-                        vcp.VelocityBias = -vc.Restitution * vRel;
-                    }
+                    var vRel = Vector2.Dot(vc.Normal,
+                        vB + MathUtils.Cross(wB, vcp.rB) - vA - MathUtils.Cross(wA, vcp.rA));
+                    if (vRel < -Settings.VelocityThreshold) vcp.VelocityBias = -vc.Restitution * vRel;
                 }
 
                 // If we have two points, then prepare the block solver.
                 if (vc.PointCount == 2 && Settings.BlockSolve)
                 {
-                    VelocityConstraintPoint vcp1 = vc.Points[0];
-                    VelocityConstraintPoint vcp2 = vc.Points[1];
+                    var vcp1 = vc.Points[0];
+                    var vcp2 = vc.Points[1];
 
-                    float rn1A = MathUtils.Cross(vcp1.rA, vc.Normal);
-                    float rn1B = MathUtils.Cross(vcp1.rB, vc.Normal);
-                    float rn2A = MathUtils.Cross(vcp2.rA, vc.Normal);
-                    float rn2B = MathUtils.Cross(vcp2.rB, vc.Normal);
+                    var rn1A = MathUtils.Cross(vcp1.rA, vc.Normal);
+                    var rn1B = MathUtils.Cross(vcp1.rB, vc.Normal);
+                    var rn2A = MathUtils.Cross(vcp2.rA, vc.Normal);
+                    var rn2B = MathUtils.Cross(vcp2.rB, vc.Normal);
 
-                    float k11 = mA + mB + iA * rn1A * rn1A + iB * rn1B * rn1B;
-                    float k22 = mA + mB + iA * rn2A * rn2A + iB * rn2B * rn2B;
-                    float k12 = mA + mB + iA * rn1A * rn2A + iB * rn1B * rn2B;
+                    var k11 = mA + mB + iA * rn1A * rn1A + iB * rn1B * rn1B;
+                    var k22 = mA + mB + iA * rn2A * rn2A + iB * rn2B * rn2B;
+                    var k12 = mA + mB + iA * rn1A * rn2A + iB * rn1B * rn2B;
 
                     // Ensure a reasonable condition number.
                     const float k_maxConditionNumber = 1000.0f;
@@ -260,30 +255,30 @@ namespace VelcroPhysics.Dynamics.Solver
         public void WarmStart()
         {
             // Warm start.
-            for (int i = 0; i < _count; ++i)
+            for (var i = 0; i < _count; ++i)
             {
-                ContactVelocityConstraint vc = VelocityConstraints[i];
+                var vc = VelocityConstraints[i];
 
-                int indexA = vc.IndexA;
-                int indexB = vc.IndexB;
-                float mA = vc.InvMassA;
-                float iA = vc.InvIA;
-                float mB = vc.InvMassB;
-                float iB = vc.InvIB;
-                int pointCount = vc.PointCount;
+                var indexA = vc.IndexA;
+                var indexB = vc.IndexB;
+                var mA = vc.InvMassA;
+                var iA = vc.InvIA;
+                var mB = vc.InvMassB;
+                var iB = vc.InvIB;
+                var pointCount = vc.PointCount;
 
-                Vector2 vA = _velocities[indexA].V;
-                float wA = _velocities[indexA].W;
-                Vector2 vB = _velocities[indexB].V;
-                float wB = _velocities[indexB].W;
+                var vA = _velocities[indexA].V;
+                var wA = _velocities[indexA].W;
+                var vB = _velocities[indexB].V;
+                var wB = _velocities[indexB].W;
 
-                Vector2 normal = vc.Normal;
-                Vector2 tangent = MathUtils.Cross(normal, 1.0f);
+                var normal = vc.Normal;
+                var tangent = MathUtils.Cross(normal, 1.0f);
 
-                for (int j = 0; j < pointCount; ++j)
+                for (var j = 0; j < pointCount; ++j)
                 {
-                    VelocityConstraintPoint vcp = vc.Points[j];
-                    Vector2 P = vcp.NormalImpulse * normal + vcp.TangentImpulse * tangent;
+                    var vcp = vc.Points[j];
+                    var P = vcp.NormalImpulse * normal + vcp.TangentImpulse * tangent;
                     wA -= iA * MathUtils.Cross(vcp.rA, P);
                     vA -= mA * P;
                     wB += iB * MathUtils.Cross(vcp.rB, P);
@@ -299,50 +294,50 @@ namespace VelcroPhysics.Dynamics.Solver
 
         public void SolveVelocityConstraints()
         {
-            for (int i = 0; i < _count; ++i)
+            for (var i = 0; i < _count; ++i)
             {
-                ContactVelocityConstraint vc = VelocityConstraints[i];
+                var vc = VelocityConstraints[i];
 
-                int indexA = vc.IndexA;
-                int indexB = vc.IndexB;
-                float mA = vc.InvMassA;
-                float iA = vc.InvIA;
-                float mB = vc.InvMassB;
-                float iB = vc.InvIB;
-                int pointCount = vc.PointCount;
+                var indexA = vc.IndexA;
+                var indexB = vc.IndexB;
+                var mA = vc.InvMassA;
+                var iA = vc.InvIA;
+                var mB = vc.InvMassB;
+                var iB = vc.InvIB;
+                var pointCount = vc.PointCount;
 
-                Vector2 vA = _velocities[indexA].V;
-                float wA = _velocities[indexA].W;
-                Vector2 vB = _velocities[indexB].V;
-                float wB = _velocities[indexB].W;
+                var vA = _velocities[indexA].V;
+                var wA = _velocities[indexA].W;
+                var vB = _velocities[indexB].V;
+                var wB = _velocities[indexB].W;
 
-                Vector2 normal = vc.Normal;
-                Vector2 tangent = MathUtils.Cross(normal, 1.0f);
-                float friction = vc.Friction;
+                var normal = vc.Normal;
+                var tangent = MathUtils.Cross(normal, 1.0f);
+                var friction = vc.Friction;
 
                 Debug.Assert(pointCount == 1 || pointCount == 2);
 
                 // Solve tangent constraints first because non-penetration is more important
                 // than friction.
-                for (int j = 0; j < pointCount; ++j)
+                for (var j = 0; j < pointCount; ++j)
                 {
-                    VelocityConstraintPoint vcp = vc.Points[j];
+                    var vcp = vc.Points[j];
 
                     // Relative velocity at contact
-                    Vector2 dv = vB + MathUtils.Cross(wB, vcp.rB) - vA - MathUtils.Cross(wA, vcp.rA);
+                    var dv = vB + MathUtils.Cross(wB, vcp.rB) - vA - MathUtils.Cross(wA, vcp.rA);
 
                     // Compute tangent force
-                    float vt = Vector2.Dot(dv, tangent) - vc.TangentSpeed;
-                    float lambda = vcp.TangentMass * (-vt);
+                    var vt = Vector2.Dot(dv, tangent) - vc.TangentSpeed;
+                    var lambda = vcp.TangentMass * -vt;
 
                     // b2Clamp the accumulated force
-                    float maxFriction = friction * vcp.NormalImpulse;
-                    float newImpulse = MathUtils.Clamp(vcp.TangentImpulse + lambda, -maxFriction, maxFriction);
+                    var maxFriction = friction * vcp.NormalImpulse;
+                    var newImpulse = MathUtils.Clamp(vcp.TangentImpulse + lambda, -maxFriction, maxFriction);
                     lambda = newImpulse - vcp.TangentImpulse;
                     vcp.TangentImpulse = newImpulse;
 
                     // Apply contact impulse
-                    Vector2 P = lambda * tangent;
+                    var P = lambda * tangent;
 
                     vA -= mA * P;
                     wA -= iA * MathUtils.Cross(vcp.rA, P);
@@ -354,24 +349,24 @@ namespace VelcroPhysics.Dynamics.Solver
                 // Solve normal constraints
                 if (pointCount == 1 || Settings.BlockSolve == false)
                 {
-                    for (int j = 0; j < pointCount; ++j)
+                    for (var j = 0; j < pointCount; ++j)
                     {
-                        VelocityConstraintPoint vcp = vc.Points[j];
+                        var vcp = vc.Points[j];
 
                         // Relative velocity at contact
-                        Vector2 dv = vB + MathUtils.Cross(wB, vcp.rB) - vA - MathUtils.Cross(wA, vcp.rA);
+                        var dv = vB + MathUtils.Cross(wB, vcp.rB) - vA - MathUtils.Cross(wA, vcp.rA);
 
                         // Compute normal impulse
-                        float vn = Vector2.Dot(dv, normal);
-                        float lambda = -vcp.NormalMass * (vn - vcp.VelocityBias);
+                        var vn = Vector2.Dot(dv, normal);
+                        var lambda = -vcp.NormalMass * (vn - vcp.VelocityBias);
 
                         // b2Clamp the accumulated impulse
-                        float newImpulse = Mathf.Max(vcp.NormalImpulse + lambda, 0.0f);
+                        var newImpulse = Mathf.Max(vcp.NormalImpulse + lambda, 0.0f);
                         lambda = newImpulse - vcp.NormalImpulse;
                         vcp.NormalImpulse = newImpulse;
 
                         // Apply contact impulse
-                        Vector2 P = lambda * normal;
+                        var P = lambda * normal;
                         vA -= mA * P;
                         wA -= iA * MathUtils.Cross(vcp.rA, P);
 
@@ -414,21 +409,21 @@ namespace VelcroPhysics.Dynamics.Solver
                     //    = A * x + b'
                     // b' = b - A * a;
 
-                    VelocityConstraintPoint cp1 = vc.Points[0];
-                    VelocityConstraintPoint cp2 = vc.Points[1];
+                    var cp1 = vc.Points[0];
+                    var cp2 = vc.Points[1];
 
-                    Vector2 a = new Vector2(cp1.NormalImpulse, cp2.NormalImpulse);
+                    var a = new Vector2(cp1.NormalImpulse, cp2.NormalImpulse);
                     Debug.Assert(a.x >= 0.0f && a.y >= 0.0f);
 
                     // Relative velocity at contact
-                    Vector2 dv1 = vB + MathUtils.Cross(wB, cp1.rB) - vA - MathUtils.Cross(wA, cp1.rA);
-                    Vector2 dv2 = vB + MathUtils.Cross(wB, cp2.rB) - vA - MathUtils.Cross(wA, cp2.rA);
+                    var dv1 = vB + MathUtils.Cross(wB, cp1.rB) - vA - MathUtils.Cross(wA, cp1.rA);
+                    var dv2 = vB + MathUtils.Cross(wB, cp2.rB) - vA - MathUtils.Cross(wA, cp2.rA);
 
                     // Compute normal velocity
-                    float vn1 = Vector2.Dot(dv1, normal);
-                    float vn2 = Vector2.Dot(dv2, normal);
+                    var vn1 = Vector2.Dot(dv1, normal);
+                    var vn2 = Vector2.Dot(dv2, normal);
 
-                    Vector2 b = Vector2.zero;
+                    var b = Vector2.zero;
                     b.x = vn1 - cp1.VelocityBias;
                     b.y = vn2 - cp2.VelocityBias;
 
@@ -448,16 +443,16 @@ namespace VelcroPhysics.Dynamics.Solver
                         //
                         // x = - inv(A) * b'
                         //
-                        Vector2 x = -MathUtils.Mul(ref vc.NormalMass, b);
+                        var x = -MathUtils.Mul(ref vc.NormalMass, b);
 
                         if (x.x >= 0.0f && x.y >= 0.0f)
                         {
                             // Get the incremental impulse
-                            Vector2 d = x - a;
+                            var d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.x * normal;
-                            Vector2 P2 = d.y * normal;
+                            var P1 = d.x * normal;
+                            var P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -497,11 +492,11 @@ namespace VelcroPhysics.Dynamics.Solver
                         if (x.x >= 0.0f && vn2 >= 0.0f)
                         {
                             // Get the incremental impulse
-                            Vector2 d = x - a;
+                            var d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.x * normal;
-                            Vector2 P2 = d.y * normal;
+                            var P1 = d.x * normal;
+                            var P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -538,11 +533,11 @@ namespace VelcroPhysics.Dynamics.Solver
                         if (x.y >= 0.0f && vn1 >= 0.0f)
                         {
                             // Resubstitute for the incremental impulse
-                            Vector2 d = x - a;
+                            var d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.x * normal;
-                            Vector2 P2 = d.y * normal;
+                            var P1 = d.x * normal;
+                            var P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -578,11 +573,11 @@ namespace VelcroPhysics.Dynamics.Solver
                         if (vn1 >= 0.0f && vn2 >= 0.0f)
                         {
                             // Resubstitute for the incremental impulse
-                            Vector2 d = x - a;
+                            var d = x - a;
 
                             // Apply incremental impulse
-                            Vector2 P1 = d.x * normal;
-                            Vector2 P2 = d.y * normal;
+                            var P1 = d.x * normal;
+                            var P2 = d.y * normal;
                             vA -= mA * (P1 + P2);
                             wA -= iA * (MathUtils.Cross(cp1.rA, P1) + MathUtils.Cross(cp2.rA, P2));
 
@@ -610,14 +605,14 @@ namespace VelcroPhysics.Dynamics.Solver
 
         public void StoreImpulses()
         {
-            for (int i = 0; i < _count; ++i)
+            for (var i = 0; i < _count; ++i)
             {
-                ContactVelocityConstraint vc = VelocityConstraints[i];
-                Manifold manifold = _contacts[vc.ContactIndex].Manifold;
+                var vc = VelocityConstraints[i];
+                var manifold = _contacts[vc.ContactIndex].Manifold;
 
-                for (int j = 0; j < vc.PointCount; ++j)
+                for (var j = 0; j < vc.PointCount; ++j)
                 {
-                    ManifoldPoint point = manifold.Points[j];
+                    var point = manifold.Points[j];
                     point.NormalImpulse = vc.Points[j].NormalImpulse;
                     point.TangentImpulse = vc.Points[j].TangentImpulse;
                     manifold.Points[j] = point;
@@ -629,58 +624,60 @@ namespace VelcroPhysics.Dynamics.Solver
 
         public bool SolvePositionConstraints()
         {
-            float minSeparation = 0.0f;
+            var minSeparation = 0.0f;
 
-            for (int i = 0; i < _count; ++i)
+            for (var i = 0; i < _count; ++i)
             {
-                ContactPositionConstraint pc = _positionConstraints[i];
+                var pc = _positionConstraints[i];
 
-                int indexA = pc.IndexA;
-                int indexB = pc.IndexB;
-                Vector2 localCenterA = pc.LocalCenterA;
-                float mA = pc.InvMassA;
-                float iA = pc.InvIA;
-                Vector2 localCenterB = pc.LocalCenterB;
-                float mB = pc.InvMassB;
-                float iB = pc.InvIB;
-                int pointCount = pc.PointCount;
+                var indexA = pc.IndexA;
+                var indexB = pc.IndexB;
+                var localCenterA = pc.LocalCenterA;
+                var mA = pc.InvMassA;
+                var iA = pc.InvIA;
+                var localCenterB = pc.LocalCenterB;
+                var mB = pc.InvMassB;
+                var iB = pc.InvIB;
+                var pointCount = pc.PointCount;
 
-                Vector2 cA = _positions[indexA].C;
-                float aA = _positions[indexA].A;
+                var cA = _positions[indexA].C;
+                var aA = _positions[indexA].A;
 
-                Vector2 cB = _positions[indexB].C;
-                float aB = _positions[indexB].A;
+                var cB = _positions[indexB].C;
+                var aB = _positions[indexB].A;
 
                 // Solve normal constraints
-                for (int j = 0; j < pointCount; ++j)
+                for (var j = 0; j < pointCount; ++j)
                 {
-                    Transform xfA = new Transform();
-                    Transform xfB = new Transform();
+                    var xfA = new Transform();
+                    var xfB = new Transform();
                     xfA.q.Set(aA);
                     xfB.q.Set(aB);
                     xfA.p = cA - MathUtils.Mul(xfA.q, localCenterA);
                     xfB.p = cB - MathUtils.Mul(xfB.q, localCenterB);
 
-                    PositionSolverManifold.Initialize(pc, xfA, xfB, j, out Vector2 normal, out Vector2 point, out float separation);
+                    PositionSolverManifold.Initialize(pc, xfA, xfB, j, out var normal, out var point,
+                        out var separation);
 
-                    Vector2 rA = point - cA;
-                    Vector2 rB = point - cB;
+                    var rA = point - cA;
+                    var rB = point - cB;
 
                     // Track max constraint error.
                     minSeparation = Mathf.Min(minSeparation, separation);
 
                     // Prevent large corrections and allow slop.
-                    float C = MathUtils.Clamp(Settings.Baumgarte * (separation + Settings.LinearSlop), -Settings.MaxLinearCorrection, 0.0f);
+                    var C = MathUtils.Clamp(Settings.Baumgarte * (separation + Settings.LinearSlop),
+                        -Settings.MaxLinearCorrection, 0.0f);
 
                     // Compute the effective mass.
-                    float rnA = MathUtils.Cross(rA, normal);
-                    float rnB = MathUtils.Cross(rB, normal);
-                    float K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
+                    var rnA = MathUtils.Cross(rA, normal);
+                    var rnB = MathUtils.Cross(rB, normal);
+                    var K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
 
                     // Compute normal impulse
-                    float impulse = K > 0.0f ? -C / K : 0.0f;
+                    var impulse = K > 0.0f ? -C / K : 0.0f;
 
-                    Vector2 P = impulse * normal;
+                    var P = impulse * normal;
 
                     cA -= mA * P;
                     aA -= iA * MathUtils.Cross(rA, P);
@@ -704,70 +701,72 @@ namespace VelcroPhysics.Dynamics.Solver
         // Sequential position solver for position constraints.
         public bool SolveTOIPositionConstraints(int toiIndexA, int toiIndexB)
         {
-            float minSeparation = 0.0f;
+            var minSeparation = 0.0f;
 
-            for (int i = 0; i < _count; ++i)
+            for (var i = 0; i < _count; ++i)
             {
-                ContactPositionConstraint pc = _positionConstraints[i];
+                var pc = _positionConstraints[i];
 
-                int indexA = pc.IndexA;
-                int indexB = pc.IndexB;
-                Vector2 localCenterA = pc.LocalCenterA;
-                Vector2 localCenterB = pc.LocalCenterB;
-                int pointCount = pc.PointCount;
+                var indexA = pc.IndexA;
+                var indexB = pc.IndexB;
+                var localCenterA = pc.LocalCenterA;
+                var localCenterB = pc.LocalCenterB;
+                var pointCount = pc.PointCount;
 
-                float mA = 0.0f;
-                float iA = 0.0f;
+                var mA = 0.0f;
+                var iA = 0.0f;
                 if (indexA == toiIndexA || indexA == toiIndexB)
                 {
                     mA = pc.InvMassA;
                     iA = pc.InvIA;
                 }
 
-                float mB = 0.0f;
-                float iB = 0.0f;
+                var mB = 0.0f;
+                var iB = 0.0f;
                 if (indexB == toiIndexA || indexB == toiIndexB)
                 {
                     mB = pc.InvMassB;
                     iB = pc.InvIB;
                 }
 
-                Vector2 cA = _positions[indexA].C;
-                float aA = _positions[indexA].A;
+                var cA = _positions[indexA].C;
+                var aA = _positions[indexA].A;
 
-                Vector2 cB = _positions[indexB].C;
-                float aB = _positions[indexB].A;
+                var cB = _positions[indexB].C;
+                var aB = _positions[indexB].A;
 
                 // Solve normal constraints
-                for (int j = 0; j < pointCount; ++j)
+                for (var j = 0; j < pointCount; ++j)
                 {
-                    Transform xfA = new Transform();
-                    Transform xfB = new Transform();
+                    var xfA = new Transform();
+                    var xfB = new Transform();
                     xfA.q.Set(aA);
                     xfB.q.Set(aB);
                     xfA.p = cA - MathUtils.Mul(xfA.q, localCenterA);
                     xfB.p = cB - MathUtils.Mul(xfB.q, localCenterB);
 
-                    PositionSolverManifold.Initialize(pc, xfA, xfB, j, out Vector2 normal, out Vector2 point, out float separation);
+                    PositionSolverManifold.Initialize(pc, xfA, xfB, j, out var normal, out var point,
+                        out var separation);
 
-                    Vector2 rA = point - cA;
-                    Vector2 rB = point - cB;
+                    var rA = point - cA;
+                    var rB = point - cB;
 
                     // Track max constraint error.
                     minSeparation = Mathf.Min(minSeparation, separation);
 
                     // Prevent large corrections and allow slop.
-                    float C = MathUtils.Clamp(Settings.Baumgarte * (separation + Settings.LinearSlop), -Settings.MaxLinearCorrection, 0.0f);
+                    var C = MathUtils.Clamp(Settings.Baumgarte * (separation + Settings.LinearSlop),
+                        -Settings.MaxLinearCorrection, 0.0f);
 
                     // Compute the effective mass.
-                    float rnA = MathUtils.Cross(rA, normal);
-                    float rnB = MathUtils.Cross(rB, normal);
-                    float K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
+                    var rnA = MathUtils.Cross(rA, normal);
+                    var rnB = MathUtils.Cross(rB, normal);
+                    var K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
 
                     // Compute normal impulse
-                    float impulse = K > 0.0f ? -C / K : 0.0f;
+                    var impulse = K > 0.0f ? -C / K : 0.0f;
 
-                    Vector2 P = impulse * normal;
+                    var P = impulse * normal;
 
                     cA -= mA * P;
                     aA -= iA * MathUtils.Cross(rA, P);

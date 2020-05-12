@@ -90,7 +90,7 @@ namespace VelcroPhysics.Collision.Broadphase
         /// <returns></returns>
         public int AddProxy(ref FixtureProxy proxy)
         {
-            int proxyId = _tree.AddProxy(ref proxy.AABB, proxy);
+            var proxyId = _tree.AddProxy(ref proxy.AABB, proxy);
             ++_proxyCount;
             BufferMove(proxyId);
             return proxyId;
@@ -113,7 +113,7 @@ namespace VelcroPhysics.Collision.Broadphase
         /// </summary>
         public void MoveProxy(int proxyId, ref AABB aabb, Vector2 displacement)
         {
-            bool buffer = _tree.MoveProxy(proxyId, ref aabb, displacement);
+            var buffer = _tree.MoveProxy(proxyId, ref aabb, displacement);
             if (buffer)
                 BufferMove(proxyId);
         }
@@ -154,8 +154,8 @@ namespace VelcroPhysics.Collision.Broadphase
         /// <returns></returns>
         public bool TestOverlap(int proxyIdA, int proxyIdB)
         {
-            _tree.GetFatAABB(proxyIdA, out AABB aabbA);
-            _tree.GetFatAABB(proxyIdB, out AABB aabbB);
+            _tree.GetFatAABB(proxyIdA, out var aabbA);
+            _tree.GetFatAABB(proxyIdB, out var aabbB);
             return AABB.TestOverlap(ref aabbA, ref aabbB);
         }
 
@@ -169,7 +169,7 @@ namespace VelcroPhysics.Collision.Broadphase
             _pairCount = 0;
 
             // Perform tree queries for all moving proxies.
-            for (int j = 0; j < _moveCount; ++j)
+            for (var j = 0; j < _moveCount; ++j)
             {
                 _queryProxyId = _moveBuffer[j];
                 if (_queryProxyId == NullProxy)
@@ -177,7 +177,7 @@ namespace VelcroPhysics.Collision.Broadphase
 
                 // We have to query the tree with the fat AABB so that
                 // we don't fail to create a pair that may touch later.
-                _tree.GetFatAABB(_queryProxyId, out AABB fatAABB);
+                _tree.GetFatAABB(_queryProxyId, out var fatAABB);
 
                 // Query tree, create pairs and add them pair buffer.
                 _tree.Query(_queryCallback, ref fatAABB);
@@ -190,12 +190,12 @@ namespace VelcroPhysics.Collision.Broadphase
             Array.Sort(_pairBuffer, 0, _pairCount);
 
             // Send the pairs back to the client.
-            int i = 0;
+            var i = 0;
             while (i < _pairCount)
             {
-                Pair primaryPair = _pairBuffer[i];
-                FixtureProxy userDataA = _tree.GetUserData(primaryPair.ProxyIdA);
-                FixtureProxy userDataB = _tree.GetUserData(primaryPair.ProxyIdB);
+                var primaryPair = _pairBuffer[i];
+                var userDataA = _tree.GetUserData(primaryPair.ProxyIdA);
+                var userDataB = _tree.GetUserData(primaryPair.ProxyIdB);
 
                 callback(ref userDataA, ref userDataB);
                 ++i;
@@ -203,7 +203,7 @@ namespace VelcroPhysics.Collision.Broadphase
                 // Skip any duplicate pairs.
                 while (i < _pairCount)
                 {
-                    Pair pair = _pairBuffer[i];
+                    var pair = _pairBuffer[i];
                     if (pair.ProxyIdA != primaryPair.ProxyIdA || pair.ProxyIdB != primaryPair.ProxyIdB)
                         break;
 
@@ -252,7 +252,7 @@ namespace VelcroPhysics.Collision.Broadphase
         {
             if (_moveCount == _moveCapacity)
             {
-                int[] oldBuffer = _moveBuffer;
+                var oldBuffer = _moveBuffer;
                 _moveCapacity *= 2;
                 _moveBuffer = new int[_moveCapacity];
                 Array.Copy(oldBuffer, _moveBuffer, _moveCount);
@@ -264,11 +264,9 @@ namespace VelcroPhysics.Collision.Broadphase
 
         private void UnBufferMove(int proxyId)
         {
-            for (int i = 0; i < _moveCount; ++i)
-            {
+            for (var i = 0; i < _moveCount; ++i)
                 if (_moveBuffer[i] == proxyId)
                     _moveBuffer[i] = NullProxy;
-            }
         }
 
         /// <summary>
@@ -283,7 +281,7 @@ namespace VelcroPhysics.Collision.Broadphase
             // Grow the pair buffer as needed.
             if (_pairCount == _pairCapacity)
             {
-                Pair[] oldBuffer = _pairBuffer;
+                var oldBuffer = _pairBuffer;
                 _pairCapacity *= 2;
                 _pairBuffer = new Pair[_pairCapacity];
                 Array.Copy(oldBuffer, _pairBuffer, _pairCount);

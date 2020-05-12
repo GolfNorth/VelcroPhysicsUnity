@@ -112,7 +112,7 @@ namespace VelcroPhysics.Dynamics.Joints
         /// </summary>
         public float Breakpoint
         {
-            get { return _breakpoint; }
+            get => _breakpoint;
             set
             {
                 _breakpoint = value;
@@ -167,14 +167,14 @@ namespace VelcroPhysics.Dynamics.Joints
             if (!Enabled)
                 return;
 
-            float jointErrorSquared = GetReactionForce(invDt).sqrMagnitude;
+            var jointErrorSquared = GetReactionForce(invDt).sqrMagnitude;
 
             if (Mathf.Abs(jointErrorSquared) <= _breakpointSquared)
                 return;
 
             Enabled = false;
 
-            Broke?.Invoke(this, (float)Mathf.Sqrt(jointErrorSquared));
+            Broke?.Invoke(this, Mathf.Sqrt(jointErrorSquared));
         }
 
         internal abstract void SolveVelocityConstraints(ref SolverData data);

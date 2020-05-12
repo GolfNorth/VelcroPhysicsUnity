@@ -13,19 +13,20 @@ namespace VelcroPhysics.Collision.Narrowphase
         internal int Count;
         internal FixedArray3<SimplexVertex> V;
 
-        internal void ReadCache(ref SimplexCache cache, ref DistanceProxy proxyA, ref Transform transformA, ref DistanceProxy proxyB, ref Transform transformB)
+        internal void ReadCache(ref SimplexCache cache, ref DistanceProxy proxyA, ref Transform transformA,
+            ref DistanceProxy proxyB, ref Transform transformB)
         {
             Debug.Assert(cache.Count <= 3);
 
             // Copy data from cache.
             Count = cache.Count;
-            for (int i = 0; i < Count; ++i)
+            for (var i = 0; i < Count; ++i)
             {
-                SimplexVertex v = V[i];
+                var v = V[i];
                 v.IndexA = cache.IndexA[i];
                 v.IndexB = cache.IndexB[i];
-                Vector2 wALocal = proxyA.Vertices[v.IndexA];
-                Vector2 wBLocal = proxyB.Vertices[v.IndexB];
+                var wALocal = proxyA.Vertices[v.IndexA];
+                var wBLocal = proxyB.Vertices[v.IndexB];
                 v.WA = MathUtils.Mul(ref transformA, wALocal);
                 v.WB = MathUtils.Mul(ref transformB, wBLocal);
                 v.W = v.WB - v.WA;
@@ -37,23 +38,21 @@ namespace VelcroPhysics.Collision.Narrowphase
             // old metric then flush the simplex.
             if (Count > 1)
             {
-                float metric1 = cache.Metric;
-                float metric2 = GetMetric();
+                var metric1 = cache.Metric;
+                var metric2 = GetMetric();
                 if (metric2 < 0.5f * metric1 || 2.0f * metric1 < metric2 || metric2 < Settings.Epsilon)
-                {
                     // Reset the simplex.
                     Count = 0;
-                }
             }
 
             // If the cache is empty or invalid ...
             if (Count == 0)
             {
-                SimplexVertex v = V[0];
+                var v = V[0];
                 v.IndexA = 0;
                 v.IndexB = 0;
-                Vector2 wALocal = proxyA.Vertices[0];
-                Vector2 wBLocal = proxyB.Vertices[0];
+                var wALocal = proxyA.Vertices[0];
+                var wBLocal = proxyB.Vertices[0];
                 v.WA = MathUtils.Mul(ref transformA, wALocal);
                 v.WB = MathUtils.Mul(ref transformB, wBLocal);
                 v.W = v.WB - v.WA;
@@ -66,11 +65,11 @@ namespace VelcroPhysics.Collision.Narrowphase
         internal void WriteCache(ref SimplexCache cache)
         {
             cache.Metric = GetMetric();
-            cache.Count = (ushort)Count;
-            for (int i = 0; i < Count; ++i)
+            cache.Count = (ushort) Count;
+            for (var i = 0; i < Count; ++i)
             {
-                cache.IndexA[i] = (byte)V[i].IndexA;
-                cache.IndexB[i] = (byte)V[i].IndexB;
+                cache.IndexA[i] = (byte) V[i].IndexA;
+                cache.IndexB[i] = (byte) V[i].IndexB;
             }
         }
 
@@ -82,20 +81,16 @@ namespace VelcroPhysics.Collision.Narrowphase
                     return -V[0].W;
 
                 case 2:
-                    {
-                        Vector2 e12 = V[1].W - V[0].W;
-                        float sgn = MathUtils.Cross(e12, -V[0].W);
-                        if (sgn > 0.0f)
-                        {
-                            // Origin is left of e12.
-                            return MathUtils.Cross(1.0f, e12);
-                        }
-                        else
-                        {
-                            // Origin is right of e12.
-                            return MathUtils.Cross(e12, 1.0f);
-                        }
-                    }
+                {
+                    var e12 = V[1].W - V[0].W;
+                    var sgn = MathUtils.Cross(e12, -V[0].W);
+                    if (sgn > 0.0f)
+                        // Origin is left of e12.
+                        return MathUtils.Cross(1.0f, e12);
+                    else
+                        // Origin is right of e12.
+                        return MathUtils.Cross(e12, 1.0f);
+                }
 
                 default:
                     Debug.Assert(false);
@@ -204,12 +199,12 @@ namespace VelcroPhysics.Collision.Narrowphase
 
         internal void Solve2()
         {
-            Vector2 w1 = V[0].W;
-            Vector2 w2 = V[1].W;
-            Vector2 e12 = w2 - w1;
+            var w1 = V[0].W;
+            var w2 = V[1].W;
+            var e12 = w2 - w1;
 
             // w1 region
-            float d12_2 = -Vector2.Dot(w1, e12);
+            var d12_2 = -Vector2.Dot(w1, e12);
             if (d12_2 <= 0.0f)
             {
                 // a2 <= 0, so we clamp it to 0
@@ -219,7 +214,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // w2 region
-            float d12_1 = Vector2.Dot(w2, e12);
+            var d12_1 = Vector2.Dot(w2, e12);
             if (d12_1 <= 0.0f)
             {
                 // a1 <= 0, so we clamp it to 0
@@ -230,7 +225,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // Must be in e12 region.
-            float inv_d12 = 1.0f / (d12_1 + d12_2);
+            var inv_d12 = 1.0f / (d12_1 + d12_2);
             V.Value0.A = d12_1 * inv_d12;
             V.Value1.A = d12_2 * inv_d12;
             Count = 2;
@@ -243,46 +238,46 @@ namespace VelcroPhysics.Collision.Narrowphase
         // - inside the triangle
         internal void Solve3()
         {
-            Vector2 w1 = V[0].W;
-            Vector2 w2 = V[1].W;
-            Vector2 w3 = V[2].W;
+            var w1 = V[0].W;
+            var w2 = V[1].W;
+            var w3 = V[2].W;
 
             // Edge12
             // [1      1     ][a1] = [1]
             // [w1.e12 w2.e12][a2] = [0]
             // a3 = 0
-            Vector2 e12 = w2 - w1;
-            float w1e12 = Vector2.Dot(w1, e12);
-            float w2e12 = Vector2.Dot(w2, e12);
-            float d12_1 = w2e12;
-            float d12_2 = -w1e12;
+            var e12 = w2 - w1;
+            var w1e12 = Vector2.Dot(w1, e12);
+            var w2e12 = Vector2.Dot(w2, e12);
+            var d12_1 = w2e12;
+            var d12_2 = -w1e12;
 
             // Edge13
             // [1      1     ][a1] = [1]
             // [w1.e13 w3.e13][a3] = [0]
             // a2 = 0
-            Vector2 e13 = w3 - w1;
-            float w1e13 = Vector2.Dot(w1, e13);
-            float w3e13 = Vector2.Dot(w3, e13);
-            float d13_1 = w3e13;
-            float d13_2 = -w1e13;
+            var e13 = w3 - w1;
+            var w1e13 = Vector2.Dot(w1, e13);
+            var w3e13 = Vector2.Dot(w3, e13);
+            var d13_1 = w3e13;
+            var d13_2 = -w1e13;
 
             // Edge23
             // [1      1     ][a2] = [1]
             // [w2.e23 w3.e23][a3] = [0]
             // a1 = 0
-            Vector2 e23 = w3 - w2;
-            float w2e23 = Vector2.Dot(w2, e23);
-            float w3e23 = Vector2.Dot(w3, e23);
-            float d23_1 = w3e23;
-            float d23_2 = -w2e23;
+            var e23 = w3 - w2;
+            var w2e23 = Vector2.Dot(w2, e23);
+            var w3e23 = Vector2.Dot(w3, e23);
+            var d23_1 = w3e23;
+            var d23_2 = -w2e23;
 
             // Triangle123
-            float n123 = MathUtils.Cross(e12, e13);
+            var n123 = MathUtils.Cross(e12, e13);
 
-            float d123_1 = n123 * MathUtils.Cross(w2, w3);
-            float d123_2 = n123 * MathUtils.Cross(w3, w1);
-            float d123_3 = n123 * MathUtils.Cross(w1, w2);
+            var d123_1 = n123 * MathUtils.Cross(w2, w3);
+            var d123_2 = n123 * MathUtils.Cross(w3, w1);
+            var d123_3 = n123 * MathUtils.Cross(w1, w2);
 
             // w1 region
             if (d12_2 <= 0.0f && d13_2 <= 0.0f)
@@ -295,7 +290,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             // e12
             if (d12_1 > 0.0f && d12_2 > 0.0f && d123_3 <= 0.0f)
             {
-                float inv_d12 = 1.0f / (d12_1 + d12_2);
+                var inv_d12 = 1.0f / (d12_1 + d12_2);
                 V.Value0.A = d12_1 * inv_d12;
                 V.Value1.A = d12_2 * inv_d12;
                 Count = 2;
@@ -305,7 +300,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             // e13
             if (d13_1 > 0.0f && d13_2 > 0.0f && d123_2 <= 0.0f)
             {
-                float inv_d13 = 1.0f / (d13_1 + d13_2);
+                var inv_d13 = 1.0f / (d13_1 + d13_2);
                 V.Value0.A = d13_1 * inv_d13;
                 V.Value2.A = d13_2 * inv_d13;
                 Count = 2;
@@ -334,7 +329,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             // e23
             if (d23_1 > 0.0f && d23_2 > 0.0f && d123_1 <= 0.0f)
             {
-                float inv_d23 = 1.0f / (d23_1 + d23_2);
+                var inv_d23 = 1.0f / (d23_1 + d23_2);
                 V.Value1.A = d23_1 * inv_d23;
                 V.Value2.A = d23_2 * inv_d23;
                 Count = 2;
@@ -343,7 +338,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // Must be in triangle123
-            float inv_d123 = 1.0f / (d123_1 + d123_2 + d123_3);
+            var inv_d123 = 1.0f / (d123_1 + d123_2 + d123_3);
             V.Value0.A = d123_1 * inv_d123;
             V.Value1.A = d123_2 * inv_d123;
             V.Value2.A = d123_3 * inv_d123;

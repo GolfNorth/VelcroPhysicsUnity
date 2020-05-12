@@ -9,7 +9,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class MouseJointTemplate : JointTemplate
     {
-        public MouseJointTemplate() : base(JointType.FixedMouse) { }
+        public MouseJointTemplate() : base(JointType.FixedMouse)
+        {
+        }
 
         /// <summary>
         /// The damping ratio. 0 = no damping, 1 = critical damping.

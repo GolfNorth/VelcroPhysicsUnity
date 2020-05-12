@@ -9,7 +9,8 @@ namespace VelcroPhysics.Collision.Narrowphase
 {
     public static class EPCollider
     {
-        public static void Collide(ref Manifold manifold, EdgeShape edgeA, ref Transform xfA, PolygonShape polygonB, ref Transform xfB)
+        public static void Collide(ref Manifold manifold, EdgeShape edgeA, ref Transform xfA, PolygonShape polygonB,
+            ref Transform xfB)
         {
             // Algorithm:
             // 1. Classify v1 and v2
@@ -23,32 +24,32 @@ namespace VelcroPhysics.Collision.Narrowphase
             bool front;
             Vector2 lowerLimit, upperLimit;
             Vector2 normal;
-            Vector2 normal0 = Vector2.zero;
-            Vector2 normal2 = Vector2.zero;
+            var normal0 = Vector2.zero;
+            var normal2 = Vector2.zero;
 
-            Transform xf = MathUtils.MulT(xfA, xfB);
+            var xf = MathUtils.MulT(xfA, xfB);
 
-            Vector2 centroidB = MathUtils.Mul(ref xf, polygonB.MassData.Centroid);
+            var centroidB = MathUtils.Mul(ref xf, polygonB.MassData.Centroid);
 
-            Vector2 v0 = edgeA.Vertex0;
-            Vector2 v1 = edgeA._vertex1;
-            Vector2 v2 = edgeA._vertex2;
-            Vector2 v3 = edgeA.Vertex3;
+            var v0 = edgeA.Vertex0;
+            var v1 = edgeA._vertex1;
+            var v2 = edgeA._vertex2;
+            var v3 = edgeA.Vertex3;
 
-            bool hasVertex0 = edgeA.HasVertex0;
-            bool hasVertex3 = edgeA.HasVertex3;
+            var hasVertex0 = edgeA.HasVertex0;
+            var hasVertex3 = edgeA.HasVertex3;
 
-            Vector2 edge1 = v2 - v1;
+            var edge1 = v2 - v1;
             edge1.Normalize();
-            Vector2 normal1 = new Vector2(edge1.y, -edge1.x);
-            float offset1 = Vector2.Dot(normal1, centroidB - v1);
+            var normal1 = new Vector2(edge1.y, -edge1.x);
+            var offset1 = Vector2.Dot(normal1, centroidB - v1);
             float offset0 = 0.0f, offset2 = 0.0f;
             bool convex1 = false, convex2 = false;
 
             // Is there a preceding edge?
             if (hasVertex0)
             {
-                Vector2 edge0 = v1 - v0;
+                var edge0 = v1 - v0;
                 edge0.Normalize();
                 normal0 = new Vector2(edge0.y, -edge0.x);
                 convex1 = MathUtils.Cross(edge0, edge1) >= 0.0f;
@@ -58,7 +59,7 @@ namespace VelcroPhysics.Collision.Narrowphase
             // Is there a following edge?
             if (hasVertex3)
             {
-                Vector2 edge2 = v3 - v2;
+                var edge2 = v3 - v2;
                 edge2.Normalize();
                 normal2 = new Vector2(edge2.y, -edge2.x);
                 convex2 = MathUtils.Cross(edge1, edge2) > 0.0f;
@@ -86,7 +87,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                 }
                 else if (convex1)
                 {
-                    front = offset0 >= 0.0f || (offset1 >= 0.0f && offset2 >= 0.0f);
+                    front = offset0 >= 0.0f || offset1 >= 0.0f && offset2 >= 0.0f;
                     if (front)
                     {
                         normal = normal1;
@@ -102,7 +103,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                 }
                 else if (convex2)
                 {
-                    front = offset2 >= 0.0f || (offset0 >= 0.0f && offset1 >= 0.0f);
+                    front = offset2 >= 0.0f || offset0 >= 0.0f && offset1 >= 0.0f;
                     if (front)
                     {
                         normal = normal1;
@@ -221,16 +222,16 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // Get polygonB in frameA
-            Vector2[] normals = new Vector2[Settings.MaxPolygonVertices];
-            Vector2[] vertices = new Vector2[Settings.MaxPolygonVertices];
-            int count = polygonB.Vertices.Count;
-            for (int i = 0; i < polygonB.Vertices.Count; ++i)
+            var normals = new Vector2[Settings.MaxPolygonVertices];
+            var vertices = new Vector2[Settings.MaxPolygonVertices];
+            var count = polygonB.Vertices.Count;
+            for (var i = 0; i < polygonB.Vertices.Count; ++i)
             {
                 vertices[i] = MathUtils.Mul(ref xf, polygonB.Vertices[i]);
                 normals[i] = MathUtils.Mul(xf.q, polygonB.Normals[i]);
             }
 
-            float radius = polygonB.Radius + edgeA.Radius;
+            var radius = polygonB.Radius + edgeA.Radius;
 
             manifold.PointCount = 0;
 
@@ -240,25 +241,16 @@ namespace VelcroPhysics.Collision.Narrowphase
             edgeAxis.Index = front ? 0 : 1;
             edgeAxis.Separation = Settings.MaxFloat;
 
-            for (int i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
-                float s = Vector2.Dot(normal, vertices[i] - v1);
-                if (s < edgeAxis.Separation)
-                {
-                    edgeAxis.Separation = s;
-                }
+                var s = Vector2.Dot(normal, vertices[i] - v1);
+                if (s < edgeAxis.Separation) edgeAxis.Separation = s;
             }
 
             // If no valid normal can be found than this edge should not collide.
-            if (edgeAxis.Type == EPAxisType.Unknown)
-            {
-                return;
-            }
+            if (edgeAxis.Type == EPAxisType.Unknown) return;
 
-            if (edgeAxis.Separation > radius)
-            {
-                return;
-            }
+            if (edgeAxis.Separation > radius) return;
 
             //Velcro: ComputePolygonSeparation() was manually inlined here
             EPAxis polygonAxis;
@@ -266,15 +258,15 @@ namespace VelcroPhysics.Collision.Narrowphase
             polygonAxis.Index = -1;
             polygonAxis.Separation = -Settings.MaxFloat;
 
-            Vector2 perp = new Vector2(-normal.y, normal.x);
+            var perp = new Vector2(-normal.y, normal.x);
 
-            for (int i = 0; i < count; ++i)
+            for (var i = 0; i < count; ++i)
             {
-                Vector2 n = -normals[i];
+                var n = -normals[i];
 
-                float s1 = Vector2.Dot(n, vertices[i] - v1);
-                float s2 = Vector2.Dot(n, vertices[i] - v2);
-                float s = Mathf.Min(s1, s2);
+                var s1 = Vector2.Dot(n, vertices[i] - v1);
+                var s2 = Vector2.Dot(n, vertices[i] - v2);
+                var s = Mathf.Min(s1, s2);
 
                 if (s > radius)
                 {
@@ -288,17 +280,11 @@ namespace VelcroPhysics.Collision.Narrowphase
                 // Adjacency
                 if (Vector2.Dot(n, perp) >= 0.0f)
                 {
-                    if (Vector2.Dot(n - upperLimit, normal) < -Settings.AngularSlop)
-                    {
-                        continue;
-                    }
+                    if (Vector2.Dot(n - upperLimit, normal) < -Settings.AngularSlop) continue;
                 }
                 else
                 {
-                    if (Vector2.Dot(n - lowerLimit, normal) < -Settings.AngularSlop)
-                    {
-                        continue;
-                    }
+                    if (Vector2.Dot(n - lowerLimit, normal) < -Settings.AngularSlop) continue;
                 }
 
                 if (s > polygonAxis.Separation)
@@ -309,10 +295,7 @@ namespace VelcroPhysics.Collision.Narrowphase
                 }
             }
 
-            if (polygonAxis.Type != EPAxisType.Unknown && polygonAxis.Separation > radius)
-            {
-                return;
-            }
+            if (polygonAxis.Type != EPAxisType.Unknown && polygonAxis.Separation > radius) return;
 
             // Use hysteresis for jitter reduction.
             const float k_relativeTol = 0.98f;
@@ -320,30 +303,24 @@ namespace VelcroPhysics.Collision.Narrowphase
 
             EPAxis primaryAxis;
             if (polygonAxis.Type == EPAxisType.Unknown)
-            {
                 primaryAxis = edgeAxis;
-            }
             else if (polygonAxis.Separation > k_relativeTol * edgeAxis.Separation + k_absoluteTol)
-            {
                 primaryAxis = polygonAxis;
-            }
             else
-            {
                 primaryAxis = edgeAxis;
-            }
 
-            FixedArray2<ClipVertex> ie = new FixedArray2<ClipVertex>();
+            var ie = new FixedArray2<ClipVertex>();
             ReferenceFace rf;
             if (primaryAxis.Type == EPAxisType.EdgeA)
             {
                 manifold.Type = ManifoldType.FaceA;
 
                 // Search for the polygon normal that is most anti-parallel to the edge normal.
-                int bestIndex = 0;
-                float bestValue = Vector2.Dot(normal, normals[0]);
-                for (int i = 1; i < count; ++i)
+                var bestIndex = 0;
+                var bestValue = Vector2.Dot(normal, normals[0]);
+                for (var i = 1; i < count; ++i)
                 {
-                    float value = Vector2.Dot(normal, normals[i]);
+                    var value = Vector2.Dot(normal, normals[i]);
                     if (value < bestValue)
                     {
                         bestValue = value;
@@ -351,18 +328,18 @@ namespace VelcroPhysics.Collision.Narrowphase
                     }
                 }
 
-                int i1 = bestIndex;
-                int i2 = i1 + 1 < count ? i1 + 1 : 0;
+                var i1 = bestIndex;
+                var i2 = i1 + 1 < count ? i1 + 1 : 0;
 
                 ie.Value0.V = vertices[i1];
                 ie.Value0.ID.ContactFeature.IndexA = 0;
-                ie.Value0.ID.ContactFeature.IndexB = (byte)i1;
+                ie.Value0.ID.ContactFeature.IndexB = (byte) i1;
                 ie.Value0.ID.ContactFeature.TypeA = ContactFeatureType.Face;
                 ie.Value0.ID.ContactFeature.TypeB = ContactFeatureType.Vertex;
 
                 ie.Value1.V = vertices[i2];
                 ie.Value1.ID.ContactFeature.IndexA = 0;
-                ie.Value1.ID.ContactFeature.IndexB = (byte)i2;
+                ie.Value1.ID.ContactFeature.IndexB = (byte) i2;
                 ie.Value1.ID.ContactFeature.TypeA = ContactFeatureType.Face;
                 ie.Value1.ID.ContactFeature.TypeB = ContactFeatureType.Vertex;
 
@@ -389,13 +366,13 @@ namespace VelcroPhysics.Collision.Narrowphase
 
                 ie.Value0.V = v1;
                 ie.Value0.ID.ContactFeature.IndexA = 0;
-                ie.Value0.ID.ContactFeature.IndexB = (byte)primaryAxis.Index;
+                ie.Value0.ID.ContactFeature.IndexB = (byte) primaryAxis.Index;
                 ie.Value0.ID.ContactFeature.TypeA = ContactFeatureType.Vertex;
                 ie.Value0.ID.ContactFeature.TypeB = ContactFeatureType.Face;
 
                 ie.Value1.V = v2;
                 ie.Value1.ID.ContactFeature.IndexA = 0;
-                ie.Value1.ID.ContactFeature.IndexB = (byte)primaryAxis.Index;
+                ie.Value1.ID.ContactFeature.IndexB = (byte) primaryAxis.Index;
                 ie.Value1.ID.ContactFeature.TypeA = ContactFeatureType.Vertex;
                 ie.Value1.ID.ContactFeature.TypeB = ContactFeatureType.Face;
 
@@ -419,18 +396,12 @@ namespace VelcroPhysics.Collision.Narrowphase
             // Clip to box side 1
             np = Collision.ClipSegmentToLine(out clipPoints1, ref ie, rf.SideNormal1, rf.SideOffset1, rf.i1);
 
-            if (np < Settings.MaxManifoldPoints)
-            {
-                return;
-            }
+            if (np < Settings.MaxManifoldPoints) return;
 
             // Clip to negative box side 1
             np = Collision.ClipSegmentToLine(out clipPoints2, ref clipPoints1, rf.SideNormal2, rf.SideOffset2, rf.i2);
 
-            if (np < Settings.MaxManifoldPoints)
-            {
-                return;
-            }
+            if (np < Settings.MaxManifoldPoints) return;
 
             // Now clipPoints2 contains the clipped points.
             if (primaryAxis.Type == EPAxisType.EdgeA)
@@ -444,14 +415,14 @@ namespace VelcroPhysics.Collision.Narrowphase
                 manifold.LocalPoint = polygonB.Vertices[rf.i1];
             }
 
-            int pointCount = 0;
-            for (int i = 0; i < Settings.MaxManifoldPoints; ++i)
+            var pointCount = 0;
+            for (var i = 0; i < Settings.MaxManifoldPoints; ++i)
             {
-                float separation = Vector2.Dot(rf.Normal, clipPoints2[i].V - rf.v1);
+                var separation = Vector2.Dot(rf.Normal, clipPoints2[i].V - rf.v1);
 
                 if (separation <= radius)
                 {
-                    ManifoldPoint cp = manifold.Points[pointCount];
+                    var cp = manifold.Points[pointCount];
 
                     if (primaryAxis.Type == EPAxisType.EdgeA)
                     {

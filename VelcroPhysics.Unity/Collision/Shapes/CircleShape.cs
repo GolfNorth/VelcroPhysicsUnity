@@ -44,7 +44,9 @@ namespace VelcroPhysics.Collision.Shapes
             ComputeProperties();
         }
 
-        internal CircleShape() : base(ShapeType.Circle) { }
+        internal CircleShape() : base(ShapeType.Circle)
+        {
+        }
 
         public override int ChildCount => 1;
 
@@ -53,7 +55,7 @@ namespace VelcroPhysics.Collision.Shapes
         /// </summary>
         public Vector2 Position
         {
-            get { return _position; }
+            get => _position;
             set
             {
                 _position = value;
@@ -66,7 +68,8 @@ namespace VelcroPhysics.Collision.Shapes
             return TestPointHelper.TestPointCircle(ref _position, _radius, ref point, ref transform);
         }
 
-        public override bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex, out RayCastOutput output)
+        public override bool RayCast(ref RayCastInput input, ref Transform transform, int childIndex,
+            out RayCastOutput output)
         {
             return RayCastHelper.RayCastCircle(ref _position, Radius, ref input, ref transform, out output);
         }
@@ -85,7 +88,7 @@ namespace VelcroPhysics.Collision.Shapes
         private void ComputeMass()
         {
             //Velcro: We calculate area for later consumption
-            float area = Settings.Pi * _2radius;
+            var area = Settings.Pi * _2radius;
             MassData.Area = area;
             MassData.Mass = Density * area;
         }
@@ -110,7 +113,7 @@ namespace VelcroPhysics.Collision.Shapes
 
         public override Shape Clone()
         {
-            CircleShape clone = new CircleShape();
+            var clone = new CircleShape();
             clone.ShapeType = ShapeType;
             clone._radius = Radius;
             clone._2radius = _2radius; //Velcro note: We also copy the cache

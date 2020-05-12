@@ -38,35 +38,36 @@ namespace VelcroPhysics.Tools.PolygonManipulation
         /// <param name="triangles">The triangles.</param>
         /// <param name="maxPolys">The maximun number of polygons to return.</param>
         /// <param name="tolerance">The tolerance</param>
-        public static List<Vertices> PolygonizeTriangles(List<Vertices> triangles, int maxPolys = int.MaxValue, float tolerance = 0.001f)
+        public static List<Vertices> PolygonizeTriangles(List<Vertices> triangles, int maxPolys = int.MaxValue,
+            float tolerance = 0.001f)
         {
             if (triangles.Count <= 0)
                 return triangles;
 
-            List<Vertices> polys = new List<Vertices>();
+            var polys = new List<Vertices>();
 
-            bool[] covered = new bool[triangles.Count];
-            for (int i = 0; i < triangles.Count; ++i)
+            var covered = new bool[triangles.Count];
+            for (var i = 0; i < triangles.Count; ++i)
             {
                 covered[i] = false;
 
                 //Check here for degenerate triangles
-                Vertices triangle = triangles[i];
-                Vector2 a = triangle[0];
-                Vector2 b = triangle[1];
-                Vector2 c = triangle[2];
+                var triangle = triangles[i];
+                var a = triangle[0];
+                var b = triangle[1];
+                var c = triangle[2];
 
-                if ((a.x == b.x && a.y == b.y) || (b.x == c.x && b.y == c.y) || (a.x == c.x && a.y == c.y))
+                if (a.x == b.x && a.y == b.y || b.x == c.x && b.y == c.y || a.x == c.x && a.y == c.y)
                     covered[i] = true;
             }
 
-            int polyIndex = 0;
+            var polyIndex = 0;
 
-            bool notDone = true;
+            var notDone = true;
             while (notDone)
             {
-                int currTri = -1;
-                for (int i = 0; i < triangles.Count; ++i)
+                var currTri = -1;
+                for (var i = 0; i < triangles.Count; ++i)
                 {
                     if (covered[i])
                         continue;
@@ -81,24 +82,18 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                 }
                 else
                 {
-                    Vertices poly = new Vertices(3);
+                    var poly = new Vertices(3);
 
-                    for (int i = 0; i < 3; i++)
-                    {
-                        poly.Add(triangles[currTri][i]);
-                    }
+                    for (var i = 0; i < 3; i++) poly.Add(triangles[currTri][i]);
 
                     covered[currTri] = true;
-                    int index = 0;
-                    for (int i = 0; i < 2 * triangles.Count; ++i, ++index)
+                    var index = 0;
+                    for (var i = 0; i < 2 * triangles.Count; ++i, ++index)
                     {
                         while (index >= triangles.Count)
                             index -= triangles.Count;
-                        if (covered[index])
-                        {
-                            continue;
-                        }
-                        Vertices newP = AddTriangle(triangles[index], poly);
+                        if (covered[index]) continue;
+                        var newP = AddTriangle(triangles[index], poly);
                         if (newP == null)
                             continue; // is this right
 
@@ -134,11 +129,9 @@ namespace VelcroPhysics.Tools.PolygonManipulation
 
             //TODO: Add sanity check
             //Remove empty vertice collections
-            for (int i = polys.Count - 1; i >= 0; i--)
-            {
+            for (var i = polys.Count - 1; i >= 0; i--)
                 if (polys[i].Count == 0)
                     polys.RemoveAt(i);
-            }
 
             return polys;
         }
@@ -146,12 +139,11 @@ namespace VelcroPhysics.Tools.PolygonManipulation
         private static Vertices AddTriangle(Vertices t, Vertices vertices)
         {
             // First, find vertices that connect
-            int firstP = -1;
-            int firstT = -1;
-            int secondP = -1;
-            int secondT = -1;
-            for (int i = 0; i < vertices.Count; i++)
-            {
+            var firstP = -1;
+            var firstT = -1;
+            var secondP = -1;
+            var secondT = -1;
+            for (var i = 0; i < vertices.Count; i++)
                 if (t[0].x == vertices[i].x && t[0].y == vertices[i].y)
                 {
                     if (firstP == -1)
@@ -191,7 +183,6 @@ namespace VelcroPhysics.Tools.PolygonManipulation
                         secondT = 2;
                     }
                 }
-            }
 
             // Fix ordering if first should be last vertex of poly
             if (firstP == 0 && secondP == vertices.Count - 1)
@@ -201,20 +192,17 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             }
 
             // Didn't find it
-            if (secondP == -1)
-            {
-                return null;
-            }
+            if (secondP == -1) return null;
 
             // Find tip index on triangle
-            int tipT = 0;
+            var tipT = 0;
             if (tipT == firstT || tipT == secondT)
                 tipT = 1;
             if (tipT == firstT || tipT == secondT)
                 tipT = 2;
 
-            Vertices result = new Vertices(vertices.Count + 1);
-            for (int i = 0; i < vertices.Count; i++)
+            var result = new Vertices(vertices.Count + 1);
+            for (var i = 0; i < vertices.Count; i++)
             {
                 result.Add(vertices[i]);
 

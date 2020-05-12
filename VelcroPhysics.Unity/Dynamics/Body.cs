@@ -131,7 +131,7 @@ namespace VelcroPhysics.Dynamics
         /// Gets the total number revolutions the body has made.
         /// </summary>
         /// <value>The revolutions.</value>
-        public float Revolutions => Rotation / (float)Mathf.PI;
+        public float Revolutions => Rotation / Mathf.PI;
 
         /// <summary>
         /// Gets or sets the body type.
@@ -140,7 +140,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The type of body.</value>
         public BodyType BodyType
         {
-            get { return _type; }
+            get => _type;
             set
             {
                 if (value == _type)
@@ -165,10 +165,10 @@ namespace VelcroPhysics.Dynamics
                 _torque = 0.0f;
 
                 // Delete the attached contacts.
-                ContactEdge ce = ContactList;
+                var ce = ContactList;
                 while (ce != null)
                 {
-                    ContactEdge ce0 = ce;
+                    var ce0 = ce;
                     ce = ce.Next;
                     _world.ContactManager.Destroy(ce0.Contact);
                 }
@@ -176,14 +176,11 @@ namespace VelcroPhysics.Dynamics
                 ContactList = null;
 
                 // Touch the proxies so that new contacts will be created (when appropriate)
-                IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-                foreach (Fixture fixture in FixtureList)
+                var broadPhase = _world.ContactManager.BroadPhase;
+                foreach (var fixture in FixtureList)
                 {
-                    int proxyCount = fixture.ProxyCount;
-                    for (int j = 0; j < proxyCount; j++)
-                    {
-                        broadPhase.TouchProxy(fixture.Proxies[j].ProxyId);
-                    }
+                    var proxyCount = fixture.ProxyCount;
+                    for (var j = 0; j < proxyCount; j++) broadPhase.TouchProxy(fixture.Proxies[j].ProxyId);
                 }
             }
         }
@@ -194,7 +191,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The linear velocity.</value>
         public Vector2 LinearVelocity
         {
-            get { return _linearVelocity; }
+            get => _linearVelocity;
             set
             {
                 Debug.Assert(!float.IsNaN(value.x) && !float.IsNaN(value.y));
@@ -215,7 +212,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The angular velocity.</value>
         public float AngularVelocity
         {
-            get { return _angularVelocity; }
+            get => _angularVelocity;
             set
             {
                 Debug.Assert(!float.IsNaN(value));
@@ -248,7 +245,7 @@ namespace VelcroPhysics.Dynamics
         /// <value><c>true</c> if this instance is included in CCD; otherwise, <c>false</c>.</value>
         public bool IsBullet
         {
-            get { return (_flags & BodyFlags.BulletFlag) == BodyFlags.BulletFlag; }
+            get => (_flags & BodyFlags.BulletFlag) == BodyFlags.BulletFlag;
             set
             {
                 if (value)
@@ -265,11 +262,13 @@ namespace VelcroPhysics.Dynamics
         /// <value><c>true</c> if sleeping is allowed; otherwise, <c>false</c>.</value>
         public bool SleepingAllowed
         {
-            get { return (_flags & BodyFlags.AutoSleepFlag) == BodyFlags.AutoSleepFlag; }
+            get => (_flags & BodyFlags.AutoSleepFlag) == BodyFlags.AutoSleepFlag;
             set
             {
                 if (value)
+                {
                     _flags |= BodyFlags.AutoSleepFlag;
+                }
                 else
                 {
                     _flags &= ~BodyFlags.AutoSleepFlag;
@@ -285,7 +284,7 @@ namespace VelcroPhysics.Dynamics
         /// <value><c>true</c> if awake; otherwise, <c>false</c>.</value>
         public bool Awake
         {
-            get { return (_flags & BodyFlags.AwakeFlag) == BodyFlags.AwakeFlag; }
+            get => (_flags & BodyFlags.AwakeFlag) == BodyFlags.AwakeFlag;
             set
             {
                 if (value)
@@ -320,7 +319,7 @@ namespace VelcroPhysics.Dynamics
         /// <value><c>true</c> if active; otherwise, <c>false</c>.</value>
         public bool Enabled
         {
-            get { return (_flags & BodyFlags.Enabled) == BodyFlags.Enabled; }
+            get => (_flags & BodyFlags.Enabled) == BodyFlags.Enabled;
 
             set
             {
@@ -332,11 +331,8 @@ namespace VelcroPhysics.Dynamics
                     _flags |= BodyFlags.Enabled;
 
                     // Create all proxies.
-                    IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-                    for (int i = 0; i < FixtureList.Count; i++)
-                    {
-                        FixtureList[i].CreateProxies(broadPhase, ref _xf);
-                    }
+                    var broadPhase = _world.ContactManager.BroadPhase;
+                    for (var i = 0; i < FixtureList.Count; i++) FixtureList[i].CreateProxies(broadPhase, ref _xf);
 
                     // Contacts are created the next time step.
                 }
@@ -345,21 +341,19 @@ namespace VelcroPhysics.Dynamics
                     _flags &= ~BodyFlags.Enabled;
 
                     // Destroy all proxies.
-                    IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
+                    var broadPhase = _world.ContactManager.BroadPhase;
 
-                    for (int i = 0; i < FixtureList.Count; i++)
-                    {
-                        FixtureList[i].DestroyProxies(broadPhase);
-                    }
+                    for (var i = 0; i < FixtureList.Count; i++) FixtureList[i].DestroyProxies(broadPhase);
 
                     // Destroy the attached contacts.
-                    ContactEdge ce = ContactList;
+                    var ce = ContactList;
                     while (ce != null)
                     {
-                        ContactEdge ce0 = ce;
+                        var ce0 = ce;
                         ce = ce.Next;
                         _world.ContactManager.Destroy(ce0.Contact);
                     }
+
                     ContactList = null;
                 }
             }
@@ -372,7 +366,7 @@ namespace VelcroPhysics.Dynamics
         /// <value><c>true</c> if it has fixed rotation; otherwise, <c>false</c>.</value>
         public bool FixedRotation
         {
-            get { return (_flags & BodyFlags.FixedRotationFlag) == BodyFlags.FixedRotationFlag; }
+            get => (_flags & BodyFlags.FixedRotationFlag) == BodyFlags.FixedRotationFlag;
             set
             {
                 if (value == FixedRotation)
@@ -414,7 +408,7 @@ namespace VelcroPhysics.Dynamics
         /// <returns>Return the world position of the body's origin.</returns>
         public Vector2 Position
         {
-            get { return _xf.p; }
+            get => _xf.p;
             set
             {
                 Debug.Assert(!float.IsNaN(value.x) && !float.IsNaN(value.y));
@@ -429,7 +423,7 @@ namespace VelcroPhysics.Dynamics
         /// <returns>Return the current world rotation angle in radians.</returns>
         public float Rotation
         {
-            get { return _sweep.A; }
+            get => _sweep.A;
             set
             {
                 Debug.Assert(!float.IsNaN(value));
@@ -453,7 +447,7 @@ namespace VelcroPhysics.Dynamics
         /// <value><c>true</c> if it ignores gravity; otherwise, <c>false</c>.</value>
         public bool IgnoreGravity
         {
-            get { return (_flags & BodyFlags.IgnoreGravity) == BodyFlags.IgnoreGravity; }
+            get => (_flags & BodyFlags.IgnoreGravity) == BodyFlags.IgnoreGravity;
             set
             {
                 if (value)
@@ -475,7 +469,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The local position.</value>
         public Vector2 LocalCenter
         {
-            get { return _sweep.LocalCenter; }
+            get => _sweep.LocalCenter;
             set
             {
                 if (_type != BodyType.Dynamic)
@@ -484,12 +478,12 @@ namespace VelcroPhysics.Dynamics
                 //Velcro: We support setting the mass independently
 
                 // Move center of mass.
-                Vector2 oldCenter = _sweep.C;
+                var oldCenter = _sweep.C;
                 _sweep.LocalCenter = value;
                 _sweep.C0 = _sweep.C = MathUtils.Mul(ref _xf, ref _sweep.LocalCenter);
 
                 // Update center of mass velocity.
-                Vector2 a = _sweep.C - oldCenter;
+                var a = _sweep.C - oldCenter;
                 _linearVelocity += new Vector2(-_angularVelocity * a.y, _angularVelocity * a.x);
             }
         }
@@ -500,7 +494,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The mass.</value>
         public float Mass
         {
-            get { return _mass; }
+            get => _mass;
             set
             {
                 Debug.Assert(!float.IsNaN(value));
@@ -524,7 +518,7 @@ namespace VelcroPhysics.Dynamics
         /// <value>The inertia.</value>
         public float Inertia
         {
-            get { return _inertia + _mass * Vector2.Dot(_sweep.LocalCenter, _sweep.LocalCenter); }
+            get => _inertia + _mass * Vector2.Dot(_sweep.LocalCenter, _sweep.LocalCenter);
             set
             {
                 Debug.Assert(!float.IsNaN(value));
@@ -546,9 +540,9 @@ namespace VelcroPhysics.Dynamics
         {
             set
             {
-                for (int i = 0; i < FixtureList.Count; i++)
+                for (var i = 0; i < FixtureList.Count; i++)
                 {
-                    Fixture f = FixtureList[i];
+                    var f = FixtureList[i];
                     f.Restitution = value;
                 }
             }
@@ -558,9 +552,9 @@ namespace VelcroPhysics.Dynamics
         {
             set
             {
-                for (int i = 0; i < FixtureList.Count; i++)
+                for (var i = 0; i < FixtureList.Count; i++)
                 {
-                    Fixture f = FixtureList[i];
+                    var f = FixtureList[i];
                     f.Friction = value;
                 }
             }
@@ -570,9 +564,9 @@ namespace VelcroPhysics.Dynamics
         {
             set
             {
-                for (int i = 0; i < FixtureList.Count; i++)
+                for (var i = 0; i < FixtureList.Count; i++)
                 {
-                    Fixture f = FixtureList[i];
+                    var f = FixtureList[i];
                     f.CollisionCategories = value;
                 }
             }
@@ -582,9 +576,9 @@ namespace VelcroPhysics.Dynamics
         {
             set
             {
-                for (int i = 0; i < FixtureList.Count; i++)
+                for (var i = 0; i < FixtureList.Count; i++)
                 {
-                    Fixture f = FixtureList[i];
+                    var f = FixtureList[i];
                     f.CollidesWith = value;
                 }
             }
@@ -600,9 +594,9 @@ namespace VelcroPhysics.Dynamics
         {
             set
             {
-                for (int i = 0; i < FixtureList.Count; i++)
+                for (var i = 0; i < FixtureList.Count; i++)
                 {
-                    Fixture f = FixtureList[i];
+                    var f = FixtureList[i];
                     f.IgnoreCCDWith = value;
                 }
             }
@@ -612,9 +606,9 @@ namespace VelcroPhysics.Dynamics
         {
             set
             {
-                for (int i = 0; i < FixtureList.Count; i++)
+                for (var i = 0; i < FixtureList.Count; i++)
                 {
-                    Fixture f = FixtureList[i];
+                    var f = FixtureList[i];
                     f.CollisionGroup = value;
                 }
             }
@@ -624,9 +618,9 @@ namespace VelcroPhysics.Dynamics
         {
             set
             {
-                for (int i = 0; i < FixtureList.Count; i++)
+                for (var i = 0; i < FixtureList.Count; i++)
                 {
-                    Fixture f = FixtureList[i];
+                    var f = FixtureList[i];
                     f.IsSensor = value;
                 }
             }
@@ -634,7 +628,7 @@ namespace VelcroPhysics.Dynamics
 
         public bool IgnoreCCD
         {
-            get { return (_flags & BodyFlags.IgnoreCCD) == BodyFlags.IgnoreCCD; }
+            get => (_flags & BodyFlags.IgnoreCCD) == BodyFlags.IgnoreCCD;
             set
             {
                 if (value)
@@ -664,14 +658,14 @@ namespace VelcroPhysics.Dynamics
         /// </summary>
         public Fixture CreateFixture(FixtureTemplate template)
         {
-            Fixture f = new Fixture(this, template);
+            var f = new Fixture(this, template);
             f.FixtureId = _world._fixtureIdCounter++;
             return f;
         }
 
         public Fixture CreateFixture(Shape shape, object userData = null)
         {
-            FixtureTemplate template = new FixtureTemplate();
+            var template = new FixtureTemplate();
             template.Shape = shape;
             template.UserData = userData;
 
@@ -701,26 +695,24 @@ namespace VelcroPhysics.Dynamics
             Debug.Assert(FixtureList.Contains(fixture));
 
             // Destroy any contacts associated with the fixture.
-            ContactEdge edge = ContactList;
+            var edge = ContactList;
             while (edge != null)
             {
-                Contact c = edge.Contact;
+                var c = edge.Contact;
                 edge = edge.Next;
 
-                Fixture fixtureA = c.FixtureA;
-                Fixture fixtureB = c.FixtureB;
+                var fixtureA = c.FixtureA;
+                var fixtureB = c.FixtureB;
 
                 if (fixture == fixtureA || fixture == fixtureB)
-                {
                     // This destroys the contact and removes it from
                     // this body's contact list.
                     _world.ContactManager.Destroy(c);
-                }
             }
 
             if (Enabled)
             {
-                IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
+                var broadPhase = _world.ContactManager.BroadPhase;
                 fixture.DestroyProxies(broadPhase);
             }
 
@@ -774,11 +766,8 @@ namespace VelcroPhysics.Dynamics
             _sweep.C0 = _sweep.C;
             _sweep.A0 = angle;
 
-            IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-            for (int i = 0; i < FixtureList.Count; i++)
-            {
-                FixtureList[i].Synchronize(broadPhase, ref _xf, ref _xf);
-            }
+            var broadPhase = _world.ContactManager.BroadPhase;
+            for (var i = 0; i < FixtureList.Count; i++) FixtureList[i].Synchronize(broadPhase, ref _xf, ref _xf);
         }
 
         /// <summary>
@@ -968,13 +957,13 @@ namespace VelcroPhysics.Dynamics
             Debug.Assert(BodyType == BodyType.Dynamic || BodyType == BodyType.Static);
 
             // Accumulate mass over all fixtures.
-            Vector2 localCenter = Vector2.zero;
-            foreach (Fixture f in FixtureList)
+            var localCenter = Vector2.zero;
+            foreach (var f in FixtureList)
             {
                 if (f.Shape._density == 0.0f)
                     continue;
 
-                MassData massData = f.Shape.MassData;
+                var massData = f.Shape.MassData;
                 _mass += massData.Mass;
                 localCenter += massData.Mass * massData.Centroid;
                 _inertia += massData.Inertia;
@@ -1015,12 +1004,12 @@ namespace VelcroPhysics.Dynamics
             }
 
             // Move center of mass.
-            Vector2 oldCenter = _sweep.C;
+            var oldCenter = _sweep.C;
             _sweep.LocalCenter = localCenter;
             _sweep.C0 = _sweep.C = MathUtils.Mul(ref _xf, ref _sweep.LocalCenter);
 
             // Update center of mass velocity.
-            Vector2 a = _sweep.C - oldCenter;
+            var a = _sweep.C - oldCenter;
             _linearVelocity += new Vector2(-_angularVelocity * a.y, _angularVelocity * a.x);
         }
 
@@ -1150,15 +1139,12 @@ namespace VelcroPhysics.Dynamics
 
         internal void SynchronizeFixtures()
         {
-            Transform xf1 = new Transform();
+            var xf1 = new Transform();
             xf1.q.Set(_sweep.A0);
             xf1.p = _sweep.C0 - MathUtils.Mul(xf1.q, _sweep.LocalCenter);
 
-            IBroadPhase broadPhase = _world.ContactManager.BroadPhase;
-            for (int i = 0; i < FixtureList.Count; i++)
-            {
-                FixtureList[i].Synchronize(broadPhase, ref xf1, ref _xf);
-            }
+            var broadPhase = _world.ContactManager.BroadPhase;
+            for (var i = 0; i < FixtureList.Count; i++) FixtureList[i].Synchronize(broadPhase, ref xf1, ref _xf);
         }
 
         internal void SynchronizeTransform()
@@ -1175,22 +1161,13 @@ namespace VelcroPhysics.Dynamics
         internal bool ShouldCollide(Body other)
         {
             // At least one body should be dynamic.
-            if (_type != BodyType.Dynamic && other._type != BodyType.Dynamic)
-            {
-                return false;
-            }
+            if (_type != BodyType.Dynamic && other._type != BodyType.Dynamic) return false;
 
             // Does a joint prevent collision?
-            for (JointEdge jn = JointList; jn != null; jn = jn.Next)
-            {
+            for (var jn = JointList; jn != null; jn = jn.Next)
                 if (jn.Other == other)
-                {
                     if (jn.Joint.CollideConnected == false)
-                    {
                         return false;
-                    }
-                }
-            }
 
             return true;
         }
@@ -1209,17 +1186,11 @@ namespace VelcroPhysics.Dynamics
         {
             add
             {
-                foreach (Fixture f in FixtureList)
-                {
-                    f.OnCollision += value;
-                }
+                foreach (var f in FixtureList) f.OnCollision += value;
             }
             remove
             {
-                foreach (Fixture f in FixtureList)
-                {
-                    f.OnCollision -= value;
-                }
+                foreach (var f in FixtureList) f.OnCollision -= value;
             }
         }
 
@@ -1227,17 +1198,11 @@ namespace VelcroPhysics.Dynamics
         {
             add
             {
-                foreach (Fixture f in FixtureList)
-                {
-                    f.OnSeparation += value;
-                }
+                foreach (var f in FixtureList) f.OnSeparation += value;
             }
             remove
             {
-                foreach (Fixture f in FixtureList)
-                {
-                    f.OnSeparation -= value;
-                }
+                foreach (var f in FixtureList) f.OnSeparation -= value;
             }
         }
     }

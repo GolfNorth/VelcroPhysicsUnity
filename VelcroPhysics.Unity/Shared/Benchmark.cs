@@ -9,7 +9,7 @@ namespace VelcroPhysics.Shared
 
         public static BenchmarkRun StartRun(string area)
         {
-            BenchmarkRun run = _runPool.GetFromPool();
+            var run = _runPool.GetFromPool();
             run.SetData(area);
             return run;
         }
@@ -30,7 +30,7 @@ namespace VelcroPhysics.Shared
             if (!Settings.EnableDiagnostics)
                 return 0;
 
-            long oldVal = _results[area];
+            var oldVal = _results[area];
             _results[area] = 0;
             return oldVal;
         }
@@ -40,7 +40,7 @@ namespace VelcroPhysics.Shared
             if (!Settings.EnableDiagnostics)
                 return 0;
 
-            return _results.TryGetValue(area, out long value) ? value : 0;
+            return _results.TryGetValue(area, out var value) ? value : 0;
         }
     }
 }

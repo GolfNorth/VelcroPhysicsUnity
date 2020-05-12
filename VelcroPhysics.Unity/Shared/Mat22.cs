@@ -38,13 +38,10 @@ namespace VelcroPhysics.Shared
             get
             {
                 float a = ex.x, b = ey.x, c = ex.y, d = ey.y;
-                float det = a * d - b * c;
-                if (det != 0.0f)
-                {
-                    det = 1.0f / det;
-                }
+                var det = a * d - b * c;
+                if (det != 0.0f) det = 1.0f / det;
 
-                Mat22 result = new Mat22();
+                var result = new Mat22();
                 result.ex.x = det * d;
                 result.ex.y = -det * c;
 
@@ -97,11 +94,8 @@ namespace VelcroPhysics.Shared
         public Vector2 Solve(Vector2 b)
         {
             float a11 = ex.x, a12 = ey.x, a21 = ex.y, a22 = ey.y;
-            float det = a11 * a22 - a12 * a21;
-            if (det != 0.0f)
-            {
-                det = 1.0f / det;
-            }
+            var det = a11 * a22 - a12 * a21;
+            if (det != 0.0f) det = 1.0f / det;
 
             return new Vector2(det * (a22 * b.x - a12 * b.y), det * (a11 * b.y - a21 * b.x));
         }

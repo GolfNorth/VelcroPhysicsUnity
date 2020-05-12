@@ -108,14 +108,14 @@ namespace VelcroPhysics.Dynamics.Joints
 
         public override Vector2 WorldAnchorA
         {
-            get { return BodyA.GetWorldPoint(LocalAnchorA); }
-            set { LocalAnchorA = BodyA.GetLocalPoint(value); }
+            get => BodyA.GetWorldPoint(LocalAnchorA);
+            set => LocalAnchorA = BodyA.GetLocalPoint(value);
         }
 
         public override Vector2 WorldAnchorB
         {
-            get { return BodyB.GetWorldPoint(LocalAnchorB); }
-            set { LocalAnchorB = BodyB.GetLocalPoint(value); }
+            get => BodyB.GetWorldPoint(LocalAnchorB);
+            set => LocalAnchorB = BodyB.GetLocalPoint(value);
         }
 
         /// <summary>
@@ -149,13 +149,13 @@ namespace VelcroPhysics.Dynamics.Joints
             _invIA = BodyA._invI;
             _invIB = BodyB._invI;
 
-            float aA = data.Positions[_indexA].A;
-            Vector2 vA = data.Velocities[_indexA].V;
-            float wA = data.Velocities[_indexA].W;
+            var aA = data.Positions[_indexA].A;
+            var vA = data.Velocities[_indexA].V;
+            var wA = data.Velocities[_indexA].W;
 
-            float aB = data.Positions[_indexB].A;
-            Vector2 vB = data.Velocities[_indexB].V;
-            float wB = data.Velocities[_indexB].W;
+            var aB = data.Positions[_indexB].A;
+            var vB = data.Velocities[_indexB].V;
+            var wB = data.Velocities[_indexB].W;
 
             Rot qA = new Rot(aA), qB = new Rot(aB);
 
@@ -175,7 +175,7 @@ namespace VelcroPhysics.Dynamics.Joints
             float mA = _invMassA, mB = _invMassB;
             float iA = _invIA, iB = _invIB;
 
-            Mat22 K = new Mat22();
+            var K = new Mat22();
             K.ex.x = mA + mB + iA * _rA.y * _rA.y + iB * _rB.y * _rB.y;
             K.ex.y = -iA * _rA.x * _rA.y - iB * _rB.x * _rB.y;
             K.ey.x = K.ex.y;
@@ -184,10 +184,7 @@ namespace VelcroPhysics.Dynamics.Joints
             _linearMass = K.Inverse;
 
             _angularMass = iA + iB;
-            if (_angularMass > 0.0f)
-            {
-                _angularMass = 1.0f / _angularMass;
-            }
+            if (_angularMass > 0.0f) _angularMass = 1.0f / _angularMass;
 
             if (Settings.EnableWarmstarting)
             {
@@ -195,7 +192,7 @@ namespace VelcroPhysics.Dynamics.Joints
                 _linearImpulse *= data.Step.dtRatio;
                 _angularImpulse *= data.Step.dtRatio;
 
-                Vector2 P = new Vector2(_linearImpulse.x, _linearImpulse.y);
+                var P = new Vector2(_linearImpulse.x, _linearImpulse.y);
                 vA -= mA * P;
                 wA -= iA * (MathUtils.Cross(_rA, P) + _angularImpulse);
                 vB += mB * P;
@@ -215,23 +212,23 @@ namespace VelcroPhysics.Dynamics.Joints
 
         internal override void SolveVelocityConstraints(ref SolverData data)
         {
-            Vector2 vA = data.Velocities[_indexA].V;
-            float wA = data.Velocities[_indexA].W;
-            Vector2 vB = data.Velocities[_indexB].V;
-            float wB = data.Velocities[_indexB].W;
+            var vA = data.Velocities[_indexA].V;
+            var wA = data.Velocities[_indexA].W;
+            var vB = data.Velocities[_indexB].V;
+            var wB = data.Velocities[_indexB].W;
 
             float mA = _invMassA, mB = _invMassB;
             float iA = _invIA, iB = _invIB;
 
-            float h = data.Step.dt;
+            var h = data.Step.dt;
 
             // Solve angular friction
             {
-                float Cdot = wB - wA;
-                float impulse = -_angularMass * Cdot;
+                var Cdot = wB - wA;
+                var impulse = -_angularMass * Cdot;
 
-                float oldImpulse = _angularImpulse;
-                float maxImpulse = h * MaxTorque;
+                var oldImpulse = _angularImpulse;
+                var maxImpulse = h * MaxTorque;
                 _angularImpulse = MathUtils.Clamp(_angularImpulse + impulse, -maxImpulse, maxImpulse);
                 impulse = _angularImpulse - oldImpulse;
 
@@ -241,13 +238,13 @@ namespace VelcroPhysics.Dynamics.Joints
 
             // Solve linear friction
             {
-                Vector2 Cdot = vB + MathUtils.Cross(wB, _rB) - vA - MathUtils.Cross(wA, _rA);
+                var Cdot = vB + MathUtils.Cross(wB, _rB) - vA - MathUtils.Cross(wA, _rA);
 
-                Vector2 impulse = -MathUtils.Mul(ref _linearMass, Cdot);
-                Vector2 oldImpulse = _linearImpulse;
+                var impulse = -MathUtils.Mul(ref _linearMass, Cdot);
+                var oldImpulse = _linearImpulse;
                 _linearImpulse += impulse;
 
-                float maxImpulse = h * MaxForce;
+                var maxImpulse = h * MaxForce;
 
                 if (_linearImpulse.sqrMagnitude > maxImpulse * maxImpulse)
                 {

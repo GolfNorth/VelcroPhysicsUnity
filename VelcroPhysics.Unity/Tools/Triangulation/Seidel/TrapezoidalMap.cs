@@ -34,7 +34,7 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
         //         break trapezoid into 4 smaller trapezoids
         public Trapezoid[] Case1(Trapezoid t, Edge e)
         {
-            Trapezoid[] trapezoids = new Trapezoid[4];
+            var trapezoids = new Trapezoid[4];
             trapezoids[0] = new Trapezoid(t.LeftPoint, e.P, t.Top, t.Bottom);
             trapezoids[1] = new Trapezoid(e.P, e.Q, t.Top, e);
             trapezoids[2] = new Trapezoid(e.P, e.Q, e, t.Bottom);
@@ -58,7 +58,7 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
             else
                 rp = t.RightPoint;
 
-            Trapezoid[] trapezoids = new Trapezoid[3];
+            var trapezoids = new Trapezoid[3];
             trapezoids[0] = new Trapezoid(t.LeftPoint, e.P, t.Top, t.Bottom);
             trapezoids[1] = new Trapezoid(e.P, rp, t.Top, e);
             trapezoids[2] = new Trapezoid(e.P, rp, e, t.Bottom);
@@ -91,7 +91,7 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
             else
                 rp = t.RightPoint;
 
-            Trapezoid[] trapezoids = new Trapezoid[2];
+            var trapezoids = new Trapezoid[2];
 
             if (_cross == t.Top)
             {
@@ -136,7 +136,7 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
             else
                 lp = t.LeftPoint;
 
-            Trapezoid[] trapezoids = new Trapezoid[3];
+            var trapezoids = new Trapezoid[3];
 
             if (_cross == t.Top)
             {
@@ -169,10 +169,10 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
         // Create an AABB around segments
         public Trapezoid BoundingBox(List<Edge> edges)
         {
-            Point max = edges[0].P + _margin;
-            Point min = edges[0].Q - _margin;
+            var max = edges[0].P + _margin;
+            var min = edges[0].Q - _margin;
 
-            foreach (Edge e in edges)
+            foreach (var e in edges)
             {
                 if (e.P.X > max.X) max = new Point(e.P.X + _margin, max.Y);
                 if (e.P.Y > max.Y) max = new Point(max.X, e.P.Y + _margin);
@@ -184,10 +184,10 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
                 if (e.Q.Y < min.Y) min = new Point(min.X, e.Q.Y - _margin);
             }
 
-            Edge top = new Edge(new Point(min.X, max.Y), new Point(max.X, max.Y));
-            Edge bottom = new Edge(new Point(min.X, min.Y), new Point(max.X, min.Y));
-            Point left = bottom.P;
-            Point right = top.Q;
+            var top = new Edge(new Point(min.X, max.Y), new Point(max.X, max.Y));
+            var bottom = new Edge(new Point(min.X, min.Y), new Point(max.X, min.Y));
+            var left = bottom.P;
+            var right = top.Q;
 
             return new Trapezoid(left, right, top, bottom);
         }

@@ -13,7 +13,9 @@ namespace VelcroPhysics.Templates.Shapes
     /// </summary>
     public class ChainShapeTemplate : ShapeTemplate
     {
-        public ChainShapeTemplate() : base(ShapeType.Chain) { }
+        public ChainShapeTemplate() : base(ShapeType.Chain)
+        {
+        }
 
         /// <summary>
         /// Establish connectivity to a vertex that follows the last vertex.

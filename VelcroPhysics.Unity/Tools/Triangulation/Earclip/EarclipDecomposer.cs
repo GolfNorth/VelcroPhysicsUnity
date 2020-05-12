@@ -74,57 +74,50 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
             if (vertices.Count < 3)
                 return new List<Vertices>();
 
-            List<Vertices> results = new List<Vertices>();
+            var results = new List<Vertices>();
 
             //Recurse and split on pinch points
             Vertices pA, pB;
-            Vertices pin = new Vertices(vertices);
+            var pin = new Vertices(vertices);
             if (ResolvePinchPoint(pin, out pA, out pB, tolerance))
             {
-                List<Vertices> mergeA = TriangulatePolygon(pA, tolerance);
-                List<Vertices> mergeB = TriangulatePolygon(pB, tolerance);
+                var mergeA = TriangulatePolygon(pA, tolerance);
+                var mergeB = TriangulatePolygon(pB, tolerance);
 
                 if (mergeA.Count == -1 || mergeB.Count == -1)
                     throw new Exception("Can't triangulate your polygon.");
 
-                for (int i = 0; i < mergeA.Count; ++i)
-                {
-                    results.Add(new Vertices(mergeA[i]));
-                }
-                for (int i = 0; i < mergeB.Count; ++i)
-                {
-                    results.Add(new Vertices(mergeB[i]));
-                }
+                for (var i = 0; i < mergeA.Count; ++i) results.Add(new Vertices(mergeA[i]));
+                for (var i = 0; i < mergeB.Count; ++i) results.Add(new Vertices(mergeB[i]));
 
                 return results;
             }
 
-            Vertices[] buffer = new Vertices[vertices.Count - 2];
-            int bufferSize = 0;
-            float[] xrem = new float[vertices.Count];
-            float[] yrem = new float[vertices.Count];
-            for (int i = 0; i < vertices.Count; ++i)
+            var buffer = new Vertices[vertices.Count - 2];
+            var bufferSize = 0;
+            var xrem = new float[vertices.Count];
+            var yrem = new float[vertices.Count];
+            for (var i = 0; i < vertices.Count; ++i)
             {
                 xrem[i] = vertices[i].x;
                 yrem[i] = vertices[i].y;
             }
 
-            int vNum = vertices.Count;
+            var vNum = vertices.Count;
 
             while (vNum > 3)
             {
                 // Find an ear
-                int earIndex = -1;
-                float earMaxMinCross = -10.0f;
-                for (int i = 0; i < vNum; ++i)
-                {
+                var earIndex = -1;
+                var earMaxMinCross = -10.0f;
+                for (var i = 0; i < vNum; ++i)
                     if (IsEar(i, xrem, yrem, vNum))
                     {
-                        int lower = Remainder(i - 1, vNum);
-                        int upper = Remainder(i + 1, vNum);
-                        Vector2 d1 = new Vector2(xrem[upper] - xrem[i], yrem[upper] - yrem[i]);
-                        Vector2 d2 = new Vector2(xrem[i] - xrem[lower], yrem[i] - yrem[lower]);
-                        Vector2 d3 = new Vector2(xrem[lower] - xrem[upper], yrem[lower] - yrem[upper]);
+                        var lower = Remainder(i - 1, vNum);
+                        var upper = Remainder(i + 1, vNum);
+                        var d1 = new Vector2(xrem[upper] - xrem[i], yrem[upper] - yrem[i]);
+                        var d2 = new Vector2(xrem[i] - xrem[lower], yrem[i] - yrem[lower]);
+                        var d3 = new Vector2(xrem[lower] - xrem[upper], yrem[lower] - yrem[upper]);
 
                         d1.Normalize();
                         d2.Normalize();
@@ -142,14 +135,13 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                         cross31 = Mathf.Abs(cross31);
 
                         //Find the maximum minimum angle
-                        float minCross = Mathf.Min(cross12, Mathf.Min(cross23, cross31));
+                        var minCross = Mathf.Min(cross12, Mathf.Min(cross23, cross31));
                         if (minCross > earMaxMinCross)
                         {
                             earIndex = i;
                             earMaxMinCross = minCross;
                         }
                     }
-                }
 
                 // If we still haven't found an ear, we're screwed.
                 // Note: sometimes this is happening because the
@@ -157,10 +149,7 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                 // should just be thrown out without halting triangulation.
                 if (earIndex == -1)
                 {
-                    for (int i = 0; i < bufferSize; i++)
-                    {
-                        results.Add(buffer[i]);
-                    }
+                    for (var i = 0; i < bufferSize; i++) results.Add(buffer[i]);
 
                     return results;
                 }
@@ -169,10 +158,10 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                 // - remove the ear tip from the list
 
                 --vNum;
-                float[] newx = new float[vNum];
-                float[] newy = new float[vNum];
-                int currDest = 0;
-                for (int i = 0; i < vNum; ++i)
+                var newx = new float[vNum];
+                var newy = new float[vNum];
+                var currDest = 0;
+                for (var i = 0; i < vNum; ++i)
                 {
                     if (currDest == earIndex)
                         ++currDest;
@@ -182,9 +171,9 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                 }
 
                 // - add the clipped triangle to the triangle list
-                int under = (earIndex == 0) ? (vNum) : (earIndex - 1);
-                int over = (earIndex == vNum) ? 0 : (earIndex + 1);
-                Triangle toAdd = new Triangle(xrem[earIndex], yrem[earIndex], xrem[over], yrem[over], xrem[under],
+                var under = earIndex == 0 ? vNum : earIndex - 1;
+                var over = earIndex == vNum ? 0 : earIndex + 1;
+                var toAdd = new Triangle(xrem[earIndex], yrem[earIndex], xrem[over], yrem[over], xrem[under],
                     yrem[under]);
                 buffer[bufferSize] = toAdd;
                 ++bufferSize;
@@ -194,14 +183,11 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                 yrem = newy;
             }
 
-            Triangle tooAdd = new Triangle(xrem[1], yrem[1], xrem[2], yrem[2], xrem[0], yrem[0]);
+            var tooAdd = new Triangle(xrem[1], yrem[1], xrem[2], yrem[2], xrem[0], yrem[0]);
             buffer[bufferSize] = tooAdd;
             ++bufferSize;
 
-            for (int i = 0; i < bufferSize; i++)
-            {
-                results.Add(new Vertices(buffer[i]));
-            }
+            for (var i = 0; i < bufferSize; i++) results.Add(new Vertices(buffer[i]));
 
             return results;
         }
@@ -226,44 +212,46 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
             if (pin.Count < 3)
                 return false;
 
-            bool hasPinchPoint = false;
-            int pinchIndexA = -1;
-            int pinchIndexB = -1;
-            for (int i = 0; i < pin.Count; ++i)
+            var hasPinchPoint = false;
+            var pinchIndexA = -1;
+            var pinchIndexB = -1;
+            for (var i = 0; i < pin.Count; ++i)
             {
-                for (int j = i + 1; j < pin.Count; ++j)
-                {
+                for (var j = i + 1; j < pin.Count; ++j)
                     //Don't worry about pinch points where the points
                     //are actually just dupe neighbors
-                    if (Mathf.Abs(pin[i].x - pin[j].x) < tolerance && Mathf.Abs(pin[i].y - pin[j].y) < tolerance && j != i + 1)
+                    if (Mathf.Abs(pin[i].x - pin[j].x) < tolerance && Mathf.Abs(pin[i].y - pin[j].y) < tolerance &&
+                        j != i + 1)
                     {
                         pinchIndexA = i;
                         pinchIndexB = j;
                         hasPinchPoint = true;
                         break;
                     }
-                }
+
                 if (hasPinchPoint)
                     break;
             }
+
             if (hasPinchPoint)
             {
-                int sizeA = pinchIndexB - pinchIndexA;
+                var sizeA = pinchIndexB - pinchIndexA;
                 if (sizeA == pin.Count)
                     return false; //has dupe points at wraparound, not a problem here
-                for (int i = 0; i < sizeA; ++i)
+                for (var i = 0; i < sizeA; ++i)
                 {
-                    int ind = Remainder(pinchIndexA + i, pin.Count); // is this right
+                    var ind = Remainder(pinchIndexA + i, pin.Count); // is this right
                     poutA.Add(pin[ind]);
                 }
 
-                int sizeB = pin.Count - sizeA;
-                for (int i = 0; i < sizeB; ++i)
+                var sizeB = pin.Count - sizeA;
+                for (var i = 0; i < sizeB; ++i)
                 {
-                    int ind = Remainder(pinchIndexB + i, pin.Count); // is this right    
+                    var ind = Remainder(pinchIndexB + i, pin.Count); // is this right    
                     poutB.Add(pin[ind]);
                 }
             }
+
             return hasPinchPoint;
         }
 
@@ -275,11 +263,8 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
         /// <returns></returns>
         private static int Remainder(int x, int modulus)
         {
-            int rem = x % modulus;
-            while (rem < 0)
-            {
-                rem += modulus;
-            }
+            var rem = x % modulus;
+            while (rem < 0) rem += modulus;
             return rem;
         }
 
@@ -299,12 +284,9 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
         private static bool IsEar(int i, float[] xv, float[] yv, int xvLength)
         {
             float dx0, dy0, dx1, dy1;
-            if (i >= xvLength || i < 0 || xvLength < 3)
-            {
-                return false;
-            }
-            int upper = i + 1;
-            int lower = i - 1;
+            if (i >= xvLength || i < 0 || xvLength < 3) return false;
+            var upper = i + 1;
+            var lower = i - 1;
             if (i == 0)
             {
                 dx0 = xv[0] - xv[xvLength - 1];
@@ -329,20 +311,21 @@ namespace VelcroPhysics.Tools.Triangulation.Earclip
                 dy1 = yv[i + 1] - yv[i];
             }
 
-            float cross = dx0 * dy1 - dx1 * dy0;
+            var cross = dx0 * dy1 - dx1 * dy0;
 
             if (cross > 0)
                 return false;
 
-            Triangle myTri = new Triangle(xv[i], yv[i], xv[upper], yv[upper], xv[lower], yv[lower]);
+            var myTri = new Triangle(xv[i], yv[i], xv[upper], yv[upper], xv[lower], yv[lower]);
 
-            for (int j = 0; j < xvLength; ++j)
+            for (var j = 0; j < xvLength; ++j)
             {
                 if (j == i || j == lower || j == upper)
                     continue;
                 if (myTri.IsInside(xv[j], yv[j]))
                     return false;
             }
+
             return true;
         }
     }

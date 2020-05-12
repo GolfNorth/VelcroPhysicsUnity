@@ -37,6 +37,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
     internal abstract class TriangulationContext
     {
         public readonly List<TriangulationPoint> Points = new List<TriangulationPoint>(200);
+
         public readonly List<DelaunayTriangle> Triangles = new List<DelaunayTriangle>();
         //private int _stepTime = -1;
 
@@ -68,7 +69,9 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
 
         public abstract TriangulationConstraint NewConstraint(TriangulationPoint a, TriangulationPoint b);
 
-        public void Update(string message) { }
+        public void Update(string message)
+        {
+        }
 
         public virtual void Clear()
         {

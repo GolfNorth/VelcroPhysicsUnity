@@ -50,17 +50,11 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             else
             {
                 if (p1.X < p2.X)
-                {
                     return -1;
-                }
                 else if (p1.X > p2.X)
-                {
                     return 1;
-                }
                 else
-                {
                     return 0;
-                }
             }
         }
 

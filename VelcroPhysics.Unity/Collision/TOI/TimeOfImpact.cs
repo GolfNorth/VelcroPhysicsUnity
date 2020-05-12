@@ -34,14 +34,12 @@ namespace VelcroPhysics.Collision.TOI
         // CCD via the local separating axis method. This seeks progression
         // by computing the largest time at which separation is maintained.
 
-        [ThreadStatic]
-        public static int TOICalls,
-                          TOIIters,
-                          TOIMaxIters;
+        [ThreadStatic] public static int TOICalls,
+            TOIIters,
+            TOIMaxIters;
 
-        [ThreadStatic]
-        public static int TOIRootIters,
-                          TOIMaxRootIters;
+        [ThreadStatic] public static int TOIRootIters,
+            TOIMaxRootIters;
 
         /// <summary>
         /// Compute the upper bound on time before two shapes penetrate. Time is represented as
@@ -61,27 +59,27 @@ namespace VelcroPhysics.Collision.TOI
             output.State = TOIOutputState.Unknown;
             output.T = input.TMax;
 
-            Sweep sweepA = input.SweepA;
-            Sweep sweepB = input.SweepB;
+            var sweepA = input.SweepA;
+            var sweepB = input.SweepB;
 
             // Large rotations can make the root finder fail, so we normalize the
             // sweep angles.
             sweepA.Normalize();
             sweepB.Normalize();
 
-            float tMax = input.TMax;
+            var tMax = input.TMax;
 
-            float totalRadius = input.ProxyA.Radius + input.ProxyB.Radius;
-            float target = Mathf.Max(Settings.LinearSlop, totalRadius - 3.0f * Settings.LinearSlop);
+            var totalRadius = input.ProxyA.Radius + input.ProxyB.Radius;
+            var target = Mathf.Max(Settings.LinearSlop, totalRadius - 3.0f * Settings.LinearSlop);
             const float tolerance = 0.25f * Settings.LinearSlop;
             Debug.Assert(target > tolerance);
 
-            float t1 = 0.0f;
+            var t1 = 0.0f;
             const int k_maxIterations = 20;
-            int iter = 0;
+            var iter = 0;
 
             // Prepare input for distance query.
-            DistanceInput distanceInput = new DistanceInput();
+            var distanceInput = new DistanceInput();
             distanceInput.ProxyA = input.ProxyA;
             distanceInput.ProxyB = input.ProxyB;
             distanceInput.UseRadii = false;
@@ -119,18 +117,20 @@ namespace VelcroPhysics.Collision.TOI
                     break;
                 }
 
-                SeparationFunction.Initialize(ref cache, input.ProxyA, ref sweepA, input.ProxyB, ref sweepB, t1, out Vector2 axis, out Vector2 localPoint, out SeparationFunctionType type);
+                SeparationFunction.Initialize(ref cache, input.ProxyA, ref sweepA, input.ProxyB, ref sweepB, t1,
+                    out var axis, out var localPoint, out var type);
 
                 // Compute the TOI on the separating axis. We do this by successively
                 // resolving the deepest point. This loop is bounded by the number of vertices.
-                bool done = false;
-                float t2 = tMax;
-                int pushBackIter = 0;
+                var done = false;
+                var t2 = tMax;
+                var pushBackIter = 0;
                 for (;;)
                 {
                     // Find the deepest point at t2. Store the witness point indices.
                     int indexA, indexB;
-                    float s2 = SeparationFunction.FindMinSeparation(out indexA, out indexB, t2, input.ProxyA, ref sweepA, input.ProxyB, ref sweepB, ref axis, ref localPoint, type);
+                    var s2 = SeparationFunction.FindMinSeparation(out indexA, out indexB, t2, input.ProxyA, ref sweepA,
+                        input.ProxyB, ref sweepB, ref axis, ref localPoint, type);
 
                     // Is the final configuration separated?
                     if (s2 > target + tolerance)
@@ -151,7 +151,8 @@ namespace VelcroPhysics.Collision.TOI
                     }
 
                     // Compute the initial separation of the witness points.
-                    float s1 = SeparationFunction.Evaluate(indexA, indexB, t1, input.ProxyA, ref sweepA, input.ProxyB, ref sweepB, ref axis, ref localPoint, type);
+                    var s1 = SeparationFunction.Evaluate(indexA, indexB, t1, input.ProxyA, ref sweepA, input.ProxyB,
+                        ref sweepB, ref axis, ref localPoint, type);
 
                     // Check for initial overlap. This might happen if the root finder
                     // runs out of iterations.
@@ -174,29 +175,26 @@ namespace VelcroPhysics.Collision.TOI
                     }
 
                     // Compute 1D root of: f(x) - target = 0
-                    int rootIterCount = 0;
+                    var rootIterCount = 0;
                     float a1 = t1, a2 = t2;
                     for (;;)
                     {
                         // Use a mix of the secant rule and bisection.
                         float t;
                         if ((rootIterCount & 1) != 0)
-                        {
                             // Secant rule to improve convergence.
                             t = a1 + (target - s1) * (a2 - a1) / (s2 - s1);
-                        }
                         else
-                        {
                             // Bisection to guarantee progress.
                             t = 0.5f * (a1 + a2);
-                        }
 
                         ++rootIterCount;
 
                         if (Settings.EnableDiagnostics) //Velcro: We only gather diagnostics when enabled
                             ++TOIRootIters;
 
-                        float s = SeparationFunction.Evaluate(indexA, indexB, t, input.ProxyA, ref sweepA, input.ProxyB, ref sweepB, ref axis, ref localPoint, type);
+                        var s = SeparationFunction.Evaluate(indexA, indexB, t, input.ProxyA, ref sweepA, input.ProxyB,
+                            ref sweepB, ref axis, ref localPoint, type);
 
                         if (Mathf.Abs(s - target) < tolerance)
                         {
@@ -217,10 +215,7 @@ namespace VelcroPhysics.Collision.TOI
                             s2 = s;
                         }
 
-                        if (rootIterCount == 50)
-                        {
-                            break;
-                        }
+                        if (rootIterCount == 50) break;
                     }
 
                     if (Settings.EnableDiagnostics) //Velcro: We only gather diagnostics when enabled
@@ -228,10 +223,7 @@ namespace VelcroPhysics.Collision.TOI
 
                     ++pushBackIter;
 
-                    if (pushBackIter == Settings.MaxPolygonVertices)
-                    {
-                        break;
-                    }
+                    if (pushBackIter == Settings.MaxPolygonVertices) break;
                 }
 
                 ++iter;
@@ -239,10 +231,7 @@ namespace VelcroPhysics.Collision.TOI
                 if (Settings.EnableDiagnostics) //Velcro: We only gather diagnostics when enabled
                     ++TOIIters;
 
-                if (done)
-                {
-                    break;
-                }
+                if (done) break;
 
                 if (iter == k_maxIterations)
                 {

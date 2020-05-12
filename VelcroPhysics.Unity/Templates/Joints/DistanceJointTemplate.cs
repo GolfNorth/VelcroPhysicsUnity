@@ -13,7 +13,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class DistanceJointTemplate : JointTemplate
     {
-        public DistanceJointTemplate() : base(JointType.Distance) { }
+        public DistanceJointTemplate() : base(JointType.Distance)
+        {
+        }
 
         /// <summary>
         /// The damping ratio. 0 = no damping, 1 = critical damping.

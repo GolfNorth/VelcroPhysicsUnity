@@ -85,7 +85,8 @@ namespace VelcroPhysics.Dynamics.Joints
         /// <param name="worldAnchorB">The world anchor for the second body.</param>
         /// <param name="ratio">The ratio.</param>
         /// <param name="useWorldCoordinates">Set to true if you are using world coordinates as anchors.</param>
-        public PulleyJoint(Body bodyA, Body bodyB, Vector2 anchorA, Vector2 anchorB, Vector2 worldAnchorA, Vector2 worldAnchorB, float ratio, bool useWorldCoordinates = false)
+        public PulleyJoint(Body bodyA, Body bodyB, Vector2 anchorA, Vector2 anchorB, Vector2 worldAnchorA,
+            Vector2 worldAnchorB, float ratio, bool useWorldCoordinates = false)
             : base(bodyA, bodyB)
         {
             JointType = JointType.Pulley;
@@ -98,9 +99,9 @@ namespace VelcroPhysics.Dynamics.Joints
                 LocalAnchorA = BodyA.GetLocalPoint(anchorA);
                 LocalAnchorB = BodyB.GetLocalPoint(anchorB);
 
-                Vector2 dA = anchorA - worldAnchorA;
+                var dA = anchorA - worldAnchorA;
                 LengthA = dA.magnitude;
-                Vector2 dB = anchorB - worldAnchorB;
+                var dB = anchorB - worldAnchorB;
                 LengthB = dB.magnitude;
             }
             else
@@ -108,9 +109,9 @@ namespace VelcroPhysics.Dynamics.Joints
                 LocalAnchorA = anchorA;
                 LocalAnchorB = anchorB;
 
-                Vector2 dA = anchorA - BodyA.GetLocalPoint(worldAnchorA);
+                var dA = anchorA - BodyA.GetLocalPoint(worldAnchorA);
                 LengthA = dA.magnitude;
-                Vector2 dB = anchorB - BodyB.GetLocalPoint(worldAnchorB);
+                var dB = anchorB - BodyB.GetLocalPoint(worldAnchorB);
                 LengthB = dB.magnitude;
             }
 
@@ -163,9 +164,9 @@ namespace VelcroPhysics.Dynamics.Joints
         {
             get
             {
-                Vector2 p = BodyA.GetWorldPoint(LocalAnchorA);
-                Vector2 s = WorldAnchorA;
-                Vector2 d = p - s;
+                var p = BodyA.GetWorldPoint(LocalAnchorA);
+                var s = WorldAnchorA;
+                var d = p - s;
                 return d.magnitude;
             }
         }
@@ -177,9 +178,9 @@ namespace VelcroPhysics.Dynamics.Joints
         {
             get
             {
-                Vector2 p = BodyB.GetWorldPoint(LocalAnchorB);
-                Vector2 s = WorldAnchorB;
-                Vector2 d = p - s;
+                var p = BodyB.GetWorldPoint(LocalAnchorB);
+                var s = WorldAnchorB;
+                var d = p - s;
                 return d.magnitude;
             }
         }
@@ -195,7 +196,7 @@ namespace VelcroPhysics.Dynamics.Joints
 
         public override Vector2 GetReactionForce(float invDt)
         {
-            Vector2 P = _impulse * _uB;
+            var P = _impulse * _uB;
             return invDt * P;
         }
 
@@ -215,15 +216,15 @@ namespace VelcroPhysics.Dynamics.Joints
             _invIA = BodyA._invI;
             _invIB = BodyB._invI;
 
-            Vector2 cA = data.Positions[_indexA].C;
-            float aA = data.Positions[_indexA].A;
-            Vector2 vA = data.Velocities[_indexA].V;
-            float wA = data.Velocities[_indexA].W;
+            var cA = data.Positions[_indexA].C;
+            var aA = data.Positions[_indexA].A;
+            var vA = data.Velocities[_indexA].V;
+            var wA = data.Velocities[_indexA].W;
 
-            Vector2 cB = data.Positions[_indexB].C;
-            float aB = data.Positions[_indexB].A;
-            Vector2 vB = data.Velocities[_indexB].V;
-            float wB = data.Velocities[_indexB].W;
+            var cB = data.Positions[_indexB].C;
+            var aB = data.Positions[_indexB].A;
+            var vB = data.Velocities[_indexB].V;
+            var wB = data.Velocities[_indexB].W;
 
             Rot qA = new Rot(aA), qB = new Rot(aB);
 
@@ -234,40 +235,29 @@ namespace VelcroPhysics.Dynamics.Joints
             _uA = cA + _rA - WorldAnchorA;
             _uB = cB + _rB - WorldAnchorB;
 
-            float lengthA = _uA.magnitude;
-            float lengthB = _uB.magnitude;
+            var lengthA = _uA.magnitude;
+            var lengthB = _uB.magnitude;
 
             if (lengthA > 10.0f * Settings.LinearSlop)
-            {
                 _uA *= 1.0f / lengthA;
-            }
             else
-            {
                 _uA = Vector2.zero;
-            }
 
             if (lengthB > 10.0f * Settings.LinearSlop)
-            {
                 _uB *= 1.0f / lengthB;
-            }
             else
-            {
                 _uB = Vector2.zero;
-            }
 
             // Compute effective mass.
-            float ruA = MathUtils.Cross(_rA, _uA);
-            float ruB = MathUtils.Cross(_rB, _uB);
+            var ruA = MathUtils.Cross(_rA, _uA);
+            var ruB = MathUtils.Cross(_rB, _uB);
 
-            float mA = _invMassA + _invIA * ruA * ruA;
-            float mB = _invMassB + _invIB * ruB * ruB;
+            var mA = _invMassA + _invIA * ruA * ruA;
+            var mB = _invMassB + _invIB * ruB * ruB;
 
             _mass = mA + Ratio * Ratio * mB;
 
-            if (_mass > 0.0f)
-            {
-                _mass = 1.0f / _mass;
-            }
+            if (_mass > 0.0f) _mass = 1.0f / _mass;
 
             if (Settings.EnableWarmstarting)
             {
@@ -275,8 +265,8 @@ namespace VelcroPhysics.Dynamics.Joints
                 _impulse *= data.Step.dtRatio;
 
                 // Warm starting.
-                Vector2 PA = -(_impulse) * _uA;
-                Vector2 PB = (-Ratio * _impulse) * _uB;
+                var PA = -_impulse * _uA;
+                var PB = -Ratio * _impulse * _uB;
 
                 vA += _invMassA * PA;
                 wA += _invIA * MathUtils.Cross(_rA, PA);
@@ -296,20 +286,20 @@ namespace VelcroPhysics.Dynamics.Joints
 
         internal override void SolveVelocityConstraints(ref SolverData data)
         {
-            Vector2 vA = data.Velocities[_indexA].V;
-            float wA = data.Velocities[_indexA].W;
-            Vector2 vB = data.Velocities[_indexB].V;
-            float wB = data.Velocities[_indexB].W;
+            var vA = data.Velocities[_indexA].V;
+            var wA = data.Velocities[_indexA].W;
+            var vB = data.Velocities[_indexB].V;
+            var wB = data.Velocities[_indexB].W;
 
-            Vector2 vpA = vA + MathUtils.Cross(wA, _rA);
-            Vector2 vpB = vB + MathUtils.Cross(wB, _rB);
+            var vpA = vA + MathUtils.Cross(wA, _rA);
+            var vpB = vB + MathUtils.Cross(wB, _rB);
 
-            float Cdot = -Vector2.Dot(_uA, vpA) - Ratio * Vector2.Dot(_uB, vpB);
-            float impulse = -_mass * Cdot;
+            var Cdot = -Vector2.Dot(_uA, vpA) - Ratio * Vector2.Dot(_uB, vpB);
+            var impulse = -_mass * Cdot;
             _impulse += impulse;
 
-            Vector2 PA = -impulse * _uA;
-            Vector2 PB = -Ratio * impulse * _uB;
+            var PA = -impulse * _uA;
+            var PB = -Ratio * impulse * _uB;
             vA += _invMassA * PA;
             wA += _invIA * MathUtils.Cross(_rA, PA);
             vB += _invMassB * PB;
@@ -323,62 +313,51 @@ namespace VelcroPhysics.Dynamics.Joints
 
         internal override bool SolvePositionConstraints(ref SolverData data)
         {
-            Vector2 cA = data.Positions[_indexA].C;
-            float aA = data.Positions[_indexA].A;
-            Vector2 cB = data.Positions[_indexB].C;
-            float aB = data.Positions[_indexB].A;
+            var cA = data.Positions[_indexA].C;
+            var aA = data.Positions[_indexA].A;
+            var cB = data.Positions[_indexB].C;
+            var aB = data.Positions[_indexB].A;
 
             Rot qA = new Rot(aA), qB = new Rot(aB);
 
-            Vector2 rA = MathUtils.Mul(qA, LocalAnchorA - _localCenterA);
-            Vector2 rB = MathUtils.Mul(qB, LocalAnchorB - _localCenterB);
+            var rA = MathUtils.Mul(qA, LocalAnchorA - _localCenterA);
+            var rB = MathUtils.Mul(qB, LocalAnchorB - _localCenterB);
 
             // Get the pulley axes.
-            Vector2 uA = cA + rA - WorldAnchorA;
-            Vector2 uB = cB + rB - WorldAnchorB;
+            var uA = cA + rA - WorldAnchorA;
+            var uB = cB + rB - WorldAnchorB;
 
-            float lengthA = uA.magnitude;
-            float lengthB = uB.magnitude;
+            var lengthA = uA.magnitude;
+            var lengthB = uB.magnitude;
 
             if (lengthA > 10.0f * Settings.LinearSlop)
-            {
                 uA *= 1.0f / lengthA;
-            }
             else
-            {
                 uA = Vector2.zero;
-            }
 
             if (lengthB > 10.0f * Settings.LinearSlop)
-            {
                 uB *= 1.0f / lengthB;
-            }
             else
-            {
                 uB = Vector2.zero;
-            }
 
             // Compute effective mass.
-            float ruA = MathUtils.Cross(rA, uA);
-            float ruB = MathUtils.Cross(rB, uB);
+            var ruA = MathUtils.Cross(rA, uA);
+            var ruB = MathUtils.Cross(rB, uB);
 
-            float mA = _invMassA + _invIA * ruA * ruA;
-            float mB = _invMassB + _invIB * ruB * ruB;
+            var mA = _invMassA + _invIA * ruA * ruA;
+            var mB = _invMassB + _invIB * ruB * ruB;
 
-            float mass = mA + Ratio * Ratio * mB;
+            var mass = mA + Ratio * Ratio * mB;
 
-            if (mass > 0.0f)
-            {
-                mass = 1.0f / mass;
-            }
+            if (mass > 0.0f) mass = 1.0f / mass;
 
-            float C = Constant - lengthA - Ratio * lengthB;
-            float linearError = Mathf.Abs(C);
+            var C = Constant - lengthA - Ratio * lengthB;
+            var linearError = Mathf.Abs(C);
 
-            float impulse = -mass * C;
+            var impulse = -mass * C;
 
-            Vector2 PA = -impulse * uA;
-            Vector2 PB = -Ratio * impulse * uB;
+            var PA = -impulse * uA;
+            var PB = -Ratio * impulse * uB;
 
             cA += _invMassA * PA;
             aA += _invIA * MathUtils.Cross(rA, PA);

@@ -17,27 +17,28 @@ namespace VelcroPhysics.Factories
     {
         public static Fixture AttachEdge(Vector2 start, Vector2 end, Body body, object userData = null)
         {
-            EdgeShape edgeShape = new EdgeShape(start, end);
+            var edgeShape = new EdgeShape(start, end);
             return body.CreateFixture(edgeShape, userData);
         }
 
         public static Fixture AttachChainShape(Vertices vertices, Body body, object userData = null)
         {
-            ChainShape shape = new ChainShape(vertices);
+            var shape = new ChainShape(vertices);
             return body.CreateFixture(shape, userData);
         }
 
         public static Fixture AttachLoopShape(Vertices vertices, Body body, object userData = null)
         {
-            ChainShape shape = new ChainShape(vertices, true);
+            var shape = new ChainShape(vertices, true);
             return body.CreateFixture(shape, userData);
         }
 
-        public static Fixture AttachRectangle(float width, float height, float density, Vector2 offset, Body body, object userData = null)
+        public static Fixture AttachRectangle(float width, float height, float density, Vector2 offset, Body body,
+            object userData = null)
         {
-            Vertices rectangleVertices = PolygonUtils.CreateRectangle(width / 2, height / 2);
+            var rectangleVertices = PolygonUtils.CreateRectangle(width / 2, height / 2);
             rectangleVertices.Translate(ref offset);
-            PolygonShape rectangleShape = new PolygonShape(rectangleVertices, density);
+            var rectangleShape = new PolygonShape(rectangleVertices, density);
             return body.CreateFixture(rectangleShape, userData);
         }
 
@@ -46,16 +47,17 @@ namespace VelcroPhysics.Factories
             if (radius <= 0)
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be more than 0 meters");
 
-            CircleShape circleShape = new CircleShape(radius, density);
+            var circleShape = new CircleShape(radius, density);
             return body.CreateFixture(circleShape, userData);
         }
 
-        public static Fixture AttachCircle(float radius, float density, Body body, Vector2 offset, object userData = null)
+        public static Fixture AttachCircle(float radius, float density, Body body, Vector2 offset,
+            object userData = null)
         {
             if (radius <= 0)
                 throw new ArgumentOutOfRangeException(nameof(radius), "Radius must be more than 0 meters");
 
-            CircleShape circleShape = new CircleShape(radius, density);
+            var circleShape = new CircleShape(radius, density);
             circleShape.Position = offset;
             return body.CreateFixture(circleShape, userData);
         }
@@ -65,11 +67,12 @@ namespace VelcroPhysics.Factories
             if (vertices.Count <= 1)
                 throw new ArgumentOutOfRangeException(nameof(vertices), "Too few points to be a polygon");
 
-            PolygonShape polygon = new PolygonShape(vertices, density);
+            var polygon = new PolygonShape(vertices, density);
             return body.CreateFixture(polygon, userData);
         }
 
-        public static Fixture AttachEllipse(float xRadius, float yRadius, int edges, float density, Body body, object userData = null)
+        public static Fixture AttachEllipse(float xRadius, float yRadius, int edges, float density, Body body,
+            object userData = null)
         {
             if (xRadius <= 0)
                 throw new ArgumentOutOfRangeException(nameof(xRadius), "X-radius must be more than 0");
@@ -77,49 +80,48 @@ namespace VelcroPhysics.Factories
             if (yRadius <= 0)
                 throw new ArgumentOutOfRangeException(nameof(yRadius), "Y-radius must be more than 0");
 
-            Vertices ellipseVertices = PolygonUtils.CreateEllipse(xRadius, yRadius, edges);
-            PolygonShape polygonShape = new PolygonShape(ellipseVertices, density);
+            var ellipseVertices = PolygonUtils.CreateEllipse(xRadius, yRadius, edges);
+            var polygonShape = new PolygonShape(ellipseVertices, density);
             return body.CreateFixture(polygonShape, userData);
         }
 
-        public static List<Fixture> AttachCompoundPolygon(List<Vertices> list, float density, Body body, object userData = null)
+        public static List<Fixture> AttachCompoundPolygon(List<Vertices> list, float density, Body body,
+            object userData = null)
         {
-            List<Fixture> res = new List<Fixture>(list.Count);
+            var res = new List<Fixture>(list.Count);
 
             //Then we create several fixtures using the body
-            foreach (Vertices vertices in list)
-            {
+            foreach (var vertices in list)
                 if (vertices.Count == 2)
                 {
-                    EdgeShape shape = new EdgeShape(vertices[0], vertices[1]);
+                    var shape = new EdgeShape(vertices[0], vertices[1]);
                     res.Add(body.CreateFixture(shape, userData));
                 }
                 else
                 {
-                    PolygonShape shape = new PolygonShape(vertices, density);
+                    var shape = new PolygonShape(vertices, density);
                     res.Add(body.CreateFixture(shape, userData));
                 }
-            }
 
             return res;
         }
 
         public static Fixture AttachLineArc(float radians, int sides, float radius, bool closed, Body body)
         {
-            Vertices arc = PolygonUtils.CreateArc(radians, sides, radius);
+            var arc = PolygonUtils.CreateArc(radians, sides, radius);
             arc.Rotate((Mathf.PI - radians) / 2);
             return closed ? AttachLoopShape(arc, body) : AttachChainShape(arc, body);
         }
 
         public static List<Fixture> AttachSolidArc(float density, float radians, int sides, float radius, Body body)
         {
-            Vertices arc = PolygonUtils.CreateArc(radians, sides, radius);
+            var arc = PolygonUtils.CreateArc(radians, sides, radius);
             arc.Rotate((Mathf.PI - radians) / 2);
 
             //Close the arc
             arc.Add(arc[0]);
 
-            List<Vertices> triangles = Triangulate.ConvexPartition(arc, TriangulationAlgorithm.Earclip);
+            var triangles = Triangulate.ConvexPartition(arc, TriangulationAlgorithm.Earclip);
 
             return AttachCompoundPolygon(triangles, density, body);
         }

@@ -36,19 +36,16 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="subdivisions">The subdivisions.</param>
         public static void ConvertPathToEdges(Path path, Body body, int subdivisions)
         {
-            Vertices verts = path.GetVertices(subdivisions);
+            var verts = path.GetVertices(subdivisions);
 
             if (path.Closed)
             {
-                ChainShape chain = new ChainShape(verts, true);
+                var chain = new ChainShape(verts, true);
                 body.CreateFixture(chain);
             }
             else
             {
-                for (int i = 1; i < verts.Count; i++)
-                {
-                    body.CreateFixture(new EdgeShape(verts[i], verts[i - 1]));
-                }
+                for (var i = 1; i < verts.Count; i++) body.CreateFixture(new EdgeShape(verts[i], verts[i - 1]));
             }
         }
 
@@ -67,12 +64,9 @@ namespace VelcroPhysics.Tools.PathGenerator
 
             List<Vector2> verts = path.GetVertices(subdivisions);
 
-            List<Vertices> decomposedVerts = Triangulate.ConvexPartition(new Vertices(verts), TriangulationAlgorithm.Bayazit);
+            var decomposedVerts = Triangulate.ConvexPartition(new Vertices(verts), TriangulationAlgorithm.Bayazit);
 
-            foreach (Vertices item in decomposedVerts)
-            {
-                body.CreateFixture(new PolygonShape(item, density));
-            }
+            foreach (var item in decomposedVerts) body.CreateFixture(new PolygonShape(item, density));
         }
 
         /// <summary>
@@ -85,20 +79,19 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="copies">The copies.</param>
         /// <param name="userData"></param>
         /// <returns></returns>
-        public static List<Body> EvenlyDistributeShapesAlongPath(World world, Path path, IEnumerable<Shape> shapes, BodyType type, int copies, object userData = null)
+        public static List<Body> EvenlyDistributeShapesAlongPath(World world, Path path, IEnumerable<Shape> shapes,
+            BodyType type, int copies, object userData = null)
         {
-            List<Vector3> centers = path.SubdivideEvenly(copies);
-            List<Body> bodyList = new List<Body>();
+            var centers = path.SubdivideEvenly(copies);
+            var bodyList = new List<Body>();
 
-            for (int i = 0; i < centers.Count; i++)
+            for (var i = 0; i < centers.Count; i++)
             {
                 // copy the type from original body
-                Body b = BodyFactory.CreateBody(world, new Vector2(centers[i].x, centers[i].y), centers[i].z, type, userData);
+                var b = BodyFactory.CreateBody(world, new Vector2(centers[i].x, centers[i].y), centers[i].z, type,
+                    userData);
 
-                foreach (Shape shape in shapes)
-                {
-                    b.CreateFixture(shape);
-                }
+                foreach (var shape in shapes) b.CreateFixture(shape);
 
                 bodyList.Add(b);
             }
@@ -116,15 +109,17 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="copies">The copies.</param>
         /// <param name="userData">The user data.</param>
         /// <returns></returns>
-        public static List<Body> EvenlyDistributeShapesAlongPath(World world, Path path, Shape shape, BodyType type, int copies, object userData)
+        public static List<Body> EvenlyDistributeShapesAlongPath(World world, Path path, Shape shape, BodyType type,
+            int copies, object userData)
         {
-            List<Shape> shapes = new List<Shape>(1);
+            var shapes = new List<Shape>(1);
             shapes.Add(shape);
 
             return EvenlyDistributeShapesAlongPath(world, path, shapes, type, copies, userData);
         }
 
-        public static List<Body> EvenlyDistributeShapesAlongPath(World world, Path path, Shape shape, BodyType type, int copies)
+        public static List<Body> EvenlyDistributeShapesAlongPath(World world, Path path, Shape shape, BodyType type,
+            int copies)
         {
             return EvenlyDistributeShapesAlongPath(world, path, shape, type, copies, null);
         }
@@ -139,9 +134,9 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="timeStep">The time step.</param>
         public static void MoveBodyOnPath(Path path, Body body, float time, float strength, float timeStep)
         {
-            Vector2 destination = path.GetPosition(time);
-            Vector2 positionDelta = body.Position - destination;
-            Vector2 velocity = (positionDelta / timeStep) * strength;
+            var destination = path.GetPosition(time);
+            var positionDelta = body.Position - destination;
+            var velocity = positionDelta / timeStep * strength;
 
             body.LinearVelocity = -velocity;
         }
@@ -155,13 +150,14 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="localAnchorB">The local anchor B.</param>
         /// <param name="connectFirstAndLast">if set to <c>true</c> [connect first and last].</param>
         /// <param name="collideConnected">if set to <c>true</c> [collide connected].</param>
-        public static List<RevoluteJoint> AttachBodiesWithRevoluteJoint(World world, List<Body> bodies, Vector2 localAnchorA, Vector2 localAnchorB, bool connectFirstAndLast, bool collideConnected)
+        public static List<RevoluteJoint> AttachBodiesWithRevoluteJoint(World world, List<Body> bodies,
+            Vector2 localAnchorA, Vector2 localAnchorB, bool connectFirstAndLast, bool collideConnected)
         {
-            List<RevoluteJoint> joints = new List<RevoluteJoint>(bodies.Count + 1);
+            var joints = new List<RevoluteJoint>(bodies.Count + 1);
 
-            for (int i = 1; i < bodies.Count; i++)
+            for (var i = 1; i < bodies.Count; i++)
             {
-                RevoluteJoint joint = new RevoluteJoint(bodies[i], bodies[i - 1], localAnchorA, localAnchorB);
+                var joint = new RevoluteJoint(bodies[i], bodies[i - 1], localAnchorA, localAnchorB);
                 joint.CollideConnected = collideConnected;
                 world.AddJoint(joint);
                 joints.Add(joint);
@@ -169,7 +165,7 @@ namespace VelcroPhysics.Tools.PathGenerator
 
             if (connectFirstAndLast)
             {
-                RevoluteJoint lastjoint = new RevoluteJoint(bodies[0], bodies[bodies.Count - 1], localAnchorA, localAnchorB);
+                var lastjoint = new RevoluteJoint(bodies[0], bodies[bodies.Count - 1], localAnchorA, localAnchorB);
                 lastjoint.CollideConnected = collideConnected;
                 world.AddJoint(lastjoint);
                 joints.Add(lastjoint);

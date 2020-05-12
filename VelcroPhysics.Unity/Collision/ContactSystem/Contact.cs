@@ -158,12 +158,13 @@ namespace VelcroPhysics.Collision.ContactSystem
         /// </summary>
         public void GetWorldManifold(out Vector2 normal, out FixedArray2<Vector2> points)
         {
-            Body bodyA = FixtureA.Body;
-            Body bodyB = FixtureB.Body;
-            Shape shapeA = FixtureA.Shape;
-            Shape shapeB = FixtureB.Shape;
+            var bodyA = FixtureA.Body;
+            var bodyB = FixtureB.Body;
+            var shapeA = FixtureA.Shape;
+            var shapeB = FixtureB.Shape;
 
-            WorldManifold.Initialize(ref Manifold, ref bodyA._xf, shapeA.Radius, ref bodyB._xf, shapeB.Radius, out normal, out points, out _);
+            WorldManifold.Initialize(ref Manifold, ref bodyA._xf, shapeA.Radius, ref bodyB._xf, shapeB.Radius,
+                out normal, out points, out _);
         }
 
         private void Reset(Fixture fA, int indexA, Fixture fB, int indexB)
@@ -210,25 +211,26 @@ namespace VelcroPhysics.Collision.ContactSystem
             if (FixtureA == null || FixtureB == null)
                 return;
 
-            Body bodyA = FixtureA.Body;
-            Body bodyB = FixtureB.Body;
+            var bodyA = FixtureA.Body;
+            var bodyB = FixtureB.Body;
 
-            Manifold oldManifold = Manifold;
+            var oldManifold = Manifold;
 
             // Re-enable this contact.
             _flags |= ContactFlags.EnabledFlag;
 
             bool touching;
-            bool wasTouching = IsTouching;
+            var wasTouching = IsTouching;
 
-            bool sensor = FixtureA.IsSensor || FixtureB.IsSensor;
+            var sensor = FixtureA.IsSensor || FixtureB.IsSensor;
 
             // Is this contact a sensor?
             if (sensor)
             {
-                Shape shapeA = FixtureA.Shape;
-                Shape shapeB = FixtureB.Shape;
-                touching = Narrowphase.Collision.TestOverlap(shapeA, ChildIndexA, shapeB, ChildIndexB, ref bodyA._xf, ref bodyB._xf);
+                var shapeA = FixtureA.Shape;
+                var shapeB = FixtureB.Shape;
+                touching = Narrowphase.Collision.TestOverlap(shapeA, ChildIndexA, shapeB, ChildIndexB, ref bodyA._xf,
+                    ref bodyB._xf);
 
                 // Sensors don't generate manifolds.
                 Manifold.PointCount = 0;
@@ -240,16 +242,16 @@ namespace VelcroPhysics.Collision.ContactSystem
 
                 // Match old contact ids to new contact ids and copy the
                 // stored impulses to warm start the solver.
-                for (int i = 0; i < Manifold.PointCount; ++i)
+                for (var i = 0; i < Manifold.PointCount; ++i)
                 {
-                    ManifoldPoint mp2 = Manifold.Points[i];
+                    var mp2 = Manifold.Points[i];
                     mp2.NormalImpulse = 0.0f;
                     mp2.TangentImpulse = 0.0f;
-                    ContactID id2 = mp2.Id;
+                    var id2 = mp2.Id;
 
-                    for (int j = 0; j < oldManifold.PointCount; ++j)
+                    for (var j = 0; j < oldManifold.PointCount; ++j)
                     {
-                        ManifoldPoint mp1 = oldManifold.Points[j];
+                        var mp1 = oldManifold.Points[j];
 
                         if (mp1.Id.Key == id2.Key)
                         {
@@ -311,29 +313,36 @@ namespace VelcroPhysics.Collision.ContactSystem
             switch (_type)
             {
                 case ContactType.Polygon:
-                    CollidePolygon.CollidePolygons(ref manifold, (PolygonShape)FixtureA.Shape, ref transformA, (PolygonShape)FixtureB.Shape, ref transformB);
+                    CollidePolygon.CollidePolygons(ref manifold, (PolygonShape) FixtureA.Shape, ref transformA,
+                        (PolygonShape) FixtureB.Shape, ref transformB);
                     break;
                 case ContactType.PolygonAndCircle:
-                    CollideCircle.CollidePolygonAndCircle(ref manifold, (PolygonShape)FixtureA.Shape, ref transformA, (CircleShape)FixtureB.Shape, ref transformB);
+                    CollideCircle.CollidePolygonAndCircle(ref manifold, (PolygonShape) FixtureA.Shape, ref transformA,
+                        (CircleShape) FixtureB.Shape, ref transformB);
                     break;
                 case ContactType.EdgeAndCircle:
-                    CollideEdge.CollideEdgeAndCircle(ref manifold, (EdgeShape)FixtureA.Shape, ref transformA, (CircleShape)FixtureB.Shape, ref transformB);
+                    CollideEdge.CollideEdgeAndCircle(ref manifold, (EdgeShape) FixtureA.Shape, ref transformA,
+                        (CircleShape) FixtureB.Shape, ref transformB);
                     break;
                 case ContactType.EdgeAndPolygon:
-                    CollideEdge.CollideEdgeAndPolygon(ref manifold, (EdgeShape)FixtureA.Shape, ref transformA, (PolygonShape)FixtureB.Shape, ref transformB);
+                    CollideEdge.CollideEdgeAndPolygon(ref manifold, (EdgeShape) FixtureA.Shape, ref transformA,
+                        (PolygonShape) FixtureB.Shape, ref transformB);
                     break;
                 case ContactType.ChainAndCircle:
-                    ChainShape chain = (ChainShape)FixtureA.Shape;
+                    var chain = (ChainShape) FixtureA.Shape;
                     chain.GetChildEdge(_edge, ChildIndexA);
-                    CollideEdge.CollideEdgeAndCircle(ref manifold, _edge, ref transformA, (CircleShape)FixtureB.Shape, ref transformB);
+                    CollideEdge.CollideEdgeAndCircle(ref manifold, _edge, ref transformA, (CircleShape) FixtureB.Shape,
+                        ref transformB);
                     break;
                 case ContactType.ChainAndPolygon:
-                    ChainShape loop2 = (ChainShape)FixtureA.Shape;
+                    var loop2 = (ChainShape) FixtureA.Shape;
                     loop2.GetChildEdge(_edge, ChildIndexA);
-                    CollideEdge.CollideEdgeAndPolygon(ref manifold, _edge, ref transformA, (PolygonShape)FixtureB.Shape, ref transformB);
+                    CollideEdge.CollideEdgeAndPolygon(ref manifold, _edge, ref transformA,
+                        (PolygonShape) FixtureB.Shape, ref transformB);
                     break;
                 case ContactType.Circle:
-                    CollideCircle.CollideCircles(ref manifold, (CircleShape)FixtureA.Shape, ref transformA, (CircleShape)FixtureB.Shape, ref transformB);
+                    CollideCircle.CollideCircles(ref manifold, (CircleShape) FixtureA.Shape, ref transformA,
+                        (CircleShape) FixtureB.Shape, ref transformB);
                     break;
                 default:
                     throw new ArgumentException("You are using an unsupported contact type.");
@@ -342,40 +351,34 @@ namespace VelcroPhysics.Collision.ContactSystem
 
         internal static Contact Create(Fixture fixtureA, int indexA, Fixture fixtureB, int indexB)
         {
-            ShapeType type1 = fixtureA.Shape.ShapeType;
-            ShapeType type2 = fixtureB.Shape.ShapeType;
+            var type1 = fixtureA.Shape.ShapeType;
+            var type2 = fixtureB.Shape.ShapeType;
 
             Debug.Assert(ShapeType.Unknown < type1 && type1 < ShapeType.TypeCount);
             Debug.Assert(ShapeType.Unknown < type2 && type2 < ShapeType.TypeCount);
 
             Contact c;
-            Queue<Contact> pool = fixtureA.Body._world._contactPool;
+            var pool = fixtureA.Body._world._contactPool;
             if (pool.Count > 0)
             {
                 c = pool.Dequeue();
-                if ((type1 >= type2 || (type1 == ShapeType.Edge && type2 == ShapeType.Polygon)) && !(type2 == ShapeType.Edge && type1 == ShapeType.Polygon))
-                {
+                if ((type1 >= type2 || type1 == ShapeType.Edge && type2 == ShapeType.Polygon) &&
+                    !(type2 == ShapeType.Edge && type1 == ShapeType.Polygon))
                     c.Reset(fixtureA, indexA, fixtureB, indexB);
-                }
                 else
-                {
                     c.Reset(fixtureB, indexB, fixtureA, indexA);
-                }
             }
             else
             {
                 // Edge+Polygon is non-symmetrical due to the way Erin handles collision type registration.
-                if ((type1 >= type2 || (type1 == ShapeType.Edge && type2 == ShapeType.Polygon)) && !(type2 == ShapeType.Edge && type1 == ShapeType.Polygon))
-                {
+                if ((type1 >= type2 || type1 == ShapeType.Edge && type2 == ShapeType.Polygon) &&
+                    !(type2 == ShapeType.Edge && type1 == ShapeType.Polygon))
                     c = new Contact(fixtureA, indexA, fixtureB, indexB);
-                }
                 else
-                {
                     c = new Contact(fixtureB, indexB, fixtureA, indexA);
-                }
             }
 
-            c._type = _registers[(int)type1, (int)type2];
+            c._type = _registers[(int) type1, (int) type2];
 
             return c;
         }

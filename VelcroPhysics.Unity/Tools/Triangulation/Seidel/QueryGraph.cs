@@ -20,22 +20,19 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
 
         public List<Trapezoid> FollowEdge(Edge edge)
         {
-            List<Trapezoid> trapezoids = new List<Trapezoid>();
+            var trapezoids = new List<Trapezoid>();
             trapezoids.Add(Locate(edge));
-            int j = 0;
+            var j = 0;
 
             while (edge.Q.X > trapezoids[j].RightPoint.X)
             {
                 if (edge.IsAbove(trapezoids[j].RightPoint))
-                {
                     trapezoids.Add(trapezoids[j].UpperRight);
-                }
                 else
-                {
                     trapezoids.Add(trapezoids[j].LowerRight);
-                }
                 j += 1;
             }
+
             return trapezoids;
         }
 
@@ -49,29 +46,29 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
 
         public void Case1(Sink sink, Edge edge, Trapezoid[] tList)
         {
-            YNode yNode = new YNode(edge, Sink.Isink(tList[1]), Sink.Isink(tList[2]));
-            XNode qNode = new XNode(edge.Q, yNode, Sink.Isink(tList[3]));
-            XNode pNode = new XNode(edge.P, Sink.Isink(tList[0]), qNode);
+            var yNode = new YNode(edge, Sink.Isink(tList[1]), Sink.Isink(tList[2]));
+            var qNode = new XNode(edge.Q, yNode, Sink.Isink(tList[3]));
+            var pNode = new XNode(edge.P, Sink.Isink(tList[0]), qNode);
             Replace(sink, pNode);
         }
 
         public void Case2(Sink sink, Edge edge, Trapezoid[] tList)
         {
-            YNode yNode = new YNode(edge, Sink.Isink(tList[1]), Sink.Isink(tList[2]));
-            XNode pNode = new XNode(edge.P, Sink.Isink(tList[0]), yNode);
+            var yNode = new YNode(edge, Sink.Isink(tList[1]), Sink.Isink(tList[2]));
+            var pNode = new XNode(edge.P, Sink.Isink(tList[0]), yNode);
             Replace(sink, pNode);
         }
 
         public void Case3(Sink sink, Edge edge, Trapezoid[] tList)
         {
-            YNode yNode = new YNode(edge, Sink.Isink(tList[0]), Sink.Isink(tList[1]));
+            var yNode = new YNode(edge, Sink.Isink(tList[0]), Sink.Isink(tList[1]));
             Replace(sink, yNode);
         }
 
         public void Case4(Sink sink, Edge edge, Trapezoid[] tList)
         {
-            YNode yNode = new YNode(edge, Sink.Isink(tList[0]), Sink.Isink(tList[1]));
-            XNode qNode = new XNode(edge.Q, yNode, Sink.Isink(tList[2]));
+            var yNode = new YNode(edge, Sink.Isink(tList[0]), Sink.Isink(tList[1]));
+            var qNode = new XNode(edge.Q, yNode, Sink.Isink(tList[2]));
             Replace(sink, qNode);
         }
     }

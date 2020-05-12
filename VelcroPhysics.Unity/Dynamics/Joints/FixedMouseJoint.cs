@@ -93,13 +93,13 @@ namespace VelcroPhysics.Dynamics.Joints
 
         public override Vector2 WorldAnchorA
         {
-            get { return BodyA.GetWorldPoint(LocalAnchorA); }
-            set { LocalAnchorA = BodyA.GetLocalPoint(value); }
+            get => BodyA.GetWorldPoint(LocalAnchorA);
+            set => LocalAnchorA = BodyA.GetLocalPoint(value);
         }
 
         public override Vector2 WorldAnchorB
         {
-            get { return _worldAnchor; }
+            get => _worldAnchor;
             set
             {
                 WakeBodies();
@@ -114,7 +114,7 @@ namespace VelcroPhysics.Dynamics.Joints
         /// </summary>
         public float MaxForce
         {
-            get { return _maxForce; }
+            get => _maxForce;
             set
             {
                 Debug.Assert(MathUtils.IsValid(value) && value >= 0.0f);
@@ -127,7 +127,7 @@ namespace VelcroPhysics.Dynamics.Joints
         /// </summary>
         public float Frequency
         {
-            get { return _frequency; }
+            get => _frequency;
             set
             {
                 Debug.Assert(MathUtils.IsValid(value) && value >= 0.0f);
@@ -140,7 +140,7 @@ namespace VelcroPhysics.Dynamics.Joints
         /// </summary>
         public float DampingRatio
         {
-            get { return _dampingRatio; }
+            get => _dampingRatio;
             set
             {
                 Debug.Assert(MathUtils.IsValid(value) && value >= 0.0f);
@@ -165,34 +165,31 @@ namespace VelcroPhysics.Dynamics.Joints
             _invMassA = BodyA._invMass;
             _invIA = BodyA._invI;
 
-            Vector2 cA = data.Positions[_indexA].C;
-            float aA = data.Positions[_indexA].A;
-            Vector2 vA = data.Velocities[_indexA].V;
-            float wA = data.Velocities[_indexA].W;
+            var cA = data.Positions[_indexA].C;
+            var aA = data.Positions[_indexA].A;
+            var vA = data.Velocities[_indexA].V;
+            var wA = data.Velocities[_indexA].W;
 
-            Rot qA = new Rot(aA);
+            var qA = new Rot(aA);
 
-            float mass = BodyA.Mass;
+            var mass = BodyA.Mass;
 
             // Frequency
-            float omega = 2.0f * Settings.Pi * Frequency;
+            var omega = 2.0f * Settings.Pi * Frequency;
 
             // Damping coefficient
-            float d = 2.0f * mass * DampingRatio * omega;
+            var d = 2.0f * mass * DampingRatio * omega;
 
             // Spring stiffness
-            float k = mass * (omega * omega);
+            var k = mass * (omega * omega);
 
             // magic formulas
             // gamma has units of inverse mass.
             // beta has units of inverse time.
-            float h = data.Step.dt;
+            var h = data.Step.dt;
             Debug.Assert(d + h * k > Settings.Epsilon);
             _gamma = h * (d + h * k);
-            if (_gamma != 0.0f)
-            {
-                _gamma = 1.0f / _gamma;
-            }
+            if (_gamma != 0.0f) _gamma = 1.0f / _gamma;
 
             _beta = h * k * _gamma;
 
@@ -202,11 +199,11 @@ namespace VelcroPhysics.Dynamics.Joints
             // K    = [(1/m1 + 1/m2) * eye(2) - skew(r1) * invI1 * skew(r1) - skew(r2) * invI2 * skew(r2)]
             //      = [1/m1+1/m2     0    ] + invI1 * [r1.y*r1.y -r1.x*r1.y] + invI2 * [r1.y*r1.y -r1.x*r1.y]
             //        [    0     1/m1+1/m2]           [-r1.x*r1.y r1.x*r1.x]           [-r1.x*r1.y r1.x*r1.x]
-            Mat22 K = new Mat22();
+            var K = new Mat22();
             K.ex.x = _invMassA + _invIA * _rA.y * _rA.y + _gamma;
             K.ex.y = -_invIA * _rA.x * _rA.y;
             K.ey.x = K.ex.y;
-            K.ey.y = _invMassA + _invIA * _rA.x* _rA.x + _gamma;
+            K.ey.y = _invMassA + _invIA * _rA.x * _rA.x + _gamma;
 
             _mass = K.Inverse;
 
@@ -233,20 +230,17 @@ namespace VelcroPhysics.Dynamics.Joints
 
         internal override void SolveVelocityConstraints(ref SolverData data)
         {
-            Vector2 vA = data.Velocities[_indexA].V;
-            float wA = data.Velocities[_indexA].W;
+            var vA = data.Velocities[_indexA].V;
+            var wA = data.Velocities[_indexA].W;
 
             // Cdot = v + cross(w, r)
-            Vector2 Cdot = vA + MathUtils.Cross(wA, _rA);
-            Vector2 impulse = MathUtils.Mul(ref _mass, -(Cdot + _C + _gamma * _impulse));
+            var Cdot = vA + MathUtils.Cross(wA, _rA);
+            var impulse = MathUtils.Mul(ref _mass, -(Cdot + _C + _gamma * _impulse));
 
-            Vector2 oldImpulse = _impulse;
+            var oldImpulse = _impulse;
             _impulse += impulse;
-            float maxImpulse = data.Step.dt * MaxForce;
-            if (_impulse.sqrMagnitude > maxImpulse * maxImpulse)
-            {
-                _impulse *= maxImpulse / _impulse.magnitude;
-            }
+            var maxImpulse = data.Step.dt * MaxForce;
+            if (_impulse.sqrMagnitude > maxImpulse * maxImpulse) _impulse *= maxImpulse / _impulse.magnitude;
             impulse = _impulse - oldImpulse;
 
             vA += _invMassA * impulse;

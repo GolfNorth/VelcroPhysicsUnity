@@ -42,10 +42,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         {
             ControlPoints = new List<Vector2>(vertices.Length);
 
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                Add(vertices[i]);
-            }
+            for (var i = 0; i < vertices.Length; i++) Add(vertices[i]);
         }
 
         /// <summary>
@@ -55,10 +52,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         public Path(IList<Vector2> vertices)
         {
             ControlPoints = new List<Vector2>(vertices.Count);
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                Add(vertices[i]);
-            }
+            for (var i = 0; i < vertices.Count; i++) Add(vertices[i]);
         }
 
         /// <summary>
@@ -74,10 +68,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <returns></returns>
         public int NextIndex(int index)
         {
-            if (index == ControlPoints.Count - 1)
-            {
-                return 0;
-            }
+            if (index == ControlPoints.Count - 1) return 0;
             return index + 1;
         }
 
@@ -88,10 +79,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <returns></returns>
         public int PreviousIndex(int index)
         {
-            if (index == 0)
-            {
-                return ControlPoints.Count - 1;
-            }
+            if (index == 0) return ControlPoints.Count - 1;
             return index - 1;
         }
 
@@ -101,7 +89,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="vector">The vector.</param>
         public void Translate(ref Vector2 vector)
         {
-            for (int i = 0; i < ControlPoints.Count; i++)
+            for (var i = 0; i < ControlPoints.Count; i++)
                 ControlPoints[i] = ControlPoints[i] + vector;
         }
 
@@ -111,7 +99,7 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="value">The Value.</param>
         public void Scale(ref Vector2 value)
         {
-            for (int i = 0; i < ControlPoints.Count; i++)
+            for (var i = 0; i < ControlPoints.Count; i++)
                 ControlPoints[i] = ControlPoints[i] * value;
         }
 
@@ -121,25 +109,23 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="value">The amount to rotate by in radians.</param>
         public void Rotate(float value)
         {
-            Matrix4x4 rotationMatrix = Matrix4x4.identity;
+            var rotationMatrix = Matrix4x4.identity;
 
             rotationMatrix.CreateRotationZ(value);
 
-            for (int i = 0; i < ControlPoints.Count; i++)
+            for (var i = 0; i < ControlPoints.Count; i++)
                 ControlPoints[i].Transform(rotationMatrix);
         }
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < ControlPoints.Count; i++)
+            var builder = new StringBuilder();
+            for (var i = 0; i < ControlPoints.Count; i++)
             {
                 builder.Append(ControlPoints[i]);
-                if (i < ControlPoints.Count - 1)
-                {
-                    builder.Append(" ");
-                }
+                if (i < ControlPoints.Count - 1) builder.Append(" ");
             }
+
             return builder.ToString();
         }
 
@@ -152,14 +138,11 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <returns></returns>
         public Vertices GetVertices(int divisions)
         {
-            Vertices verts = new Vertices();
+            var verts = new Vertices();
 
-            float timeStep = 1f / divisions;
+            var timeStep = 1f / divisions;
 
-            for (float i = 0; i < 1f; i += timeStep)
-            {
-                verts.Add(GetPosition(i));
-            }
+            for (float i = 0; i < 1f; i += timeStep) verts.Add(GetPosition(i));
 
             return verts;
         }
@@ -177,51 +160,53 @@ namespace VelcroPhysics.Tools.PathGenerator
 
                 _deltaT = 1f / (ControlPoints.Count - 1);
 
-                int p = (int)(time / _deltaT);
+                var p = (int) (time / _deltaT);
 
                 // use a circular indexing system
-                int p0 = p - 1;
+                var p0 = p - 1;
                 if (p0 < 0) p0 = p0 + (ControlPoints.Count - 1);
                 else if (p0 >= ControlPoints.Count - 1) p0 = p0 - (ControlPoints.Count - 1);
-                int p1 = p;
+                var p1 = p;
                 if (p1 < 0) p1 = p1 + (ControlPoints.Count - 1);
                 else if (p1 >= ControlPoints.Count - 1) p1 = p1 - (ControlPoints.Count - 1);
-                int p2 = p + 1;
+                var p2 = p + 1;
                 if (p2 < 0) p2 = p2 + (ControlPoints.Count - 1);
                 else if (p2 >= ControlPoints.Count - 1) p2 = p2 - (ControlPoints.Count - 1);
-                int p3 = p + 2;
+                var p3 = p + 2;
                 if (p3 < 0) p3 = p3 + (ControlPoints.Count - 1);
                 else if (p3 >= ControlPoints.Count - 1) p3 = p3 - (ControlPoints.Count - 1);
 
                 // relative time
-                float lt = (time - _deltaT * p) / _deltaT;
+                var lt = (time - _deltaT * p) / _deltaT;
 
-                temp = VectorUtils.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2], ControlPoints[p3], lt);
+                temp = VectorUtils.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2],
+                    ControlPoints[p3], lt);
 
                 RemoveAt(ControlPoints.Count - 1);
             }
             else
             {
-                int p = (int)(time / _deltaT);
+                var p = (int) (time / _deltaT);
 
                 // 
-                int p0 = p - 1;
+                var p0 = p - 1;
                 if (p0 < 0) p0 = 0;
                 else if (p0 >= ControlPoints.Count - 1) p0 = ControlPoints.Count - 1;
-                int p1 = p;
+                var p1 = p;
                 if (p1 < 0) p1 = 0;
                 else if (p1 >= ControlPoints.Count - 1) p1 = ControlPoints.Count - 1;
-                int p2 = p + 1;
+                var p2 = p + 1;
                 if (p2 < 0) p2 = 0;
                 else if (p2 >= ControlPoints.Count - 1) p2 = ControlPoints.Count - 1;
-                int p3 = p + 2;
+                var p3 = p + 2;
                 if (p3 < 0) p3 = 0;
                 else if (p3 >= ControlPoints.Count - 1) p3 = ControlPoints.Count - 1;
 
                 // relative time
-                float lt = (time - _deltaT * p) / _deltaT;
+                var lt = (time - _deltaT * p) / _deltaT;
 
-                temp = VectorUtils.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2], ControlPoints[p3], lt);
+                temp = VectorUtils.CatmullRom(ControlPoints[p0], ControlPoints[p1], ControlPoints[p2],
+                    ControlPoints[p3], lt);
             }
 
             return temp;
@@ -234,10 +219,10 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <returns>The normal.</returns>
         public Vector2 GetPositionNormal(float time)
         {
-            float offsetTime = time + 0.0001f;
+            var offsetTime = time + 0.0001f;
 
-            Vector2 a = GetPosition(time);
-            Vector2 b = GetPosition(offsetTime);
+            var a = GetPosition(time);
+            var b = GetPosition(offsetTime);
 
             Vector2 output, temp;
 
@@ -277,10 +262,7 @@ output = new Vector2();
             List<Vector2> verts = GetVertices(ControlPoints.Count * 25);
             float length = 0;
 
-            for (int i = 1; i < verts.Count; i++)
-            {
-                length += Vector2.Distance(verts[i - 1], verts[i]);
-            }
+            for (var i = 1; i < verts.Count; i++) length += Vector2.Distance(verts[i - 1], verts[i]);
 
             if (Closed)
                 length += Vector2.Distance(verts[ControlPoints.Count - 1], verts[0]);
@@ -290,16 +272,16 @@ output = new Vector2();
 
         public List<Vector3> SubdivideEvenly(int divisions)
         {
-            List<Vector3> verts = new List<Vector3>();
+            var verts = new List<Vector3>();
 
-            float length = GetLength();
+            var length = GetLength();
 
-            float deltaLength = length / divisions + 0.001f;
-            float t = 0.000f;
+            var deltaLength = length / divisions + 0.001f;
+            var t = 0.000f;
 
             // we always start at the first control point
-            Vector2 start = ControlPoints[0];
-            Vector2 end = GetPosition(t);
+            var start = ControlPoints[0];
+            var end = GetPosition(t);
 
             // increment t until we are at half the distance
             while (deltaLength * 0.5f >= Vector2.Distance(start, end))
@@ -314,10 +296,10 @@ output = new Vector2();
             start = end;
 
             // for each box
-            for (int i = 1; i < divisions; i++)
+            for (var i = 1; i < divisions; i++)
             {
-                Vector2 normal = GetPositionNormal(t);
-                float angle = (float)Mathf.Atan2(normal.y, normal.x);
+                var normal = GetPositionNormal(t);
+                var angle = Mathf.Atan2(normal.y, normal.x);
 
                 verts.Add(new Vector3(end.x, end.y, angle));
 
@@ -330,11 +312,13 @@ output = new Vector2();
                     if (t >= 1f)
                         break;
                 }
+
                 if (t >= 1f)
                     break;
 
                 start = end;
             }
+
             return verts;
         }
     }

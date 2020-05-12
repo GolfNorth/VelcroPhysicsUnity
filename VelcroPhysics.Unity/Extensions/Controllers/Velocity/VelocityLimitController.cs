@@ -57,7 +57,7 @@ namespace VelcroPhysics.Extensions.Controllers.Velocity
         /// <value>The max angular velocity.</value>
         public float MaxAngularVelocity
         {
-            get { return _maxAngularVelocity; }
+            get => _maxAngularVelocity;
             set
             {
                 _maxAngularVelocity = value;
@@ -71,7 +71,7 @@ namespace VelcroPhysics.Extensions.Controllers.Velocity
         /// <value>The max linear velocity.</value>
         public float MaxLinearVelocity
         {
-            get { return _maxLinearVelocity; }
+            get => _maxLinearVelocity;
             set
             {
                 _maxLinearVelocity = value;
@@ -81,7 +81,7 @@ namespace VelcroPhysics.Extensions.Controllers.Velocity
 
         public override void Update(float dt)
         {
-            foreach (Body body in _bodies)
+            foreach (var body in _bodies)
             {
                 if (!IsActiveOn(body))
                     continue;
@@ -90,15 +90,15 @@ namespace VelcroPhysics.Extensions.Controllers.Velocity
                 {
                     //Translation
                     // Check for large velocities.
-                    float translationX = dt * body._linearVelocity.x;
-                    float translationY = dt * body._linearVelocity.y;
-                    float result = translationX * translationX + translationY * translationY;
+                    var translationX = dt * body._linearVelocity.x;
+                    var translationY = dt * body._linearVelocity.y;
+                    var result = translationX * translationX + translationY * translationY;
 
                     if (result > dt * _maxLinearSqared)
                     {
-                        float sq = (float)Mathf.Sqrt(result);
+                        var sq = Mathf.Sqrt(result);
 
-                        float ratio = _maxLinearVelocity / sq;
+                        var ratio = _maxLinearVelocity / sq;
                         body._linearVelocity.x *= ratio;
                         body._linearVelocity.y *= ratio;
                     }
@@ -107,10 +107,10 @@ namespace VelcroPhysics.Extensions.Controllers.Velocity
                 if (LimitAngularVelocity)
                 {
                     //Rotation
-                    float rotation = dt * body._angularVelocity;
+                    var rotation = dt * body._angularVelocity;
                     if (rotation * rotation > _maxAngularSqared)
                     {
-                        float ratio = _maxAngularVelocity / Mathf.Abs(rotation);
+                        var ratio = _maxAngularVelocity / Mathf.Abs(rotation);
                         body._angularVelocity *= ratio;
                     }
                 }

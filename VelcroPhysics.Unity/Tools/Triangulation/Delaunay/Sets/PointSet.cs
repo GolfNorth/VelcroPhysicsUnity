@@ -46,10 +46,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Sets
         public IList<TriangulationPoint> Points { get; private set; }
         public IList<DelaunayTriangle> Triangles { get; private set; }
 
-        public virtual TriangulationMode TriangulationMode
-        {
-            get { return TriangulationMode.Unconstrained; }
-        }
+        public virtual TriangulationMode TriangulationMode => TriangulationMode.Unconstrained;
 
         public void AddTriangle(DelaunayTriangle t)
         {
@@ -58,7 +55,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Sets
 
         public void AddTriangles(IEnumerable<DelaunayTriangle> list)
         {
-            foreach (DelaunayTriangle tri in list)
+            foreach (var tri in list)
                 Triangles.Add(tri);
         }
 
@@ -70,13 +67,9 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Sets
         public virtual void PrepareTriangulation(TriangulationContext tcx)
         {
             if (Triangles == null)
-            {
                 Triangles = new List<DelaunayTriangle>(Points.Count);
-            }
             else
-            {
                 Triangles.Clear();
-            }
             tcx.Points.AddRange(Points);
         }
 

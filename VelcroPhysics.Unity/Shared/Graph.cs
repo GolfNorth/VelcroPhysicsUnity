@@ -38,9 +38,9 @@ namespace VelcroPhysics.Shared
         /// </summary>
         /// <remarks>Note that this method is O(n) in worst case.</remarks>
         /// <returns>The node that represents the value</returns>
-        public GraphNode<T,T1> Add(T value)
+        public GraphNode<T, T1> Add(T value)
         {
-            GraphNode<T, T1> result = new GraphNode<T, T1>(value);
+            var result = new GraphNode<T, T1>(value);
             Add(result);
             return result;
         }
@@ -87,13 +87,12 @@ namespace VelcroPhysics.Shared
         /// <returns>The graph node that was found if any. Otherwise it returns null.</returns>
         public GraphNode<T, T1> Find(T value)
         {
-            GraphNode<T, T1> node = First;
+            var node = First;
 
             if (node == null)
                 return null;
 
             if (value != null)
-            {
                 do
                 {
                     if (_comparer.Equals(node.Item, value))
@@ -101,9 +100,7 @@ namespace VelcroPhysics.Shared
 
                     node = node.Next;
                 } while (node != First);
-            }
             else
-            {
                 do
                 {
                     if (node.Item == null)
@@ -111,17 +108,17 @@ namespace VelcroPhysics.Shared
 
                     node = node.Next;
                 } while (node != First);
-            }
+
             return null;
         }
 
         public void Clear()
         {
-            GraphNode<T, T1> node = First;
+            var node = First;
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                GraphNode<T, T1> node0 = node;
+                var node0 = node;
                 node = node.Next;
                 node0.Invalidate();
             }
@@ -134,7 +131,7 @@ namespace VelcroPhysics.Shared
         /// <returns>True if the value was removed, otherwise false.</returns>
         public bool Remove(T value)
         {
-            GraphNode<T, T1> node = Find(value);
+            var node = Find(value);
 
             if (node == null)
                 return false;
@@ -175,11 +172,11 @@ namespace VelcroPhysics.Shared
 
         public IEnumerator<T> GetEnumerator()
         {
-            GraphNode<T, T1> node = First;
+            var node = First;
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                GraphNode<T, T1> node0 = node;
+                var node0 = node;
                 node = node.Next;
                 yield return node0.Item;
             }
@@ -192,11 +189,11 @@ namespace VelcroPhysics.Shared
 
         public IEnumerable<GraphNode<T, T1>> GetNodes()
         {
-            GraphNode<T, T1> node = First;
+            var node = First;
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
-                GraphNode<T, T1> node0 = node;
+                var node0 = node;
                 node = node.Next;
                 yield return node0;
             }

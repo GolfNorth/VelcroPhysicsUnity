@@ -74,43 +74,36 @@ namespace VelcroPhysics.Collision.ContactSystem
         // Broad-phase callback.
         private void AddPair(ref FixtureProxy proxyA, ref FixtureProxy proxyB)
         {
-            Fixture fixtureA = proxyA.Fixture;
-            Fixture fixtureB = proxyB.Fixture;
+            var fixtureA = proxyA.Fixture;
+            var fixtureB = proxyB.Fixture;
 
-            int indexA = proxyA.ChildIndex;
-            int indexB = proxyB.ChildIndex;
+            var indexA = proxyA.ChildIndex;
+            var indexB = proxyB.ChildIndex;
 
-            Body bodyA = fixtureA.Body;
-            Body bodyB = fixtureB.Body;
+            var bodyA = fixtureA.Body;
+            var bodyB = fixtureB.Body;
 
             // Are the fixtures on the same body?
-            if (bodyA == bodyB)
-            {
-                return;
-            }
+            if (bodyA == bodyB) return;
 
             // Does a contact already exist?
-            ContactEdge edge = bodyB.ContactList;
+            var edge = bodyB.ContactList;
             while (edge != null)
             {
                 if (edge.Other == bodyA)
                 {
-                    Fixture fA = edge.Contact.FixtureA;
-                    Fixture fB = edge.Contact.FixtureB;
-                    int iA = edge.Contact.ChildIndexA;
-                    int iB = edge.Contact.ChildIndexB;
+                    var fA = edge.Contact.FixtureA;
+                    var fB = edge.Contact.FixtureB;
+                    var iA = edge.Contact.ChildIndexA;
+                    var iB = edge.Contact.ChildIndexB;
 
                     if (fA == fixtureA && fB == fixtureB && iA == indexA && iB == indexB)
-                    {
                         // A contact already exists.
                         return;
-                    }
 
                     if (fA == fixtureB && fB == fixtureA && iA == indexB && iB == indexA)
-                    {
                         // A contact already exists.
                         return;
-                    }
                 }
 
                 edge = edge.Next;
@@ -136,7 +129,7 @@ namespace VelcroPhysics.Collision.ContactSystem
                 return;
 
             // Call the factory.
-            Contact c = Contact.Create(fixtureA, indexA, fixtureB, indexB);
+            var c = Contact.Create(fixtureA, indexA, fixtureB, indexB);
 
             if (c == null)
                 return;
@@ -158,10 +151,7 @@ namespace VelcroPhysics.Collision.ContactSystem
 
             c._nodeA.Prev = null;
             c._nodeA.Next = bodyA.ContactList;
-            if (bodyA.ContactList != null)
-            {
-                bodyA.ContactList.Prev = c._nodeA;
-            }
+            if (bodyA.ContactList != null) bodyA.ContactList.Prev = c._nodeA;
             bodyA.ContactList = c._nodeA;
 
             // Connect to body B
@@ -170,10 +160,7 @@ namespace VelcroPhysics.Collision.ContactSystem
 
             c._nodeB.Prev = null;
             c._nodeB.Next = bodyB.ContactList;
-            if (bodyB.ContactList != null)
-            {
-                bodyB.ContactList.Prev = c._nodeB;
-            }
+            if (bodyB.ContactList != null) bodyB.ContactList.Prev = c._nodeB;
             bodyB.ContactList = c._nodeB;
 
             // Wake up the bodies
@@ -194,8 +181,8 @@ namespace VelcroPhysics.Collision.ContactSystem
             if (contact.FixtureA == null || contact.FixtureB == null)
                 return;
 
-            Fixture fixtureA = contact.FixtureA;
-            Fixture fixtureB = contact.FixtureB;
+            var fixtureA = contact.FixtureA;
+            var fixtureB = contact.FixtureB;
 
             //Velcro: When contacts are removed, we invoke OnSeparation
             if (contact.IsTouching)
@@ -210,8 +197,8 @@ namespace VelcroPhysics.Collision.ContactSystem
                 EndContact?.Invoke(contact);
             }
 
-            Body bodyA = fixtureA.Body;
-            Body bodyB = fixtureB.Body;
+            var bodyA = fixtureA.Body;
+            var bodyB = fixtureB.Body;
 
             // Remove from the world.
             ContactList.Remove(contact);
@@ -242,15 +229,15 @@ namespace VelcroPhysics.Collision.ContactSystem
         internal void Collide()
         {
             // Update awake contacts.
-            for (int i = 0; i < ContactList.Count; i++)
+            for (var i = 0; i < ContactList.Count; i++)
             {
-                Contact c = ContactList[i];
-                Fixture fixtureA = c.FixtureA;
-                Fixture fixtureB = c.FixtureB;
-                int indexA = c.ChildIndexA;
-                int indexB = c.ChildIndexB;
-                Body bodyA = fixtureA.Body;
-                Body bodyB = fixtureB.Body;
+                var c = ContactList[i];
+                var fixtureA = c.FixtureA;
+                var fixtureB = c.FixtureB;
+                var indexA = c.ChildIndexA;
+                var indexB = c.ChildIndexB;
+                var bodyA = fixtureA.Body;
+                var bodyB = fixtureB.Body;
 
                 //Velcro: Do no try to collide disabled bodies
                 if (!bodyA.Enabled || !bodyB.Enabled)
@@ -262,7 +249,7 @@ namespace VelcroPhysics.Collision.ContactSystem
                     // Should these bodies collide?
                     if (bodyB.ShouldCollide(bodyA) == false)
                     {
-                        Contact cNuke = c;
+                        var cNuke = c;
                         Destroy(cNuke);
                         continue;
                     }
@@ -270,7 +257,7 @@ namespace VelcroPhysics.Collision.ContactSystem
                     // Check default filtering
                     if (ShouldCollide(fixtureA, fixtureB) == false)
                     {
-                        Contact cNuke = c;
+                        var cNuke = c;
                         Destroy(cNuke);
                         continue;
                     }
@@ -278,7 +265,7 @@ namespace VelcroPhysics.Collision.ContactSystem
                     // Check user filtering.
                     if (ContactFilter != null && ContactFilter(fixtureA, fixtureB) == false)
                     {
-                        Contact cNuke = c;
+                        var cNuke = c;
                         Destroy(cNuke);
                         continue;
                     }
@@ -287,23 +274,20 @@ namespace VelcroPhysics.Collision.ContactSystem
                     c._flags &= ~ContactFlags.FilterFlag;
                 }
 
-                bool activeA = bodyA.Awake && bodyA.BodyType != BodyType.Static;
-                bool activeB = bodyB.Awake && bodyB.BodyType != BodyType.Static;
+                var activeA = bodyA.Awake && bodyA.BodyType != BodyType.Static;
+                var activeB = bodyB.Awake && bodyB.BodyType != BodyType.Static;
 
                 // At least one body must be awake and it must be dynamic or kinematic.
-                if (activeA == false && activeB == false)
-                {
-                    continue;
-                }
+                if (activeA == false && activeB == false) continue;
 
-                int proxyIdA = fixtureA.Proxies[indexA].ProxyId;
-                int proxyIdB = fixtureB.Proxies[indexB].ProxyId;
-                bool overlap = BroadPhase.TestOverlap(proxyIdA, proxyIdB);
+                var proxyIdA = fixtureA.Proxies[indexA].ProxyId;
+                var proxyIdB = fixtureB.Proxies[indexB].ProxyId;
+                var overlap = BroadPhase.TestOverlap(proxyIdA, proxyIdB);
 
                 // Here we destroy contacts that cease to overlap in the broad-phase.
                 if (overlap == false)
                 {
-                    Contact cNuke = c;
+                    var cNuke = c;
                     Destroy(cNuke);
                     continue;
                 }
@@ -317,7 +301,7 @@ namespace VelcroPhysics.Collision.ContactSystem
         {
             if (Settings.UseFPECollisionCategories)
             {
-                if ((fixtureA.CollisionGroup == fixtureB.CollisionGroup) &&
+                if (fixtureA.CollisionGroup == fixtureB.CollisionGroup &&
                     fixtureA.CollisionGroup != 0 && fixtureB.CollisionGroup != 0)
                     return false;
 
@@ -332,12 +316,10 @@ namespace VelcroPhysics.Collision.ContactSystem
 
             if (fixtureA.CollisionGroup == fixtureB.CollisionGroup &&
                 fixtureA.CollisionGroup != 0)
-            {
                 return fixtureA.CollisionGroup > 0;
-            }
 
-            bool collide = (fixtureA.CollidesWith & fixtureB.CollisionCategories) != 0 &&
-                           (fixtureA.CollisionCategories & fixtureB.CollidesWith) != 0;
+            var collide = (fixtureA.CollidesWith & fixtureB.CollisionCategories) != 0 &&
+                          (fixtureA.CollisionCategories & fixtureB.CollidesWith) != 0;
 
             return collide;
         }

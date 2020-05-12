@@ -38,22 +38,19 @@ namespace VelcroPhysics.Collision.Distance
         /// The number of calls made to the ComputeDistance() function.
         /// Note: This is only activated when Settings.EnableDiagnostics = true
         /// </summary>
-        [ThreadStatic]
-        public static int GJKCalls;
+        [ThreadStatic] public static int GJKCalls;
 
         /// <summary>
         /// The number of iterations that was made on the last call to ComputeDistance().
         /// Note: This is only activated when Settings.EnableDiagnostics = true
         /// </summary>
-        [ThreadStatic]
-        public static int GJKIters;
+        [ThreadStatic] public static int GJKIters;
 
         /// <summary>
         /// The maximum number of iterations calls to the CompteDistance() function.
         /// Note: This is only activated when Settings.EnableDiagnostics = true
         /// </summary>
-        [ThreadStatic]
-        public static int GJKMaxIters;
+        [ThreadStatic] public static int GJKMaxIters;
 
         public static void ComputeDistance(ref DistanceInput input, out DistanceOutput output, out SimplexCache cache)
         {
@@ -63,24 +60,25 @@ namespace VelcroPhysics.Collision.Distance
                 ++GJKCalls;
 
             // Initialize the simplex.
-            Simplex simplex = new Simplex();
-            simplex.ReadCache(ref cache, ref input.ProxyA, ref input.TransformA, ref input.ProxyB, ref input.TransformB);
+            var simplex = new Simplex();
+            simplex.ReadCache(ref cache, ref input.ProxyA, ref input.TransformA, ref input.ProxyB,
+                ref input.TransformB);
 
             // These store the vertices of the last simplex so that we
             // can check for duplicates and prevent cycling.
-            FixedArray3<int> saveA = new FixedArray3<int>();
-            FixedArray3<int> saveB = new FixedArray3<int>();
+            var saveA = new FixedArray3<int>();
+            var saveB = new FixedArray3<int>();
 
             //Velcro: This code was not used anyway.
             //float distanceSqr1 = Settings.MaxFloat;
 
             // Main iteration loop.
-            int iter = 0;
+            var iter = 0;
             while (iter < Settings.MaxGJKIterations)
             {
                 // Copy simplex so we can identify duplicates.
-                int saveCount = simplex.Count;
-                for (int i = 0; i < saveCount; ++i)
+                var saveCount = simplex.Count;
+                for (var i = 0; i < saveCount; ++i)
                 {
                     saveA[i] = simplex.V[i].IndexA;
                     saveB[i] = simplex.V[i].IndexB;
@@ -102,17 +100,13 @@ namespace VelcroPhysics.Collision.Distance
                 }
 
                 // If we have 3 points, then the origin is in the corresponding triangle.
-                if (simplex.Count == 3)
-                {
-                    break;
-                }
+                if (simplex.Count == 3) break;
 
                 // Get search direction.
-                Vector2 d = simplex.GetSearchDirection();
+                var d = simplex.GetSearchDirection();
 
                 // Ensure the search direction is numerically fit.
                 if (d.sqrMagnitude < Settings.Epsilon * Settings.Epsilon)
-                {
                     // The origin is probably contained by a line segment
                     // or triangle. Thus the shapes are overlapped.
 
@@ -120,10 +114,9 @@ namespace VelcroPhysics.Collision.Distance
                     // In case the simplex is a point, segment, or triangle it is difficult
                     // to determine if the origin is contained in the CSO or very close to it.
                     break;
-                }
 
                 // Compute a tentative new simplex vertex using support points.
-                SimplexVertex vertex = simplex.V[simplex.Count];
+                var vertex = simplex.V[simplex.Count];
                 vertex.IndexA = input.ProxyA.GetSupport(MathUtils.MulT(input.TransformA.q, -d));
                 vertex.WA = MathUtils.Mul(ref input.TransformA, input.ProxyA.Vertices[vertex.IndexA]);
 
@@ -139,21 +132,16 @@ namespace VelcroPhysics.Collision.Distance
                     ++GJKIters;
 
                 // Check for duplicate support points. This is the main termination criteria.
-                bool duplicate = false;
-                for (int i = 0; i < saveCount; ++i)
-                {
+                var duplicate = false;
+                for (var i = 0; i < saveCount; ++i)
                     if (vertex.IndexA == saveA[i] && vertex.IndexB == saveB[i])
                     {
                         duplicate = true;
                         break;
                     }
-                }
 
                 // If we found a duplicate support point we must exit to avoid cycling.
-                if (duplicate)
-                {
-                    break;
-                }
+                if (duplicate) break;
 
                 // New vertex is OK and needed.
                 ++simplex.Count;
@@ -173,15 +161,15 @@ namespace VelcroPhysics.Collision.Distance
             // Apply radii if requested.
             if (input.UseRadii)
             {
-                float rA = input.ProxyA.Radius;
-                float rB = input.ProxyB.Radius;
+                var rA = input.ProxyA.Radius;
+                var rB = input.ProxyB.Radius;
 
                 if (output.Distance > rA + rB && output.Distance > Settings.Epsilon)
                 {
                     // Shapes are still no overlapped.
                     // Move the witness points to the outer surface.
                     output.Distance -= rA + rB;
-                    Vector2 normal = output.PointB - output.PointA;
+                    var normal = output.PointB - output.PointA;
                     normal.Normalize();
                     output.PointA += rA * normal;
                     output.PointB -= rB * normal;
@@ -190,7 +178,7 @@ namespace VelcroPhysics.Collision.Distance
                 {
                     // Shapes are overlapped when radii are considered.
                     // Move the witness points to the middle.
-                    Vector2 p = 0.5f * (output.PointA + output.PointB);
+                    var p = 0.5f * (output.PointA + output.PointB);
                     output.PointA = p;
                     output.PointB = p;
                     output.Distance = 0.0f;

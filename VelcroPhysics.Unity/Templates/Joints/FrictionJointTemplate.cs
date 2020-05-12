@@ -5,7 +5,9 @@ namespace VelcroPhysics.Templates.Joints
 {
     public class FrictionJointTemplate : JointTemplate
     {
-        public FrictionJointTemplate() : base(JointType.Friction) { }
+        public FrictionJointTemplate() : base(JointType.Friction)
+        {
+        }
 
         /// <summary>
         /// The local anchor point relative to bodyA's origin.

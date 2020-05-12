@@ -4,7 +4,9 @@ namespace VelcroPhysics.Templates.Joints
 {
     public class GearJointTemplate : JointTemplate
     {
-        public GearJointTemplate() : base(JointType.Gear) { }
+        public GearJointTemplate() : base(JointType.Gear)
+        {
+        }
 
         /// <summary>
         /// The first revolute/prismatic joint attached to the gear joint.

@@ -24,28 +24,26 @@ namespace VelcroPhysics.Tools.ConvexHull.ChainHull
             if (vertices.Count <= 3)
                 return vertices;
 
-            Vertices pointSet = new Vertices(vertices);
+            var pointSet = new Vertices(vertices);
 
             //Sort by X-axis
             pointSet.Sort(_pointComparer);
 
-            Vector2[] h = new Vector2[pointSet.Count];
+            var h = new Vector2[pointSet.Count];
             Vertices res;
 
-            int top = -1; // indices for bottom and top of the stack
+            var top = -1; // indices for bottom and top of the stack
             int i; // array scan index
 
             // Get the indices of points with min x-coord and min|max y-coord
             const int minmin = 0;
-            float xmin = pointSet[0].x;
+            var xmin = pointSet[0].x;
             for (i = 1; i < pointSet.Count; i++)
-            {
                 if (pointSet[i].x != xmin)
                     break;
-            }
 
             // degenerate case: all x-coords == xmin
-            int minmax = i - 1;
+            var minmax = i - 1;
             if (minmax == pointSet.Count - 1)
             {
                 h[++top] = pointSet[minmin];
@@ -56,10 +54,7 @@ namespace VelcroPhysics.Tools.ConvexHull.ChainHull
                 h[++top] = pointSet[minmin]; // add polygon endpoint
 
                 res = new Vertices(top + 1);
-                for (int j = 0; j < top + 1; j++)
-                {
-                    res.Add(h[j]);
-                }
+                for (var j = 0; j < top + 1; j++) res.Add(h[j]);
 
                 return res;
             }
@@ -67,14 +62,12 @@ namespace VelcroPhysics.Tools.ConvexHull.ChainHull
             top = -1;
 
             // Get the indices of points with max x-coord and min|max y-coord
-            int maxmax = pointSet.Count - 1;
-            float xmax = pointSet[pointSet.Count - 1].x;
+            var maxmax = pointSet.Count - 1;
+            var xmax = pointSet[pointSet.Count - 1].x;
             for (i = pointSet.Count - 2; i >= 0; i--)
-            {
                 if (pointSet[i].x != xmax)
                     break;
-            }
-            int maxmin = i + 1;
+            var maxmin = i + 1;
 
             // Compute the lower hull on the stack H
             h[++top] = pointSet[minmin]; // push minmin point onto stack
@@ -93,13 +86,14 @@ namespace VelcroPhysics.Tools.ConvexHull.ChainHull
 
                     top--; // pop top point off stack
                 }
+
                 h[++top] = pointSet[i]; // push P[i] onto stack
             }
 
             // Next, compute the upper hull on the stack H above the bottom hull
             if (maxmax != maxmin) // if distinct xmax points
                 h[++top] = pointSet[maxmax]; // push maxmax point onto stack
-            int bot = top;
+            var bot = top;
             i = maxmin;
             while (--i >= minmax)
             {
@@ -124,10 +118,7 @@ namespace VelcroPhysics.Tools.ConvexHull.ChainHull
 
             res = new Vertices(top + 1);
 
-            for (int j = 0; j < top + 1; j++)
-            {
-                res.Add(h[j]);
-            }
+            for (var j = 0; j < top + 1; j++) res.Add(h[j]);
 
             return res;
         }
@@ -136,7 +127,7 @@ namespace VelcroPhysics.Tools.ConvexHull.ChainHull
         {
             public override int Compare(Vector2 a, Vector2 b)
             {
-                int f = a.x.CompareTo(b.x);
+                var f = a.x.CompareTo(b.x);
                 return f != 0 ? f : a.y.CompareTo(b.y);
             }
         }

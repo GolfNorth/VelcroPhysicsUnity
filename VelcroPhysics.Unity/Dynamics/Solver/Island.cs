@@ -71,15 +71,9 @@ namespace VelcroPhysics.Dynamics.Solver
                 Positions = new Position[bodyCapacity];
             }
 
-            if (_contacts == null || _contacts.Length < contactCapacity)
-            {
-                _contacts = new Contact[contactCapacity * 2];
-            }
+            if (_contacts == null || _contacts.Length < contactCapacity) _contacts = new Contact[contactCapacity * 2];
 
-            if (_joints == null || _joints.Length < jointCapacity)
-            {
-                _joints = new Joint[jointCapacity * 2];
-            }
+            if (_joints == null || _joints.Length < jointCapacity) _joints = new Joint[jointCapacity * 2];
         }
 
         public void Clear()
@@ -91,17 +85,17 @@ namespace VelcroPhysics.Dynamics.Solver
 
         public void Solve(ref TimeStep step, ref Vector2 gravity)
         {
-            float h = step.dt;
+            var h = step.dt;
 
             // Integrate velocities and apply damping. Initialize the body state.
-            for (int i = 0; i < BodyCount; ++i)
+            for (var i = 0; i < BodyCount; ++i)
             {
-                Body b = Bodies[i];
+                var b = Bodies[i];
 
-                Vector2 c = b._sweep.C;
-                float a = b._sweep.A;
-                Vector2 v = b._linearVelocity;
-                float w = b._angularVelocity;
+                var c = b._sweep.C;
+                var a = b._sweep.A;
+                var v = b._linearVelocity;
+                var w = b._angularVelocity;
 
                 // Store positions for continuous collision.
                 b._sweep.C0 = b._sweep.C;
@@ -137,7 +131,7 @@ namespace VelcroPhysics.Dynamics.Solver
             }
 
             // Solver data
-            SolverData solverData = new SolverData();
+            var solverData = new SolverData();
             solverData.Step = step;
             solverData.Positions = Positions;
             solverData.Velocities = Velocities;
@@ -145,29 +139,24 @@ namespace VelcroPhysics.Dynamics.Solver
             _contactSolver.Reset(step, ContactCount, _contacts, Positions, Velocities);
             _contactSolver.InitializeVelocityConstraints();
 
-            if (Settings.EnableWarmstarting)
-            {
-                _contactSolver.WarmStart();
-            }
+            if (Settings.EnableWarmstarting) _contactSolver.WarmStart();
 
             if (Settings.EnableDiagnostics)
                 _watch.Start();
 
-            for (int i = 0; i < JointCount; ++i)
-            {
+            for (var i = 0; i < JointCount; ++i)
                 if (_joints[i].Enabled)
                     _joints[i].InitVelocityConstraints(ref solverData);
-            }
 
             if (Settings.EnableDiagnostics)
                 _watch.Stop();
 
             // Solve velocity constraints.
-            for (int i = 0; i < Settings.VelocityIterations; ++i)
+            for (var i = 0; i < Settings.VelocityIterations; ++i)
             {
-                for (int j = 0; j < JointCount; ++j)
+                for (var j = 0; j < JointCount; ++j)
                 {
-                    Joint joint = _joints[j];
+                    var joint = _joints[j];
 
                     if (!joint.Enabled)
                         continue;
@@ -189,25 +178,25 @@ namespace VelcroPhysics.Dynamics.Solver
             _contactSolver.StoreImpulses();
 
             // Integrate positions
-            for (int i = 0; i < BodyCount; ++i)
+            for (var i = 0; i < BodyCount; ++i)
             {
-                Vector2 c = Positions[i].C;
-                float a = Positions[i].A;
-                Vector2 v = Velocities[i].V;
-                float w = Velocities[i].W;
+                var c = Positions[i].C;
+                var a = Positions[i].A;
+                var v = Velocities[i].V;
+                var w = Velocities[i].W;
 
                 // Check for large velocities
-                Vector2 translation = h * v;
+                var translation = h * v;
                 if (Vector2.Dot(translation, translation) > Settings.MaxTranslationSquared)
                 {
-                    float ratio = Settings.MaxTranslation / translation.magnitude;
+                    var ratio = Settings.MaxTranslation / translation.magnitude;
                     v *= ratio;
                 }
 
-                float rotation = h * w;
+                var rotation = h * w;
                 if (rotation * rotation > Settings.MaxRotationSquared)
                 {
-                    float ratio = Settings.MaxRotation / Mathf.Abs(rotation);
+                    var ratio = Settings.MaxRotation / Mathf.Abs(rotation);
                     w *= ratio;
                 }
 
@@ -222,15 +211,15 @@ namespace VelcroPhysics.Dynamics.Solver
             }
 
             // Solve position constraints
-            bool positionSolved = false;
-            for (int i = 0; i < Settings.PositionIterations; ++i)
+            var positionSolved = false;
+            for (var i = 0; i < Settings.PositionIterations; ++i)
             {
-                bool contactsOkay = _contactSolver.SolvePositionConstraints();
+                var contactsOkay = _contactSolver.SolvePositionConstraints();
 
-                bool jointsOkay = true;
-                for (int j = 0; j < JointCount; ++j)
+                var jointsOkay = true;
+                for (var j = 0; j < JointCount; ++j)
                 {
-                    Joint joint = _joints[j];
+                    var joint = _joints[j];
 
                     if (!joint.Enabled)
                         continue;
@@ -238,7 +227,7 @@ namespace VelcroPhysics.Dynamics.Solver
                     if (Settings.EnableDiagnostics)
                         _watch.Start();
 
-                    bool jointOkay = joint.SolvePositionConstraints(ref solverData);
+                    var jointOkay = joint.SolvePositionConstraints(ref solverData);
 
                     if (Settings.EnableDiagnostics)
                         _watch.Stop();
@@ -261,9 +250,9 @@ namespace VelcroPhysics.Dynamics.Solver
             }
 
             // Copy state buffers back to the bodies
-            for (int i = 0; i < BodyCount; ++i)
+            for (var i = 0; i < BodyCount; ++i)
             {
-                Body body = Bodies[i];
+                var body = Bodies[i];
                 body._sweep.C = Positions[i].C;
                 body._sweep.A = Positions[i].A;
                 body._linearVelocity = Velocities[i].V;
@@ -275,16 +264,17 @@ namespace VelcroPhysics.Dynamics.Solver
 
             if (Settings.AllowSleep)
             {
-                float minSleepTime = Settings.MaxFloat;
+                var minSleepTime = Settings.MaxFloat;
 
-                for (int i = 0; i < BodyCount; ++i)
+                for (var i = 0; i < BodyCount; ++i)
                 {
-                    Body b = Bodies[i];
+                    var b = Bodies[i];
 
                     if (b.BodyType == BodyType.Static)
                         continue;
 
-                    if (!b.SleepingAllowed || b._angularVelocity * b._angularVelocity > AngTolSqr || Vector2.Dot(b._linearVelocity, b._linearVelocity) > LinTolSqr)
+                    if (!b.SleepingAllowed || b._angularVelocity * b._angularVelocity > AngTolSqr ||
+                        Vector2.Dot(b._linearVelocity, b._linearVelocity) > LinTolSqr)
                     {
                         b.SleepTime = 0.0f;
                         minSleepTime = 0.0f;
@@ -297,13 +287,11 @@ namespace VelcroPhysics.Dynamics.Solver
                 }
 
                 if (minSleepTime >= Settings.TimeToSleep && positionSolved)
-                {
-                    for (int i = 0; i < BodyCount; ++i)
+                    for (var i = 0; i < BodyCount; ++i)
                     {
-                        Body b = Bodies[i];
+                        var b = Bodies[i];
                         b.Awake = false;
                     }
-                }
             }
         }
 
@@ -313,9 +301,9 @@ namespace VelcroPhysics.Dynamics.Solver
             Debug.Assert(toiIndexB < BodyCount);
 
             // Initialize the body state.
-            for (int i = 0; i < BodyCount; ++i)
+            for (var i = 0; i < BodyCount; ++i)
             {
-                Body b = Bodies[i];
+                var b = Bodies[i];
                 Positions[i].C = b._sweep.C;
                 Positions[i].A = b._sweep.A;
                 Velocities[i].V = b._linearVelocity;
@@ -325,13 +313,10 @@ namespace VelcroPhysics.Dynamics.Solver
             _contactSolver.Reset(subStep, ContactCount, _contacts, Positions, Velocities);
 
             // Solve position constraints.
-            for (int i = 0; i < Settings.TOIPositionIterations; ++i)
+            for (var i = 0; i < Settings.TOIPositionIterations; ++i)
             {
-                bool contactsOkay = _contactSolver.SolveTOIPositionConstraints(toiIndexA, toiIndexB);
-                if (contactsOkay)
-                {
-                    break;
-                }
+                var contactsOkay = _contactSolver.SolveTOIPositionConstraints(toiIndexA, toiIndexB);
+                if (contactsOkay) break;
             }
 
             // Leap of faith to new safe state.
@@ -345,36 +330,33 @@ namespace VelcroPhysics.Dynamics.Solver
             _contactSolver.InitializeVelocityConstraints();
 
             // Solve velocity constraints.
-            for (int i = 0; i < Settings.TOIVelocityIterations; ++i)
-            {
-                _contactSolver.SolveVelocityConstraints();
-            }
+            for (var i = 0; i < Settings.TOIVelocityIterations; ++i) _contactSolver.SolveVelocityConstraints();
 
             // Don't store the TOI contact forces for warm starting
             // because they can be quite large.
 
-            float h = subStep.dt;
+            var h = subStep.dt;
 
             // Integrate positions.
-            for (int i = 0; i < BodyCount; ++i)
+            for (var i = 0; i < BodyCount; ++i)
             {
-                Vector2 c = Positions[i].C;
-                float a = Positions[i].A;
-                Vector2 v = Velocities[i].V;
-                float w = Velocities[i].W;
+                var c = Positions[i].C;
+                var a = Positions[i].A;
+                var v = Velocities[i].V;
+                var w = Velocities[i].W;
 
                 // Check for large velocities
-                Vector2 translation = h * v;
+                var translation = h * v;
                 if (Vector2.Dot(translation, translation) > Settings.MaxTranslationSquared)
                 {
-                    float ratio = Settings.MaxTranslation / translation.magnitude;
+                    var ratio = Settings.MaxTranslation / translation.magnitude;
                     v *= ratio;
                 }
 
-                float rotation = h * w;
+                var rotation = h * w;
                 if (rotation * rotation > Settings.MaxRotationSquared)
                 {
-                    float ratio = Settings.MaxRotation / Mathf.Abs(rotation);
+                    var ratio = Settings.MaxRotation / Mathf.Abs(rotation);
                     w *= ratio;
                 }
 
@@ -388,7 +370,7 @@ namespace VelcroPhysics.Dynamics.Solver
                 Velocities[i].W = w;
 
                 // Sync bodies
-                Body body = Bodies[i];
+                var body = Bodies[i];
                 body._sweep.C = c;
                 body._sweep.A = a;
                 body._linearVelocity = v;
@@ -423,9 +405,9 @@ namespace VelcroPhysics.Dynamics.Solver
             if (_contactManager == null)
                 return;
 
-            for (int i = 0; i < ContactCount; ++i)
+            for (var i = 0; i < ContactCount; ++i)
             {
-                Contact c = _contacts[i];
+                var c = _contacts[i];
 
                 //Velcro optimization: We don't store the impulses and send it to the delegate. We just send the whole contact.
                 //Velcro feature: added after collision

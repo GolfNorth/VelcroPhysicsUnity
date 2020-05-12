@@ -27,14 +27,12 @@ namespace VelcroPhysics.Tools.Triangulation.Seidel
         // Make sure parent pointers are updated
         public void Replace(Node node)
         {
-            foreach (Node parent in node.ParentList)
-            {
+            foreach (var parent in node.ParentList)
                 // Select the correct node to replace (left or right child)
                 if (parent.LeftChild == node)
                     parent.LeftChild = this;
                 else
                     parent.RightChild = this;
-            }
             ParentList.AddRange(node.ParentList);
         }
     }

@@ -131,41 +131,29 @@ namespace VelcroPhysics.Dynamics
         {
             if (_jointRemoveList.Count > 0)
             {
-                foreach (Joint joint in _jointRemoveList)
+                foreach (var joint in _jointRemoveList)
                 {
-                    bool collideConnected = joint.CollideConnected;
+                    var collideConnected = joint.CollideConnected;
 
                     // Remove from the world list.
                     JointList.Remove(joint);
 
                     // Disconnect from island graph.
-                    Body bodyA = joint.BodyA;
-                    Body bodyB = joint.BodyB;
+                    var bodyA = joint.BodyA;
+                    var bodyB = joint.BodyB;
 
                     // Wake up connected bodies.
                     bodyA.Awake = true;
 
                     // WIP David
-                    if (!joint.IsFixedType())
-                    {
-                        bodyB.Awake = true;
-                    }
+                    if (!joint.IsFixedType()) bodyB.Awake = true;
 
                     // Remove from body 1.
-                    if (joint.EdgeA.Prev != null)
-                    {
-                        joint.EdgeA.Prev.Next = joint.EdgeA.Next;
-                    }
+                    if (joint.EdgeA.Prev != null) joint.EdgeA.Prev.Next = joint.EdgeA.Next;
 
-                    if (joint.EdgeA.Next != null)
-                    {
-                        joint.EdgeA.Next.Prev = joint.EdgeA.Prev;
-                    }
+                    if (joint.EdgeA.Next != null) joint.EdgeA.Next.Prev = joint.EdgeA.Prev;
 
-                    if (joint.EdgeA == bodyA.JointList)
-                    {
-                        bodyA.JointList = joint.EdgeA.Next;
-                    }
+                    if (joint.EdgeA == bodyA.JointList) bodyA.JointList = joint.EdgeA.Next;
 
                     joint.EdgeA.Prev = null;
                     joint.EdgeA.Next = null;
@@ -174,20 +162,11 @@ namespace VelcroPhysics.Dynamics
                     if (!joint.IsFixedType())
                     {
                         // Remove from body 2
-                        if (joint.EdgeB.Prev != null)
-                        {
-                            joint.EdgeB.Prev.Next = joint.EdgeB.Next;
-                        }
+                        if (joint.EdgeB.Prev != null) joint.EdgeB.Prev.Next = joint.EdgeB.Next;
 
-                        if (joint.EdgeB.Next != null)
-                        {
-                            joint.EdgeB.Next.Prev = joint.EdgeB.Prev;
-                        }
+                        if (joint.EdgeB.Next != null) joint.EdgeB.Next.Prev = joint.EdgeB.Prev;
 
-                        if (joint.EdgeB == bodyB.JointList)
-                        {
-                            bodyB.JointList = joint.EdgeB.Next;
-                        }
+                        if (joint.EdgeB == bodyB.JointList) bodyB.JointList = joint.EdgeB.Next;
 
                         joint.EdgeB.Prev = null;
                         joint.EdgeB.Next = null;
@@ -195,15 +174,13 @@ namespace VelcroPhysics.Dynamics
                         // If the joint prevents collisions, then flag any contacts for filtering.
                         if (collideConnected == false)
                         {
-                            ContactEdge edge = bodyB.ContactList;
+                            var edge = bodyB.ContactList;
                             while (edge != null)
                             {
                                 if (edge.Other == bodyA)
-                                {
                                     // Flag the contact for filtering at the next time step (where either
                                     // body is awake).
                                     edge.Contact._flags |= ContactFlags.FilterFlag;
-                                }
 
                                 edge = edge.Next;
                             }
@@ -221,7 +198,7 @@ namespace VelcroPhysics.Dynamics
         {
             if (_jointAddList.Count > 0)
             {
-                foreach (Joint joint in _jointAddList)
+                foreach (var joint in _jointAddList)
                 {
                     // Connect to the world list.
                     JointList.Add(joint);
@@ -250,21 +227,19 @@ namespace VelcroPhysics.Dynamics
 
                         joint.BodyB.JointList = joint.EdgeB;
 
-                        Body bodyA = joint.BodyA;
-                        Body bodyB = joint.BodyB;
+                        var bodyA = joint.BodyA;
+                        var bodyB = joint.BodyB;
 
                         // If the joint prevents collisions, then flag any contacts for filtering.
                         if (joint.CollideConnected == false)
                         {
-                            ContactEdge edge = bodyB.ContactList;
+                            var edge = bodyB.ContactList;
                             while (edge != null)
                             {
                                 if (edge.Other == bodyA)
-                                {
                                     // Flag the contact for filtering at the next time step (where either
                                     // body is awake).
                                     edge.Contact._flags |= ContactFlags.FilterFlag;
-                                }
 
                                 edge = edge.Next;
                             }
@@ -284,7 +259,7 @@ namespace VelcroPhysics.Dynamics
         {
             if (_bodyAddList.Count > 0)
             {
-                foreach (Body body in _bodyAddList)
+                foreach (var body in _bodyAddList)
                 {
                     // Add to world list.
                     BodyList.Add(body);
@@ -300,7 +275,7 @@ namespace VelcroPhysics.Dynamics
         {
             if (_bodyRemoveList.Count > 0)
             {
-                foreach (Body body in _bodyRemoveList)
+                foreach (var body in _bodyRemoveList)
                 {
                     Debug.Assert(BodyList.Count > 0);
 
@@ -309,28 +284,30 @@ namespace VelcroPhysics.Dynamics
                     Debug.Assert(BodyList.Contains(body));
 
                     // Delete the attached joints.
-                    JointEdge je = body.JointList;
+                    var je = body.JointList;
                     while (je != null)
                     {
-                        JointEdge je0 = je;
+                        var je0 = je;
                         je = je.Next;
 
                         RemoveJoint(je0.Joint, false);
                     }
+
                     body.JointList = null;
 
                     // Delete the attached contacts.
-                    ContactEdge ce = body.ContactList;
+                    var ce = body.ContactList;
                     while (ce != null)
                     {
-                        ContactEdge ce0 = ce;
+                        var ce0 = ce;
                         ce = ce.Next;
                         ContactManager.Destroy(ce0.Contact);
                     }
+
                     body.ContactList = null;
 
                     // Delete the attached fixtures. This destroys broad-phase proxies.
-                    for (int i = 0; i < body.FixtureList.Count; i++)
+                    for (var i = 0; i < body.FixtureList.Count; i++)
                     {
                         body.FixtureList[i].DestroyProxies(ContactManager.BroadPhase);
                         body.FixtureList[i].Destroy();
@@ -350,22 +327,22 @@ namespace VelcroPhysics.Dynamics
 
         private bool QueryAABBCallbackWrapper(int proxyId)
         {
-            FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
+            var proxy = ContactManager.BroadPhase.GetProxy(proxyId);
             return _queryAABBCallback(proxy.Fixture);
         }
 
         private float RayCastCallbackWrapper(RayCastInput rayCastInput, int proxyId)
         {
-            FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
-            Fixture fixture = proxy.Fixture;
-            int index = proxy.ChildIndex;
+            var proxy = ContactManager.BroadPhase.GetProxy(proxyId);
+            var fixture = proxy.Fixture;
+            var index = proxy.ChildIndex;
             RayCastOutput output;
-            bool hit = fixture.RayCast(out output, ref rayCastInput, index);
+            var hit = fixture.RayCast(out output, ref rayCastInput, index);
 
             if (hit)
             {
-                float fraction = output.Fraction;
-                Vector2 point = (1.0f - fraction) * rayCastInput.Point1 + fraction * rayCastInput.Point2;
+                var fraction = output.Fraction;
+                var point = (1.0f - fraction) * rayCastInput.Point1 + fraction * rayCastInput.Point2;
                 return _rayCastCallback(fixture, point, output.Normal, fraction);
             }
 
@@ -381,48 +358,30 @@ namespace VelcroPhysics.Dynamics
                 ContactManager);
 
             // Clear all the island flags.
-            foreach (Body b in BodyList)
-            {
-                b._flags &= ~BodyFlags.IslandFlag;
-            }
+            foreach (var b in BodyList) b._flags &= ~BodyFlags.IslandFlag;
 
-            foreach (Contact c in ContactManager.ContactList)
-            {
-                c._flags &= ~ContactFlags.IslandFlag;
-            }
+            foreach (var c in ContactManager.ContactList) c._flags &= ~ContactFlags.IslandFlag;
 
-            foreach (Joint j in JointList)
-            {
-                j.IslandFlag = false;
-            }
+            foreach (var j in JointList) j.IslandFlag = false;
 
             // Build and simulate all awake islands.
-            int stackSize = BodyList.Count;
+            var stackSize = BodyList.Count;
             if (stackSize > _stack.Length)
                 _stack = new Body[Mathf.Max(_stack.Length * 2, stackSize)];
 
-            for (int index = BodyList.Count - 1; index >= 0; index--)
+            for (var index = BodyList.Count - 1; index >= 0; index--)
             {
-                Body seed = BodyList[index];
-                if ((seed._flags & BodyFlags.IslandFlag) == BodyFlags.IslandFlag)
-                {
-                    continue;
-                }
+                var seed = BodyList[index];
+                if ((seed._flags & BodyFlags.IslandFlag) == BodyFlags.IslandFlag) continue;
 
-                if (seed.Awake == false || seed.Enabled == false)
-                {
-                    continue;
-                }
+                if (seed.Awake == false || seed.Enabled == false) continue;
 
                 // The seed can be dynamic or kinematic.
-                if (seed.BodyType == BodyType.Static)
-                {
-                    continue;
-                }
+                if (seed.BodyType == BodyType.Static) continue;
 
                 // Reset island and stack.
                 Island.Clear();
-                int stackCount = 0;
+                var stackCount = 0;
                 _stack[stackCount++] = seed;
 
                 seed._flags |= BodyFlags.IslandFlag;
@@ -431,7 +390,7 @@ namespace VelcroPhysics.Dynamics
                 while (stackCount > 0)
                 {
                     // Grab the next body off the stack and add it to the island.
-                    Body b = _stack[--stackCount];
+                    var b = _stack[--stackCount];
                     Debug.Assert(b.Enabled);
                     Island.Add(b);
 
@@ -440,46 +399,31 @@ namespace VelcroPhysics.Dynamics
 
                     // To keep islands as small as possible, we don't
                     // propagate islands across static bodies.
-                    if (b.BodyType == BodyType.Static)
-                    {
-                        continue;
-                    }
+                    if (b.BodyType == BodyType.Static) continue;
 
                     // Search all contacts connected to this body.
-                    for (ContactEdge ce = b.ContactList; ce != null; ce = ce.Next)
+                    for (var ce = b.ContactList; ce != null; ce = ce.Next)
                     {
-                        Contact contact = ce.Contact;
+                        var contact = ce.Contact;
 
                         // Has this contact already been added to an island?
-                        if (contact.IslandFlag)
-                        {
-                            continue;
-                        }
+                        if (contact.IslandFlag) continue;
 
                         // Is this contact solid and touching?
-                        if (ce.Contact.Enabled == false || ce.Contact.IsTouching == false)
-                        {
-                            continue;
-                        }
+                        if (ce.Contact.Enabled == false || ce.Contact.IsTouching == false) continue;
 
                         // Skip sensors.
-                        bool sensorA = contact.FixtureA.IsSensor;
-                        bool sensorB = contact.FixtureB.IsSensor;
-                        if (sensorA || sensorB)
-                        {
-                            continue;
-                        }
+                        var sensorA = contact.FixtureA.IsSensor;
+                        var sensorB = contact.FixtureB.IsSensor;
+                        if (sensorA || sensorB) continue;
 
                         Island.Add(contact);
                         contact._flags |= ContactFlags.IslandFlag;
 
-                        Body other = ce.Other;
+                        var other = ce.Other;
 
                         // Was the other body already added to this island?
-                        if (other.IsIsland)
-                        {
-                            continue;
-                        }
+                        if (other.IsIsland) continue;
 
                         Debug.Assert(stackCount < stackSize);
                         _stack[stackCount++] = other;
@@ -488,32 +432,23 @@ namespace VelcroPhysics.Dynamics
                     }
 
                     // Search all joints connect to this body.
-                    for (JointEdge je = b.JointList; je != null; je = je.Next)
+                    for (var je = b.JointList; je != null; je = je.Next)
                     {
-                        if (je.Joint.IslandFlag)
-                        {
-                            continue;
-                        }
+                        if (je.Joint.IslandFlag) continue;
 
-                        Body other = je.Other;
+                        var other = je.Other;
 
                         // WIP David
                         //Enter here when it's a non-fixed joint. Non-fixed joints have a other body.
                         if (other != null)
                         {
                             // Don't simulate joints connected to inactive bodies.
-                            if (other.Enabled == false)
-                            {
-                                continue;
-                            }
+                            if (other.Enabled == false) continue;
 
                             Island.Add(je.Joint);
                             je.Joint.IslandFlag = true;
 
-                            if (other.IsIsland)
-                            {
-                                continue;
-                            }
+                            if (other.IsIsland) continue;
 
                             Debug.Assert(stackCount < stackSize);
                             _stack[stackCount++] = other;
@@ -531,31 +466,22 @@ namespace VelcroPhysics.Dynamics
                 Island.Solve(ref step, ref Gravity);
 
                 // Post solve cleanup.
-                for (int i = 0; i < Island.BodyCount; ++i)
+                for (var i = 0; i < Island.BodyCount; ++i)
                 {
                     // Allow static bodies to participate in other islands.
-                    Body b = Island.Bodies[i];
-                    if (b.BodyType == BodyType.Static)
-                    {
-                        b._flags &= ~BodyFlags.IslandFlag;
-                    }
+                    var b = Island.Bodies[i];
+                    if (b.BodyType == BodyType.Static) b._flags &= ~BodyFlags.IslandFlag;
                 }
             }
 
             // Synchronize fixtures, check for out of range bodies.
 
-            foreach (Body b in BodyList)
+            foreach (var b in BodyList)
             {
                 // If a body was not in an island then it did not move.
-                if (!b.IsIsland)
-                {
-                    continue;
-                }
+                if (!b.IsIsland) continue;
 
-                if (b.BodyType == BodyType.Static)
-                {
-                    continue;
-                }
+                if (b.BodyType == BodyType.Static) continue;
 
                 // Update fixtures (for broad-phase).
                 b.SynchronizeFixtures();
@@ -571,15 +497,15 @@ namespace VelcroPhysics.Dynamics
 
             if (_stepComplete)
             {
-                for (int i = 0; i < BodyList.Count; i++)
+                for (var i = 0; i < BodyList.Count; i++)
                 {
                     BodyList[i]._flags &= ~BodyFlags.IslandFlag;
                     BodyList[i]._sweep.Alpha0 = 0.0f;
                 }
 
-                for (int i = 0; i < ContactManager.ContactList.Count; i++)
+                for (var i = 0; i < ContactManager.ContactList.Count; i++)
                 {
-                    Contact c = ContactManager.ContactList[i];
+                    var c = ContactManager.ContactList[i];
 
                     // Invalidate TOI
                     c._flags &= ~ContactFlags.IslandFlag;
@@ -594,23 +520,17 @@ namespace VelcroPhysics.Dynamics
             {
                 // Find the first TOI.
                 Contact minContact = null;
-                float minAlpha = 1.0f;
+                var minAlpha = 1.0f;
 
-                for (int i = 0; i < ContactManager.ContactList.Count; i++)
+                for (var i = 0; i < ContactManager.ContactList.Count; i++)
                 {
-                    Contact c = ContactManager.ContactList[i];
+                    var c = ContactManager.ContactList[i];
 
                     // Is this contact disabled?
-                    if (c.Enabled == false)
-                    {
-                        continue;
-                    }
+                    if (c.Enabled == false) continue;
 
                     // Prevent excessive sub-stepping.
-                    if (c._toiCount > Settings.MaxSubSteps)
-                    {
-                        continue;
-                    }
+                    if (c._toiCount > Settings.MaxSubSteps) continue;
 
                     float alpha;
                     if (c.TOIFlag)
@@ -620,43 +540,36 @@ namespace VelcroPhysics.Dynamics
                     }
                     else
                     {
-                        Fixture fA = c.FixtureA;
-                        Fixture fB = c.FixtureB;
+                        var fA = c.FixtureA;
+                        var fB = c.FixtureB;
 
                         // Is there a sensor?
-                        if (fA.IsSensor || fB.IsSensor)
-                        {
-                            continue;
-                        }
+                        if (fA.IsSensor || fB.IsSensor) continue;
 
-                        Body bA = fA.Body;
-                        Body bB = fB.Body;
+                        var bA = fA.Body;
+                        var bB = fB.Body;
 
-                        BodyType typeA = bA.BodyType;
-                        BodyType typeB = bB.BodyType;
+                        var typeA = bA.BodyType;
+                        var typeB = bB.BodyType;
                         Debug.Assert(typeA == BodyType.Dynamic || typeB == BodyType.Dynamic);
 
-                        bool activeA = bA.Awake && typeA != BodyType.Static;
-                        bool activeB = bB.Awake && typeB != BodyType.Static;
+                        var activeA = bA.Awake && typeA != BodyType.Static;
+                        var activeB = bB.Awake && typeB != BodyType.Static;
 
                         // Is at least one body active (awake and dynamic or kinematic)?
-                        if (activeA == false && activeB == false)
-                        {
-                            continue;
-                        }
+                        if (activeA == false && activeB == false) continue;
 
-                        bool collideA = (bA.IsBullet || typeA != BodyType.Dynamic) && (fA.IgnoreCCDWith & fB.CollisionCategories) == 0 && !bA.IgnoreCCD;
-                        bool collideB = (bB.IsBullet || typeB != BodyType.Dynamic) && (fB.IgnoreCCDWith & fA.CollisionCategories) == 0 && !bB.IgnoreCCD;
+                        var collideA = (bA.IsBullet || typeA != BodyType.Dynamic) &&
+                                       (fA.IgnoreCCDWith & fB.CollisionCategories) == 0 && !bA.IgnoreCCD;
+                        var collideB = (bB.IsBullet || typeB != BodyType.Dynamic) &&
+                                       (fB.IgnoreCCDWith & fA.CollisionCategories) == 0 && !bB.IgnoreCCD;
 
                         // Are these two non-bullet dynamic bodies?
-                        if (collideA == false && collideB == false)
-                        {
-                            continue;
-                        }
+                        if (collideA == false && collideB == false) continue;
 
                         // Compute the TOI for this contact.
                         // Put the sweeps onto the same time interval.
-                        float alpha0 = bA._sweep.Alpha0;
+                        var alpha0 = bA._sweep.Alpha0;
 
                         if (bA._sweep.Alpha0 < bB._sweep.Alpha0)
                         {
@@ -672,7 +585,7 @@ namespace VelcroPhysics.Dynamics
                         Debug.Assert(alpha0 < 1.0f);
 
                         // Compute the time of impact in interval [0, minTOI]
-                        TOIInput input = new TOIInput();
+                        var input = new TOIInput();
                         input.ProxyA = new DistanceProxy(fA.Shape, c.ChildIndexA);
                         input.ProxyB = new DistanceProxy(fB.Shape, c.ChildIndexB);
                         input.SweepA = bA._sweep;
@@ -683,15 +596,11 @@ namespace VelcroPhysics.Dynamics
                         TimeOfImpact.CalculateTimeOfImpact(ref input, out output);
 
                         // Beta is the fraction of the remaining portion of the .
-                        float beta = output.T;
+                        var beta = output.T;
                         if (output.State == TOIOutputState.Touching)
-                        {
                             alpha = Mathf.Min(alpha0 + (1.0f - alpha0) * beta, 1.0f);
-                        }
                         else
-                        {
                             alpha = 1.0f;
-                        }
 
                         c._toi = alpha;
                         c._flags &= ~ContactFlags.TOIFlag;
@@ -713,13 +622,13 @@ namespace VelcroPhysics.Dynamics
                 }
 
                 // Advance the bodies to the TOI.
-                Fixture fA1 = minContact.FixtureA;
-                Fixture fB1 = minContact.FixtureB;
-                Body bA0 = fA1.Body;
-                Body bB0 = fB1.Body;
+                var fA1 = minContact.FixtureA;
+                var fB1 = minContact.FixtureB;
+                var bA0 = fA1.Body;
+                var bB0 = fB1.Body;
 
-                Sweep backup1 = bA0._sweep;
-                Sweep backup2 = bB0._sweep;
+                var backup1 = bA0._sweep;
+                var backup2 = bB0._sweep;
 
                 bA0.Advance(minAlpha);
                 bB0.Advance(minAlpha);
@@ -755,52 +664,34 @@ namespace VelcroPhysics.Dynamics
                 minContact._flags &= ~ContactFlags.IslandFlag;
 
                 // Get contacts on bodyA and bodyB.
-                Body[] bodies = { bA0, bB0 };
-                for (int i = 0; i < 2; ++i)
+                Body[] bodies = {bA0, bB0};
+                for (var i = 0; i < 2; ++i)
                 {
-                    Body body = bodies[i];
+                    var body = bodies[i];
                     if (body.BodyType == BodyType.Dynamic)
-                    {
-                        for (ContactEdge ce = body.ContactList; ce != null; ce = ce.Next)
+                        for (var ce = body.ContactList; ce != null; ce = ce.Next)
                         {
-                            Contact contact = ce.Contact;
+                            var contact = ce.Contact;
 
-                            if (Island.BodyCount == Island.BodyCapacity)
-                            {
-                                break;
-                            }
+                            if (Island.BodyCount == Island.BodyCapacity) break;
 
-                            if (Island.ContactCount == Island.ContactCapacity)
-                            {
-                                break;
-                            }
+                            if (Island.ContactCount == Island.ContactCapacity) break;
 
                             // Has this contact already been added to the island?
-                            if (contact.IslandFlag)
-                            {
-                                continue;
-                            }
+                            if (contact.IslandFlag) continue;
 
                             // Only add static, kinematic, or bullet bodies.
-                            Body other = ce.Other;
+                            var other = ce.Other;
                             if (other.BodyType == BodyType.Dynamic &&
                                 body.IsBullet == false && other.IsBullet == false)
-                            {
                                 continue;
-                            }
 
                             // Skip sensors.
-                            if (contact.FixtureA.IsSensor || contact.FixtureB.IsSensor)
-                            {
-                                continue;
-                            }
+                            if (contact.FixtureA.IsSensor || contact.FixtureB.IsSensor) continue;
 
                             // Tentatively advance the body to the TOI.
-                            Sweep backup = other._sweep;
-                            if (!other.IsIsland)
-                            {
-                                other.Advance(minAlpha);
-                            }
+                            var backup = other._sweep;
+                            if (!other.IsIsland) other.Advance(minAlpha);
 
                             // Update the contact points
                             contact.Update(ContactManager);
@@ -826,22 +717,15 @@ namespace VelcroPhysics.Dynamics
                             Island.Add(contact);
 
                             // Has the other body already been added to the island?
-                            if (other.IsIsland)
-                            {
-                                continue;
-                            }
+                            if (other.IsIsland) continue;
 
                             // Add the other body to the island.
                             other._flags |= BodyFlags.IslandFlag;
 
-                            if (other.BodyType != BodyType.Static)
-                            {
-                                other.Awake = true;
-                            }
+                            if (other.BodyType != BodyType.Static) other.Awake = true;
 
                             Island.Add(other);
                         }
-                    }
                 }
 
                 TimeStep subStep;
@@ -851,20 +735,17 @@ namespace VelcroPhysics.Dynamics
                 Island.SolveTOI(ref subStep, bA0.IslandIndex, bB0.IslandIndex);
 
                 // Reset island flags and synchronize broad-phase proxies.
-                for (int i = 0; i < Island.BodyCount; ++i)
+                for (var i = 0; i < Island.BodyCount; ++i)
                 {
-                    Body body = Island.Bodies[i];
+                    var body = Island.Bodies[i];
                     body._flags &= ~BodyFlags.IslandFlag;
 
-                    if (body.BodyType != BodyType.Dynamic)
-                    {
-                        continue;
-                    }
+                    if (body.BodyType != BodyType.Dynamic) continue;
 
                     body.SynchronizeFixtures();
 
                     // Invalidate all contact TOIs on this displaced body.
-                    for (ContactEdge ce = body.ContactList; ce != null; ce = ce.Next)
+                    for (var ce = body.ContactList; ce != null; ce = ce.Next)
                     {
                         ce.Contact._flags &= ~ContactFlags.TOIFlag;
                         ce.Contact._flags &= ~ContactFlags.IslandFlag;
@@ -905,10 +786,7 @@ namespace VelcroPhysics.Dynamics
         /// Get the number of broad-phase proxies.
         /// </summary>
         /// <value>The proxy count.</value>
-        public int ProxyCount
-        {
-            get { return ContactManager.BroadPhase.ProxyCount; }
-        }
+        public int ProxyCount => ContactManager.BroadPhase.ProxyCount;
 
         /// <summary>
         /// Change the global gravity vector.
@@ -939,10 +817,7 @@ namespace VelcroPhysics.Dynamics
         /// the next contact in the world list. A null contact indicates the end of the list.
         /// </summary>
         /// <value>The head of the world contact list.</value>
-        public List<Contact> ContactList
-        {
-            get { return ContactManager.ContactList; }
-        }
+        public List<Contact> ContactList => ContactManager.ContactList;
 
         /// <summary>
         /// If false, the whole simulation stops. It still processes added and removed geometries.
@@ -970,7 +845,8 @@ namespace VelcroPhysics.Dynamics
         /// <param name="body">The body.</param>
         public void RemoveBody(Body body)
         {
-            Debug.Assert(!_bodyRemoveList.Contains(body), "The body is already marked for removal. You are removing the body more than once.");
+            Debug.Assert(!_bodyRemoveList.Contains(body),
+                "The body is already marked for removal. You are removing the body more than once.");
 
             if (!_bodyRemoveList.Contains(body))
                 _bodyRemoveList.Add(body);
@@ -991,10 +867,8 @@ namespace VelcroPhysics.Dynamics
         private void RemoveJoint(Joint joint, bool doCheck)
         {
             if (doCheck)
-            {
                 Debug.Assert(!_jointRemoveList.Contains(joint),
                     "The joint is already marked for removal. You are removing the joint more than once.");
-            }
 
             if (!_jointRemoveList.Contains(joint))
                 _jointRemoveList.Add(joint);
@@ -1057,10 +931,7 @@ namespace VelcroPhysics.Dynamics
             step.dtRatio = _invDt0 * dt;
 
             //Update controllers
-            for (int i = 0; i < ControllerList.Count; i++)
-            {
-                ControllerList[i].Update(dt);
-            }
+            for (var i = 0; i < ControllerList.Count; i++) ControllerList[i].Update(dt);
 
             if (Settings.EnableDiagnostics)
                 ControllersUpdateTime = _watch.ElapsedTicks - (AddRemoveTime + NewContactsTime);
@@ -1075,24 +946,21 @@ namespace VelcroPhysics.Dynamics
             Solve(ref step);
 
             if (Settings.EnableDiagnostics)
-                SolveUpdateTime = _watch.ElapsedTicks - (AddRemoveTime + NewContactsTime + ControllersUpdateTime + ContactsUpdateTime);
+                SolveUpdateTime = _watch.ElapsedTicks -
+                                  (AddRemoveTime + NewContactsTime + ControllersUpdateTime + ContactsUpdateTime);
 
             // Handle TOI events.
-            if (Settings.ContinuousPhysics)
-            {
-                SolveTOI(ref step);
-            }
+            if (Settings.ContinuousPhysics) SolveTOI(ref step);
 
             if (Settings.EnableDiagnostics)
-                ContinuousPhysicsTime = _watch.ElapsedTicks - (AddRemoveTime + NewContactsTime + ControllersUpdateTime + ContactsUpdateTime + SolveUpdateTime);
+                ContinuousPhysicsTime = _watch.ElapsedTicks -
+                                        (AddRemoveTime + NewContactsTime + ControllersUpdateTime + ContactsUpdateTime +
+                                         SolveUpdateTime);
 
             if (Settings.AutoClearForces)
                 ClearForces();
 
-            for (int i = 0; i < BreakableBodyList.Count; i++)
-            {
-                BreakableBodyList[i].Update();
-            }
+            for (var i = 0; i < BreakableBodyList.Count; i++) BreakableBodyList[i].Update();
 
             _invDt0 = step.inv_dt;
 
@@ -1111,9 +979,9 @@ namespace VelcroPhysics.Dynamics
         /// </summary>
         public void ClearForces()
         {
-            for (int i = 0; i < BodyList.Count; i++)
+            for (var i = 0; i < BodyList.Count; i++)
             {
-                Body body = BodyList[i];
+                var body = BodyList[i];
                 body._force = Vector2.zero;
                 body._torque = 0.0f;
             }
@@ -1142,7 +1010,7 @@ namespace VelcroPhysics.Dynamics
         /// <returns>A list of fixtures that were in the affected area.</returns>
         public List<Fixture> QueryAABB(ref AABB aabb)
         {
-            List<Fixture> affected = new List<Fixture>();
+            var affected = new List<Fixture>();
 
             QueryAABB(fixture =>
             {
@@ -1168,7 +1036,7 @@ namespace VelcroPhysics.Dynamics
         /// <param name="point2">The ray ending point.</param>
         public void RayCast(Func<Fixture, Vector2, Vector2, float, float> callback, Vector2 point1, Vector2 point2)
         {
-            RayCastInput input = new RayCastInput();
+            var input = new RayCastInput();
             input.MaxFraction = 1.0f;
             input.Point1 = point1;
             input.Point2 = point2;
@@ -1180,7 +1048,7 @@ namespace VelcroPhysics.Dynamics
 
         public List<Fixture> RayCast(Vector2 point1, Vector2 point2)
         {
-            List<Fixture> affected = new List<Fixture>();
+            var affected = new List<Fixture>();
 
             RayCast((f, p, n, fr) =>
             {
@@ -1230,7 +1098,7 @@ namespace VelcroPhysics.Dynamics
         public Fixture TestPoint(Vector2 point)
         {
             AABB aabb;
-            Vector2 d = new Vector2(Settings.Epsilon, Settings.Epsilon);
+            var d = new Vector2(Settings.Epsilon, Settings.Epsilon);
             aabb.LowerBound = point - d;
             aabb.UpperBound = point + d;
 
@@ -1245,7 +1113,7 @@ namespace VelcroPhysics.Dynamics
 
         private bool TestPointCallback(Fixture fixture)
         {
-            bool inside = fixture.TestPoint(ref _point1);
+            var inside = fixture.TestPoint(ref _point1);
             if (inside)
             {
                 _myFixture = fixture;
@@ -1264,7 +1132,7 @@ namespace VelcroPhysics.Dynamics
         public List<Fixture> TestPointAll(Vector2 point)
         {
             AABB aabb;
-            Vector2 d = new Vector2(Settings.Epsilon, Settings.Epsilon);
+            var d = new Vector2(Settings.Epsilon, Settings.Epsilon);
             aabb.LowerBound = point - d;
             aabb.UpperBound = point + d;
 
@@ -1279,7 +1147,7 @@ namespace VelcroPhysics.Dynamics
 
         private bool TestPointAllCallback(Fixture fixture)
         {
-            bool inside = fixture.TestPoint(ref _point2);
+            var inside = fixture.TestPoint(ref _point2);
             if (inside)
                 _testPointAllFixtures.Add(fixture);
 
@@ -1293,14 +1161,14 @@ namespace VelcroPhysics.Dynamics
         /// Warning: Calling this method mid-update might cause a crash.
         public void ShiftOrigin(Vector2 newOrigin)
         {
-            foreach (Body b in BodyList)
+            foreach (var b in BodyList)
             {
                 b._xf.p -= newOrigin;
                 b._sweep.C0 -= newOrigin;
                 b._sweep.C -= newOrigin;
             }
 
-            foreach (Joint joint in JointList)
+            foreach (var joint in JointList)
             {
                 //joint.ShiftOrigin(newOrigin); //TODO: uncomment
             }
@@ -1312,27 +1180,18 @@ namespace VelcroPhysics.Dynamics
         {
             ProcessChanges();
 
-            for (int i = BodyList.Count - 1; i >= 0; i--)
-            {
-                RemoveBody(BodyList[i]);
-            }
+            for (var i = BodyList.Count - 1; i >= 0; i--) RemoveBody(BodyList[i]);
 
-            for (int i = ControllerList.Count - 1; i >= 0; i--)
-            {
-                RemoveController(ControllerList[i]);
-            }
+            for (var i = ControllerList.Count - 1; i >= 0; i--) RemoveController(ControllerList[i]);
 
-            for (int i = BreakableBodyList.Count - 1; i >= 0; i--)
-            {
-                RemoveBreakableBody(BreakableBodyList[i]);
-            }
+            for (var i = BreakableBodyList.Count - 1; i >= 0; i--) RemoveBreakableBody(BreakableBodyList[i]);
 
             ProcessChanges();
         }
 
         internal Body CreateBody(BodyTemplate template)
         {
-            Body b = new Body(this, template);
+            var b = new Body(this, template);
             b.BodyId = _bodyIdCounter++;
 
             AddBody(b);

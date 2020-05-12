@@ -17,21 +17,22 @@ namespace VelcroPhysics.Collision.Narrowphase
         /// <param name="transformA">The transform A.</param>
         /// <param name="circleB">The circle B.</param>
         /// <param name="transformB">The transform B.</param>
-        public static void CollideEdgeAndCircle(ref Manifold manifold, EdgeShape edgeA, ref Transform transformA, CircleShape circleB, ref Transform transformB)
+        public static void CollideEdgeAndCircle(ref Manifold manifold, EdgeShape edgeA, ref Transform transformA,
+            CircleShape circleB, ref Transform transformB)
         {
             manifold.PointCount = 0;
 
             // Compute circle in frame of edge
-            Vector2 Q = MathUtils.MulT(ref transformA, MathUtils.Mul(ref transformB, ref circleB._position));
+            var Q = MathUtils.MulT(ref transformA, MathUtils.Mul(ref transformB, ref circleB._position));
 
             Vector2 A = edgeA.Vertex1, B = edgeA.Vertex2;
-            Vector2 e = B - A;
+            var e = B - A;
 
             // Barycentric coordinates
-            float u = Vector2.Dot(e, B - Q);
-            float v = Vector2.Dot(e, Q - A);
+            var u = Vector2.Dot(e, B - Q);
+            var v = Vector2.Dot(e, Q - A);
 
-            float radius = edgeA.Radius + circleB.Radius;
+            var radius = edgeA.Radius + circleB.Radius;
 
             ContactFeature cf;
             cf.IndexB = 0;
@@ -40,27 +41,21 @@ namespace VelcroPhysics.Collision.Narrowphase
             // Region A
             if (v <= 0.0f)
             {
-                Vector2 P1 = A;
-                Vector2 d1 = Q - P1;
-                float dd1 = Vector2.Dot(d1, d1);
-                if (dd1 > radius * radius)
-                {
-                    return;
-                }
+                var P1 = A;
+                var d1 = Q - P1;
+                var dd1 = Vector2.Dot(d1, d1);
+                if (dd1 > radius * radius) return;
 
                 // Is there an edge connected to A?
                 if (edgeA.HasVertex0)
                 {
-                    Vector2 A1 = edgeA.Vertex0;
-                    Vector2 B1 = A;
-                    Vector2 e1 = B1 - A1;
-                    float u1 = Vector2.Dot(e1, B1 - Q);
+                    var A1 = edgeA.Vertex0;
+                    var B1 = A;
+                    var e1 = B1 - A1;
+                    var u1 = Vector2.Dot(e1, B1 - Q);
 
                     // Is the circle in Region AB of the previous edge?
-                    if (u1 > 0.0f)
-                    {
-                        return;
-                    }
+                    if (u1 > 0.0f) return;
                 }
 
                 cf.IndexA = 0;
@@ -78,31 +73,25 @@ namespace VelcroPhysics.Collision.Narrowphase
             // Region B
             if (u <= 0.0f)
             {
-                Vector2 P2 = B;
-                Vector2 d2 = Q - P2;
-                float dd2 = Vector2.Dot(d2, d2);
-                if (dd2 > radius * radius)
-                {
-                    return;
-                }
+                var P2 = B;
+                var d2 = Q - P2;
+                var dd2 = Vector2.Dot(d2, d2);
+                if (dd2 > radius * radius) return;
 
                 // Is there an edge connected to B?
                 if (edgeA.HasVertex3)
                 {
-                    Vector2 B2 = edgeA.Vertex3;
-                    Vector2 A2 = B;
-                    Vector2 e2 = B2 - A2;
-                    float v2 = Vector2.Dot(e2, Q - A2);
+                    var B2 = edgeA.Vertex3;
+                    var A2 = B;
+                    var e2 = B2 - A2;
+                    var v2 = Vector2.Dot(e2, Q - A2);
 
                     // Is the circle in Region AB of the next edge?
-                    if (v2 > 0.0f)
-                    {
-                        return;
-                    }
+                    if (v2 > 0.0f) return;
                 }
 
                 cf.IndexA = 1;
-                cf.TypeA = (byte)ContactFeatureType.Vertex;
+                cf.TypeA = (byte) ContactFeatureType.Vertex;
                 manifold.PointCount = 1;
                 manifold.Type = ManifoldType.Circles;
                 manifold.LocalNormal = Vector2.zero;
@@ -114,21 +103,15 @@ namespace VelcroPhysics.Collision.Narrowphase
             }
 
             // Region AB
-            float den = Vector2.Dot(e, e);
+            var den = Vector2.Dot(e, e);
             Debug.Assert(den > 0.0f);
-            Vector2 P = (1.0f / den) * (u * A + v * B);
-            Vector2 d = Q - P;
-            float dd = Vector2.Dot(d, d);
-            if (dd > radius * radius)
-            {
-                return;
-            }
+            var P = 1.0f / den * (u * A + v * B);
+            var d = Q - P;
+            var dd = Vector2.Dot(d, d);
+            if (dd > radius * radius) return;
 
-            Vector2 n = new Vector2(-e.y, e.x);
-            if (Vector2.Dot(n, Q - A) < 0.0f)
-            {
-                n = new Vector2(-n.x, -n.y);
-            }
+            var n = new Vector2(-e.y, e.x);
+            if (Vector2.Dot(n, Q - A) < 0.0f) n = new Vector2(-n.x, -n.y);
             n.Normalize();
 
             cf.IndexA = 0;
@@ -145,7 +128,8 @@ namespace VelcroPhysics.Collision.Narrowphase
         /// <summary>
         /// Collides and edge and a polygon, taking into account edge adjacency.
         /// </summary>
-        public static void CollideEdgeAndPolygon(ref Manifold manifold, EdgeShape edgeA, ref Transform xfA, PolygonShape polygonB, ref Transform xfB)
+        public static void CollideEdgeAndPolygon(ref Manifold manifold, EdgeShape edgeA, ref Transform xfA,
+            PolygonShape polygonB, ref Transform xfB)
         {
             EPCollider.Collide(ref manifold, edgeA, ref xfA, polygonB, ref xfB);
         }

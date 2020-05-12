@@ -206,7 +206,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
         protected float GetDecayMultiplier(Body body)
         {
             //TODO: Consider ForceType in distance calculation!
-            float distance = (body.Position - Position).magnitude;
+            var distance = (body.Position - Position).magnitude;
             switch (DecayMode)
             {
                 case DecayModes.None:
@@ -226,7 +226,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
                         return 1.0f;
                     if (distance > DecayEnd)
                         return 0.0f;
-                    return (DecayEnd - DecayStart / distance - DecayStart);
+                    return DecayEnd - DecayStart / distance - DecayStart;
                 }
                 case DecayModes.InverseSquare:
                 {
@@ -267,10 +267,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
             {
                 case TimingModes.Switched:
                 {
-                    if (Enabled)
-                    {
-                        ApplyForce(dt, Strength);
-                    }
+                    if (Enabled) ApplyForce(dt, Strength);
                     break;
                 }
                 case TimingModes.Triggered:
@@ -287,6 +284,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
                             Triggered = false;
                         }
                     }
+
                     break;
                 }
                 case TimingModes.Curve:
@@ -303,6 +301,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
                             Triggered = false;
                         }
                     }
+
                     break;
                 }
             }

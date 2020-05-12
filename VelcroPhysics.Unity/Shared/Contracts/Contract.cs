@@ -37,10 +37,7 @@ namespace VelcroPhysics.Shared.Contracts
         [Conditional("DEBUG")]
         public static void RequireForAll<T>(IEnumerable<T> value, Predicate<T> check)
         {
-            foreach (T item in value)
-            {
-                Requires(check(item), "Failed on: " + item);
-            }
+            foreach (var item in value) Requires(check(item), "Failed on: " + item);
         }
 
         [Conditional("DEBUG")]
@@ -52,7 +49,9 @@ namespace VelcroPhysics.Shared.Contracts
 
         private static string BuildMessage(string type, string message)
         {
-            string stackTrace = string.Join(Environment.NewLine, Environment.StackTrace.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries).Skip(3));
+            var stackTrace = string.Join(Environment.NewLine,
+                Environment.StackTrace.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .Skip(3));
             return message == null ? string.Empty : type + ": " + message + Environment.NewLine + stackTrace;
         }
     }

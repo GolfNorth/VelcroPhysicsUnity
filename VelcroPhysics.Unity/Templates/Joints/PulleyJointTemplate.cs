@@ -9,7 +9,9 @@ namespace VelcroPhysics.Templates.Joints
     /// </summary>
     public class PulleyJointTemplate : JointTemplate
     {
-        public PulleyJointTemplate() : base(JointType.Pulley) { }
+        public PulleyJointTemplate() : base(JointType.Pulley)
+        {
+        }
 
         /// <summary>
         /// The first ground anchor in world coordinates. This point never moves.

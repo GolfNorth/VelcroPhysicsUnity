@@ -24,20 +24,22 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// another way: it makes the rope less bouncy.
         /// </param>
         /// <returns></returns>
-        public static Path CreateChain(World world, Vector2 start, Vector2 end, float linkWidth, float linkHeight, int numberOfLinks, float linkDensity, bool attachRopeJoint)
+        public static Path CreateChain(World world, Vector2 start, Vector2 end, float linkWidth, float linkHeight,
+            int numberOfLinks, float linkDensity, bool attachRopeJoint)
         {
             Debug.Assert(numberOfLinks >= 2);
 
             //Chain start / end
-            Path path = new Path();
+            var path = new Path();
             path.Add(start);
             path.Add(end);
 
             //A single chainlink
-            PolygonShape shape = new PolygonShape(PolygonUtils.CreateRectangle(linkWidth, linkHeight), linkDensity);
+            var shape = new PolygonShape(PolygonUtils.CreateRectangle(linkWidth, linkHeight), linkDensity);
 
             //Use PathManager to create all the chainlinks based on the chainlink created before.
-            List<Body> chainLinks = PathManager.EvenlyDistributeShapesAlongPath(world, path, shape, BodyType.Dynamic, numberOfLinks);
+            var chainLinks =
+                PathManager.EvenlyDistributeShapesAlongPath(world, path, shape, BodyType.Dynamic, numberOfLinks);
 
             //TODO
             //if (fixStart)
@@ -56,12 +58,14 @@ namespace VelcroPhysics.Tools.PathGenerator
             //}
 
             //Attach all the chainlinks together with a revolute joint
-            PathManager.AttachBodiesWithRevoluteJoint(world, chainLinks, new Vector2(0, -linkHeight), new Vector2(0, linkHeight), false, false);
+            PathManager.AttachBodiesWithRevoluteJoint(world, chainLinks, new Vector2(0, -linkHeight),
+                new Vector2(0, linkHeight), false, false);
 
             if (attachRopeJoint)
-                JointFactory.CreateRopeJoint(world, chainLinks[0], chainLinks[chainLinks.Count - 1], Vector2.zero, Vector2.zero);
+                JointFactory.CreateRopeJoint(world, chainLinks[0], chainLinks[chainLinks.Count - 1], Vector2.zero,
+                    Vector2.zero);
 
-            return (path);
+            return path;
         }
     }
 }
