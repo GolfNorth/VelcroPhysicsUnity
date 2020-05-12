@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using UnityEngine;
 using VelcroPhysics.Shared;
 using VelcroPhysics.Utilities;
@@ -32,14 +31,14 @@ namespace VelcroPhysics.Tools.TextureTools
 
         private VerticesDetectionType _polygonDetectionType;
 
-        private Matrix _transform = Matrix.Identity;
+        private Matrix4x4 _transform = Matrix4x4.identity;
         private int _width;
 
         #region Initialization
 
         private void Initialize(uint[] data, int? width, byte? alphaTolerance,
                                 float? hullTolerance, bool? holeDetection, bool? multipartDetection,
-                                bool? pixelOffsetOptimization, Matrix? transform)
+                                bool? pixelOffsetOptimization, Matrix4x4? transform)
         {
             if (data != null && !width.HasValue)
                 throw new ArgumentNullException(nameof(width), "'width' can't be null if 'data' is set.");
@@ -78,7 +77,7 @@ namespace VelcroPhysics.Tools.TextureTools
             if (transform.HasValue)
                 Transform = transform.Value;
             else
-                Transform = Matrix.Identity;
+                Transform = Matrix4x4.identity;
         }
 
         #endregion
@@ -283,7 +282,7 @@ namespace VelcroPhysics.Tools.TextureTools
             if (PolygonDetectionType == VerticesDetectionType.Separated) // Only when VerticesDetectionType.Separated? -> Recheck.
                 ApplyTriangulationCompatibleWinding(ref detectedPolygons);
 
-            if (_transform != Matrix.Identity)
+            if (_transform != Matrix4x4.identity)
                 ApplyTransform(ref detectedPolygons);
 
             return detectedPolygons;
@@ -1133,7 +1132,7 @@ namespace VelcroPhysics.Tools.TextureTools
         /// <summary>
         /// Can be used for scaling.
         /// </summary>
-        public Matrix Transform
+        public Matrix4x4 Transform
         {
             get { return _transform; }
             set { _transform = value; }
@@ -1182,7 +1181,7 @@ namespace VelcroPhysics.Tools.TextureTools
         }
 
         public TextureConverter(byte? alphaTolerance, float? hullTolerance,
-                                bool? holeDetection, bool? multipartDetection, bool? pixelOffsetOptimization, Matrix? transform)
+                                bool? holeDetection, bool? multipartDetection, bool? pixelOffsetOptimization, Matrix4x4? transform)
         {
             Initialize(null, null, alphaTolerance, hullTolerance, holeDetection,
                 multipartDetection, pixelOffsetOptimization, transform);
@@ -1195,7 +1194,7 @@ namespace VelcroPhysics.Tools.TextureTools
 
         public TextureConverter(uint[] data, int width, byte? alphaTolerance,
                                 float? hullTolerance, bool? holeDetection, bool? multipartDetection,
-                                bool? pixelOffsetOptimization, Matrix? transform)
+                                bool? pixelOffsetOptimization, Matrix4x4? transform)
         {
             Initialize(data, width, alphaTolerance, hullTolerance, holeDetection,
                 multipartDetection, pixelOffsetOptimization, transform);

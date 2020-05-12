@@ -47,7 +47,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using UnityEngine;
 
 namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 {
@@ -298,7 +298,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             }
             catch (PointOnEdgeException e)
             {
-                Debug.WriteLine("Skipping Edge: {0}", e.Message);
+                Debug.Log($"Skipping Edge: {e.Message}");
             }
         }
 
@@ -524,7 +524,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
                 }
                 if (tcx.IsDebugEnabled)
                 {
-                    Debug.WriteLine("EdgeEvent - Point on constrained edge");
+                    Debug.Log("EdgeEvent - Point on constrained edge");
                 }
                 return;
             }
@@ -549,7 +549,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
                 }
                 if (tcx.IsDebugEnabled)
                 {
-                    Debug.WriteLine("EdgeEvent - Point on constrained edge");
+                    Debug.Log("EdgeEvent - Point on constrained edge");
                 }
                 return;
             }

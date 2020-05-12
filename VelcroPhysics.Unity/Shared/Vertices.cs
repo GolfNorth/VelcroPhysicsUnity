@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Microsoft.Xna.Framework;
 using UnityEngine;
 using VelcroPhysics.Utilities;
 using Debug = System.Diagnostics.Debug;
@@ -502,7 +501,7 @@ namespace VelcroPhysics.Shared
         /// Transforms the polygon using the defined matrix.
         /// </summary>
         /// <param name="transform">The matrix to use as transformation.</param>
-        public void Transform(ref Matrix transform)
+        public void Transform(ref Matrix4x4 transform)
         {
             // Transform main polygon
             for (int i = 0; i < Count; i++)

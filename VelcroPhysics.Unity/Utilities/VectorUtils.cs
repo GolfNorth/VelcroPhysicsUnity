@@ -1,29 +1,28 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
 using UnityEngine;
 
 namespace VelcroPhysics.Utilities
 {
     public static class VectorUtils
     {
-        public static Vector2 Transform(this Vector2 position, Matrix matrix)
+        public static Vector2 Transform(this Vector2 position, Matrix4x4 matrix)
         {
             Transform(ref position, ref matrix, out position);
             return position;
         }
         
-        public static void Transform(this ref Vector2 position, ref Matrix matrix, out Vector2 result)
+        public static void Transform(this ref Vector2 position, ref Matrix4x4 matrix, out Vector2 result)
         {
-            result = new Vector2((position.x * matrix.M11) + (position.y * matrix.M21) + matrix.M41,
-                (position.x * matrix.M12) + (position.y * matrix.M22) + matrix.M42);
+            result = new Vector2((position.x * matrix.m00) + (position.y * matrix.m10) + matrix.m30,
+                (position.x * matrix.m01) + (position.y * matrix.m11) + matrix.m31);
         }
         
-        public static void Transform(this Vector2[] sourceArray, ref Matrix matrix, Vector2[] destinationArray)
+        public static void Transform(this Vector2[] sourceArray, ref Matrix4x4 matrix, Vector2[] destinationArray)
         {
             throw new NotImplementedException();
         }
 
-        public static void Transform(this Vector2[] sourceArray, int sourceIndex, ref Matrix matrix,
+        public static void Transform(this Vector2[] sourceArray, int sourceIndex, ref Matrix4x4 matrix,
         Vector2[] destinationArray, int destinationIndex, int length)
         {
             throw new NotImplementedException();

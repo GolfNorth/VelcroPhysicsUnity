@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Xna.Framework;
 using UnityEngine;
 using VelcroPhysics.Shared;
+using VelcroPhysics.Unity.Utilities;
 using VelcroPhysics.Utilities;
 
 namespace VelcroPhysics.Tools.PathGenerator
@@ -121,8 +121,9 @@ namespace VelcroPhysics.Tools.PathGenerator
         /// <param name="value">The amount to rotate by in radians.</param>
         public void Rotate(float value)
         {
-            Matrix rotationMatrix;
-            Matrix.CreateRotationZ(value, out rotationMatrix);
+            Matrix4x4 rotationMatrix = Matrix4x4.identity;
+
+            rotationMatrix.CreateRotationZ(value);
 
             for (int i = 0; i < ControlPoints.Count; i++)
                 ControlPoints[i].Transform(rotationMatrix);
