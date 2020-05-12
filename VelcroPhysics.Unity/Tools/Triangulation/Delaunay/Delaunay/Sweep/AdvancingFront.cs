@@ -86,7 +86,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         /// MM:  This seems to be used by LocateNode to guess a position in the implicit linked list of AdvancingFrontNodes near x
         /// Removed an overload that depended on this being exact
         /// </summary>
-        private AdvancingFrontNode FindSearchNode(double x)
+        private AdvancingFrontNode FindSearchNode(float x)
         {
             // TODO: implement BST index 
             return Search;
@@ -100,7 +100,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             return LocateNode(point.X);
         }
 
-        private AdvancingFrontNode LocateNode(double x)
+        private AdvancingFrontNode LocateNode(float x)
         {
             AdvancingFrontNode node = FindSearchNode(x);
             if (x < node.Value)
@@ -129,9 +129,9 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         /// </summary>
         public AdvancingFrontNode LocatePoint(TriangulationPoint point)
         {
-            double px = point.X;
+            float px = point.X;
             AdvancingFrontNode node = FindSearchNode(px);
-            double nx = node.Point.X;
+            float nx = node.Point.X;
 
             if (px == nx)
             {

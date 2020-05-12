@@ -45,9 +45,9 @@ namespace VelcroPhysics.Utilities
         public static float CatmullRom(float value1, float value2, float value3, float value4, float amount)
         {
             // Using formula from http://www.mvps.org/directx/articles/catmull/
-            // Internally using doubles not to lose precission
-            double amountSquared = amount * amount;
-            double amountCubed = amountSquared * amount;
+            // Internally using floats not to lose precission
+            float amountSquared = amount * amount;
+            float amountCubed = amountSquared * amount;
             
             return (float)(0.5 * (2.0 * value2 + (value3 - value1) * amount 
                                                + (2.0 * value1 - 5.0 * value2 + 4.0 * value3 - value4) * amountSquared 

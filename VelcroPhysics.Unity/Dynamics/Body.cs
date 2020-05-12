@@ -117,7 +117,7 @@ namespace VelcroPhysics.Dynamics
 
         /// <summary>
         /// Scale the gravity applied to this body.
-        /// Defaults to 1. A value of 2 means double the gravity is applied to this body.
+        /// Defaults to 1. A value of 2 means float the gravity is applied to this body.
         /// </summary>
         public float GravityScale { get; set; }
 

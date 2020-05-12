@@ -43,7 +43,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         public TriangulationPoint Point;
         public AdvancingFrontNode Prev;
         public DelaunayTriangle Triangle;
-        public double Value;
+        public float Value;
 
         public AdvancingFrontNode(TriangulationPoint point)
         {

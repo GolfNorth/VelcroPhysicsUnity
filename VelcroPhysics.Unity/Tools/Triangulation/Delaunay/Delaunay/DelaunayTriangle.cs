@@ -318,18 +318,18 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay
                 EdgeIsConstrained[i] = true;
         }
 
-        public double Area()
+        public float Area()
         {
-            double b = Points[0].X - Points[1].X;
-            double h = Points[2].Y - Points[1].Y;
+            float b = Points[0].X - Points[1].X;
+            float h = Points[2].Y - Points[1].Y;
 
             return Math.Abs((b * h * 0.5f));
         }
 
         public TriangulationPoint Centroid()
         {
-            double cx = (Points[0].X + Points[1].X + Points[2].X) / 3f;
-            double cy = (Points[0].Y + Points[1].Y + Points[2].Y) / 3f;
+            float cx = (Points[0].X + Points[1].X + Points[2].X) / 3f;
+            float cy = (Points[0].Y + Points[1].Y + Points[2].Y) / 3f;
             return new TriangulationPoint(cx, cy);
         }
 

@@ -2,7 +2,6 @@
 using UnityEngine;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Extensions.Controllers.ControllerBase;
-using Random = System.Random;
 
 namespace VelcroPhysics.Extensions.Controllers.Wind
 {
@@ -70,12 +69,6 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
         public ForceTypes ForceType;
 
         /// <summary>
-        /// Provided for reuse to provide Variation functionality in
-        /// inheriting classes
-        /// </summary>
-        protected Random Randomize;
-
-        /// <summary>
         /// Curve used by Curve Mode as an animated multiplier for the force
         /// strength.
         /// Only positions between 0 and 1 are considered as that range is
@@ -100,7 +93,6 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
             Triggered = false;
             StrengthCurve = new Curve();
             Variation = 0.0f;
-            Randomize = new Random(1234);
             DecayMode = DecayModes.None;
             DecayCurve = new Curve();
             DecayStart = 0.0f;

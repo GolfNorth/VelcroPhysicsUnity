@@ -167,8 +167,8 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         {
             base.PrepareTriangulation(t);
 
-            double xmax, xmin;
-            double ymax, ymin;
+            float xmax, xmin;
+            float ymax, ymin;
 
             xmax = xmin = Points[0].X;
             ymax = ymin = Points[0].Y;
@@ -186,8 +186,8 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
                     ymin = p.Y;
             }
 
-            double deltaX = ALPHA * (xmax - xmin);
-            double deltaY = ALPHA * (ymax - ymin);
+            float deltaX = ALPHA * (xmax - xmin);
+            float deltaY = ALPHA * (ymax - ymin);
             TriangulationPoint p1 = new TriangulationPoint(xmax + deltaX, ymin - deltaY);
             TriangulationPoint p2 = new TriangulationPoint(xmin - deltaX, ymin - deltaY);
 
@@ -220,7 +220,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             public bool leftHighest;
             public AdvancingFrontNode leftNode;
             public AdvancingFrontNode rightNode;
-            public double width;
+            public float width;
         }
 
         #endregion

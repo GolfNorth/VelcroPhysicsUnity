@@ -53,8 +53,8 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 {
     internal static class DTSweep
     {
-        private const double PI_div2 = Math.PI / 2;
-        private const double PI_3div4 = 3 * Math.PI / 4;
+        private const float PI_div2 = Mathf.PI / 2;
+        private const float PI_3div4 = 3 * Mathf.PI / 4;
 
         /// <summary>
         /// Triangulate simple polygon with holes
@@ -750,7 +750,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         /// </summary>
         private static void FillAdvancingFront(DTSweepContext tcx, AdvancingFrontNode n)
         {
-            double angle;
+            float angle;
 
             // Fill right holes
             AdvancingFrontNode node = n.Next;
@@ -818,19 +818,19 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 
         private static bool AngleExceeds90Degrees(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
-            double angle = Angle(origin, pa, pb);
+            float angle = Angle(origin, pa, pb);
             bool exceeds90Degrees = ((angle > PI_div2) || (angle < -PI_div2));
             return exceeds90Degrees;
         }
 
         private static bool AngleExceedsPlus90DegreesOrIsNegative(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
-            double angle = Angle(origin, pa, pb);
+            float angle = Angle(origin, pa, pb);
             bool exceedsPlus90DegreesOrIsNegative = (angle > PI_div2) || (angle < 0);
             return exceedsPlus90DegreesOrIsNegative;
         }
 
-        private static double Angle(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
+        private static float Angle(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             /* Complex plane
             * ab = cosA +i*sinA
@@ -840,15 +840,15 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
             * Where x = ax*bx + ay*by
             * y = ax*by - ay*bx
             */
-            double px = origin.X;
-            double py = origin.Y;
-            double ax = pa.X - px;
-            double ay = pa.Y - py;
-            double bx = pb.X - px;
-            double by = pb.Y - py;
-            double x = ax * by - ay * bx;
-            double y = ax * bx + ay * by;
-            double angle = Math.Atan2(x, y);
+            float px = origin.X;
+            float py = origin.Y;
+            float ax = pa.X - px;
+            float ay = pa.Y - py;
+            float bx = pb.X - px;
+            float by = pb.Y - py;
+            float x = ax * by - ay * bx;
+            float y = ax * bx + ay * by;
+            float angle = Mathf.Atan2(x, y);
             return angle;
         }
 
@@ -954,7 +954,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
 
         private static bool IsShallow(DTSweepContext tcx, AdvancingFrontNode node)
         {
-            double height;
+            float height;
 
             if (tcx.Basin.leftHighest)
             {
@@ -976,7 +976,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
         /// </summary>
         /// <param name="node">middle node</param>
         /// <returns>the angle between 3 front nodes</returns>
-        private static double HoleAngle(AdvancingFrontNode node)
+        private static float HoleAngle(AdvancingFrontNode node)
         {
             // XXX: do we really need a signed angle for holeAngle?
             //      could possible save some cycles here
@@ -988,23 +988,23 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Delaunay.Sweep
              * Where x = ax*bx + ay*by
              *       y = ax*by - ay*bx
              */
-            double px = node.Point.X;
-            double py = node.Point.Y;
-            double ax = node.Next.Point.X - px;
-            double ay = node.Next.Point.Y - py;
-            double bx = node.Prev.Point.X - px;
-            double by = node.Prev.Point.Y - py;
-            return Math.Atan2(ax * by - ay * bx, ax * bx + ay * by);
+            float px = node.Point.X;
+            float py = node.Point.Y;
+            float ax = node.Next.Point.X - px;
+            float ay = node.Next.Point.Y - py;
+            float bx = node.Prev.Point.X - px;
+            float by = node.Prev.Point.Y - py;
+            return Mathf.Atan2(ax * by - ay * bx, ax * bx + ay * by);
         }
 
         /// <summary>
         /// The basin angle is decided against the horizontal line [1,0]
         /// </summary>
-        private static double BasinAngle(AdvancingFrontNode node)
+        private static float BasinAngle(AdvancingFrontNode node)
         {
-            double ax = node.Point.X - node.Next.Next.Point.X;
-            double ay = node.Point.Y - node.Next.Next.Point.Y;
-            return Math.Atan2(ay, ax);
+            float ax = node.Point.X - node.Next.Next.Point.X;
+            float ay = node.Point.Y - node.Next.Next.Point.Y;
+            return Mathf.Atan2(ay, ax);
         }
 
         /// <summary>

@@ -63,11 +63,6 @@ namespace VelcroPhysics.Utilities
             return displayUnits * _simUnitsToDisplayUnitsRatio;
         }
 
-        public static float ToSimUnits(double displayUnits)
-        {
-            return (float)displayUnits * _simUnitsToDisplayUnitsRatio;
-        }
-
         public static float ToSimUnits(int displayUnits)
         {
             return displayUnits * _simUnitsToDisplayUnitsRatio;
@@ -91,11 +86,6 @@ namespace VelcroPhysics.Utilities
         public static Vector2 ToSimUnits(float x, float y)
         {
             return new Vector2(x, y) * _simUnitsToDisplayUnitsRatio;
-        }
-
-        public static Vector2 ToSimUnits(double x, double y)
-        {
-            return new Vector2((float)x, (float)y) * _simUnitsToDisplayUnitsRatio;
         }
 
         public static void ToSimUnits(float x, float y, out Vector2 simUnits)

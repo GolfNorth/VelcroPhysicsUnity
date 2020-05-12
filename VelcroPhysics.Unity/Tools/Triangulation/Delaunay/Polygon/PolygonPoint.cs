@@ -38,7 +38,7 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Polygon
 {
     internal class PolygonPoint : TriangulationPoint
     {
-        public PolygonPoint(double x, double y) : base(x, y) { }
+        public PolygonPoint(float x, float y) : base(x, y) { }
 
         public PolygonPoint Next { get; set; }
         public PolygonPoint Previous { get; set; }

@@ -77,13 +77,13 @@ namespace VelcroPhysics.Tools.PolygonManipulation
             Vector2 a = vertices[i];
             Vector2 b = vertices[j];
 
-            double maxDistance = -1.0;
+            float maxDistance = -1.0f;
             int maxIndex = i;
             for (int k = i + 1; k < j; k++)
             {
                 Vector2 point = vertices[k];
 
-                double distance = LineUtils.DistanceBetweenPointAndLineSegment(ref point, ref a, ref b);
+                float distance = LineUtils.DistanceBetweenPointAndLineSegment(ref point, ref a, ref b);
 
                 if (distance > maxDistance)
                 {

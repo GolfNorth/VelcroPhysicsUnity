@@ -29,7 +29,7 @@ namespace VelcroPhysics.Dynamics.Joints
     public abstract class Joint
     {
         private float _breakpoint;
-        private double _breakpointSquared;
+        private float _breakpointSquared;
 
         internal JointEdge EdgeA = new JointEdge();
         internal JointEdge EdgeB = new JointEdge();

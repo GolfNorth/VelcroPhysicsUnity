@@ -99,7 +99,7 @@ namespace VelcroPhysics.Tools.Triangulation.Bayazit
                     }
                     else
                     {
-                        double highestScore = 0, bestIndex = lowerIndex;
+                        float highestScore = 0, bestIndex = lowerIndex;
                         while (upperIndex < lowerIndex)
                             upperIndex += vertices.Count;
 
@@ -107,7 +107,7 @@ namespace VelcroPhysics.Tools.Triangulation.Bayazit
                         {
                             if (CanSee(i, j, vertices))
                             {
-                                double score = 1 / (SquareDist(At(i, vertices), At(j, vertices)) + 1);
+                                float score = 1 / (SquareDist(At(i, vertices), At(j, vertices)) + 1);
                                 if (Reflex(j, vertices))
                                 {
                                     if (RightOn(At(j - 1, vertices), At(j, vertices), At(i, vertices)) && LeftOn(At(j + 1, vertices), At(j, vertices), At(i, vertices)))

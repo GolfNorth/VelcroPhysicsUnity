@@ -28,7 +28,7 @@ namespace VelcroPhysics.Tools.ConvexHull.Melkman
                 return vertices;
 
             //We'll never need a queue larger than the current number of Vertices +1
-            //Create double-ended queue
+            //Create float-ended queue
             Vector2[] deque = new Vector2[vertices.Count + 1];
             int qf = 3, qb = 0; //Queue front index, queue back index
 

@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
 {
     internal class PointGenerator
     {
-        private static readonly Random RNG = new Random();
-
-        public static List<TriangulationPoint> UniformDistribution(int n, double scale)
+        public static List<TriangulationPoint> UniformDistribution(int n, float scale)
         {
             List<TriangulationPoint> points = new List<TriangulationPoint>();
             for (int i = 0; i < n; i++)
             {
-                points.Add(new TriangulationPoint(scale * (0.5 - RNG.NextDouble()), scale * (0.5 - RNG.NextDouble())));
+                points.Add(new TriangulationPoint(scale * (0.5f - Random.value), scale * (0.5f - Random.value)));
             }
             return points;
         }
 
-        public static List<TriangulationPoint> UniformGrid(int n, double scale)
+        public static List<TriangulationPoint> UniformGrid(int n, float scale)
         {
-            double x = 0;
-            double size = scale / n;
-            double halfScale = 0.5 * scale;
+            float x = 0;
+            float size = scale / n;
+            float halfScale = 0.5f * scale;
 
             List<TriangulationPoint> points = new List<TriangulationPoint>();
             for (int i = 0; i < n + 1; i++)

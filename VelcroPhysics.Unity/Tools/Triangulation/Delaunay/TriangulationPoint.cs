@@ -38,9 +38,9 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay
     {
         // List of edges this point constitutes an upper ending point (CDT)
 
-        public double X, Y;
+        public float X, Y;
 
-        public TriangulationPoint(double x, double y)
+        public TriangulationPoint(float x, float y)
         {
             X = x;
             Y = y;

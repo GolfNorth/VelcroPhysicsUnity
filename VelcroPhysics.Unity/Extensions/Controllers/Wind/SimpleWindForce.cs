@@ -59,7 +59,7 @@ namespace VelcroPhysics.Extensions.Controllers.Wind
                     // Calculate random Variation
                     if (Variation != 0)
                     {
-                        float strengthVariation = (float)Randomize.NextDouble() * MathUtils.Clamp(Variation, 0, 1);
+                        float strengthVariation = (float)Random.value * MathUtils.Clamp(Variation, 0, 1);
                         forceVector.Normalize();
                         body.ApplyForce(forceVector * strength * decayMultiplier * strengthVariation);
                     }

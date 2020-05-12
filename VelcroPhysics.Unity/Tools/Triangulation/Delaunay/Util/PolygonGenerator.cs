@@ -29,24 +29,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using UnityEngine;
 using VelcroPhysics.Tools.Triangulation.Delaunay.Polygon;
-using Random = System.Random;
 
 namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
 {
     internal class PolygonGenerator
     {
-        private static readonly Random RNG = new Random();
+        private static float PI_2 = 2.0f * Mathf.PI;
 
-        private static double PI_2 = 2.0 * Mathf.PI;
-
-        public static Polygon.Polygon RandomCircleSweep(double scale, int vertexCount)
+        public static Polygon.Polygon RandomCircleSweep(float scale, int vertexCount)
         {
             PolygonPoint point;
             PolygonPoint[] points;
-            double radius = scale / 4;
+            float radius = scale / 4;
 
             points = new PolygonPoint[vertexCount];
             for (int i = 0; i < vertexCount; i++)
@@ -55,43 +51,43 @@ namespace VelcroPhysics.Tools.Triangulation.Delaunay.Util
                 {
                     if (i % 250 == 0)
                     {
-                        radius += scale / 2 * (0.5 - RNG.NextDouble());
+                        radius += scale / 2 * (0.5f - Random.value);
                     }
                     else if (i % 50 == 0)
                     {
-                        radius += scale / 5 * (0.5 - RNG.NextDouble());
+                        radius += scale / 5 * (0.5f - Random.value);
                     }
                     else
                     {
-                        radius += 25 * scale / vertexCount * (0.5 - RNG.NextDouble());
+                        radius += 25 * scale / vertexCount * (0.5f - Random.value);
                     }
                     radius = radius > scale / 2 ? scale / 2 : radius;
                     radius = radius < scale / 10 ? scale / 10 : radius;
                 } while (radius < scale / 10 || radius > scale / 2);
-                point = new PolygonPoint(radius * Math.Cos( (PI_2 * i) / vertexCount),
-                    radius * Math.Sin((PI_2 * i) / vertexCount));
+                point = new PolygonPoint(radius * Mathf.Cos( (PI_2 * i) / vertexCount),
+                    radius * Mathf.Sin((PI_2 * i) / vertexCount));
                 points[i] = point;
             }
             return new Polygon.Polygon(points);
         }
 
-        public static Polygon.Polygon RandomCircleSweep2(double scale, int vertexCount)
+        public static Polygon.Polygon RandomCircleSweep2(float scale, int vertexCount)
         {
             PolygonPoint point;
             PolygonPoint[] points;
-            double radius = scale / 4;
+            float radius = scale / 4;
 
             points = new PolygonPoint[vertexCount];
             for (int i = 0; i < vertexCount; i++)
             {
                 do
                 {
-                    radius += scale / 5 * (0.5 - RNG.NextDouble());
+                    radius += scale / 5 * (0.5f - Random.value);
                     radius = radius > scale / 2 ? scale / 2 : radius;
                     radius = radius < scale / 10 ? scale / 10 : radius;
                 } while (radius < scale / 10 || radius > scale / 2);
-                point = new PolygonPoint(radius * Math.Cos((PI_2 * i) / vertexCount),
-                    radius * Math.Sin((PI_2 * i) / vertexCount));
+                point = new PolygonPoint(radius * Mathf.Cos((PI_2 * i) / vertexCount),
+                    radius * Mathf.Sin((PI_2 * i) / vertexCount));
                 points[i] = point;
             }
             return new Polygon.Polygon(points);
