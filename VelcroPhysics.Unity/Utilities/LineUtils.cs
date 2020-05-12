@@ -14,7 +14,7 @@ namespace VelcroPhysics.Utilities
             if (start == end)
                 return Vector2.Distance(point, start);
 
-            Vector2 v = end = start;
+            Vector2 v = end - start;
             Vector2 w = point - start;
 
             float c1 = Vector2.Dot(w, v);

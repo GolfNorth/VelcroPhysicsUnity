@@ -15,7 +15,7 @@ namespace VelcroPhysics.Dynamics
     {
         private float[] _angularVelocitiesCache = new float[8];
         private bool _break;
-        private UnityEngine.Vector2[] _velocitiesCache = new UnityEngine.Vector2[8];
+        private Vector2[] _velocitiesCache = new UnityEngine.Vector2[8];
         private readonly World _world;
 
         /// <summary>
